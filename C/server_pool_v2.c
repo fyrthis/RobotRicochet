@@ -11,16 +11,33 @@
 #include <sys/time.h>
 #include <sys/ioctl.h>
 
+#include <fcntl.h>
+#include <errno.h>
+
 /* CONSTANTS */
 #define NB_MAX_THREADS 8
 #define NB_MAX_CLIENTS 50
 
 /*MUTEX & CONDITIONS*/
-pthread_mutex_t task_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+#ifdef _WIN32
+    // Windows (x64 and x86)
+    pthread_mutex_t task_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+#elif __unix__ // all unices, not all compilers
+    // Unix
+    pthread_mutex_t task_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+#elif __linux__
+    // linux
+    pthread_mutex_t task_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+#elif __APPLE__
+    // Mac OS
+    pthread_mutex_t task_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+#endif
+
 pthread_cond_t  cond_got_task   = PTHREAD_COND_INITIALIZER;
-
-pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
-
 
 /*STRUCTURES*/
 typedef struct client {
@@ -40,22 +57,11 @@ typedef struct task {
 client_t * clients = NULL;
 client_t * last_client = NULL;
 
-task_t * requests = NULL;
-task_t * last_request = NULL;
+task_t * tasks = NULL;
+task_t * last_task = NULL;
 
-int nbTask = 0;
+int nbTasks = 0;
 int nbClients = 0;
-
-/*typedef struct task {
-    //information/arguments you may need
-    int number; //num de la tache ?
-    int socket; //numero de la socket
-    char * name; //Client's name
-    //The function that receives args
-    void (*func_ptr)(void*,...); //Function to execute
-    //Next task
-    struct task * next;
-}task_t;*/
 
 /*FUNCTIONS*/
 void addClient(int socket, char *name, pthread_mutex_t* p_mutex);
@@ -65,8 +71,8 @@ void printClientsState(pthread_mutex_t* p_mutex);
 
 void addTask(int socket, char *command, pthread_mutex_t* p_mutex, pthread_cond_t*  p_cond_var);
 task_t * getTask(pthread_mutex_t* p_mutex);
-void handle_request(task_t * a_request, int thread_id);
-void * handle_requests_loop(void* data);
+void handle_request(task_t * task, int thread_id);
+void * handle_tasks_loop(void* data);
 void printTasksState(pthread_mutex_t* p_mutex);
 
 void connect1(char * name);
@@ -89,26 +95,34 @@ int strcicmp(char const *a, char const *b);
 *  présent deux fois dans la liste.       *
 *                                         *
 *******************************************/
+/*
+3 cas possibles :
+1) Le client est déjà connecté (son nom, OU sa socket est déjà en cours d'utilisation), dans ce cas on ne fait rien
+2) Le client n'est pas connecté, mais l'a été AU COURS DE LA SESSION COURANTE, on met simplement son tag isConnected à vrai.
+3) Le client n'est pas connecté et nest pas dans le cas (2), on crée un client qu'on met dans la liste
+*/
 
 void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
-    int rc;
-    client_t * client;
+    int rc =0;
+    client_t * client = NULL;
     rc = pthread_mutex_lock(p_mutex);
     if((client=findClient(socket, name))!=NULL) {
-        if(client->isConnected==0) { //Client déjà connecté
-            printf("Client %s deja connecte !\n", name);
+    /*Client déjà connecté*/
+        if(client->isConnected==0) {
+            printf("(addClient)Client %s deja connecte !\n", name);
             rc = pthread_mutex_unlock(p_mutex);
-        } else { //Précédemment connecté, reprise de partie
+    /*Précédemment connecté, reprise de partie*/
+        } else {
             client->isConnected=0;
-            printf("Client %s se reconnecte !\n", name);
+            printf("(addClient)Client %s se reconnecte !\n", name);
             rc = pthread_mutex_unlock(p_mutex);
         }
         return;
     }
     /*nouveau client*/
     client = (client_t*)malloc(sizeof(client_t));
-    if (!client) { /* malloc failed */
-	fprintf(stderr, "add_request: out of memory\n");
+    if (!client) {
+	fprintf(stderr, "(addClient) out of memory.\n");
 	exit(1);
     }
     client->socket = socket;
@@ -117,14 +131,14 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
     client->next = NULL;
 
     
-
+    /* M.a.j. de la liste*/
     if (nbClients == 0) {
-	clients = client;
-	last_client = client;
+        clients = client;
+        last_client = client;
     }
     else {
-	last_client->next = client;
-	last_client = client;
+        last_client->next = client;
+        last_client = client;
     }
 
     nbClients++;
@@ -132,7 +146,7 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
     printf("add_request: added client with socket '%d'\n", client->socket);
     fflush(stdout);
 
-    /* unlock mutex */
+    printClientsState(&client_mutex);
     rc = pthread_mutex_unlock(p_mutex);
 }
 
@@ -145,8 +159,9 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
 *******************************************/
 
 void rmClient(int socket, pthread_mutex_t* p_mutex) {
-//TODO : Retirer un client de la liste (des connectés) i.e. mettre flag connecté à false.
-
+//TODO : Retirer un client de la liste.
+//TODO : ce n'est pas ici qu'on envoie le message et qu'on clore la socket !!
+    printClientsState(&client_mutex);
 }
 
 /******************************************
@@ -173,14 +188,19 @@ client_t *findClient(int socket, char * name) {
 void printClientsState(pthread_mutex_t* p_mutex) {
     int rc = pthread_mutex_lock(p_mutex);
     
-    printf("Etat de la liste des clients : \n");
+    printf("Etat de la liste des %d clients : \n", nbClients);
     if(clients==NULL) {
         printf("Aucun client.\n");
     } else {
         int i = 1;
         client_t * client = clients;
         while(client != NULL) {
-            printf("client %d : %s sur socket %d\n", i, client->name, client->socket);
+            printf("client %d : [name:%s ; socket:%d ; connected:", i, client->name, client->socket);
+            if(client->isConnected==0) {
+                puts("true].\n");
+            } else {
+                puts("false].\n");
+            }
             client = client->next;
             i++;
         }
@@ -204,35 +224,41 @@ void printClientsState(pthread_mutex_t* p_mutex) {
 *                                         *
 *******************************************/
 void addTask(int socket, char *command, pthread_mutex_t* p_mutex, pthread_cond_t*  p_cond_var) {
-    int rc;
-    task_t * a_request;
+    int rc = 0;
+    task_t * task;
 
     /* create structure with new request */
-    a_request = (task_t*)malloc(sizeof(task_t));
-    if (!a_request) { /* malloc failed?? */
-	fprintf(stderr, "add_request: out of memory\n");
-	exit(1);
+    task = (task_t*)malloc(sizeof(task_t));
+    if (!task) {
+       fprintf(stderr, "add_request: out of memory\n");
+       exit(1);
     }
-    a_request->socket = socket;
-    a_request->command = command;
-    a_request->next = NULL;
+    task->socket = socket;
+    task->command = (char*)calloc(strlen(command)+1, sizeof(char));
+    if (!task->command) {
+       fprintf(stderr, "(addTask) out of memory\n");
+       exit(1);
+    }
+    strncpy(task->command, command, sizeof(char) * strlen(command));
+    task->next = NULL;
+
+    printf("(addTask) socket : %d \n", task->socket);
+    printf("(addTask) command : %s\n", task->command);
 
     rc = pthread_mutex_lock(p_mutex);
 
-    if (nbTask == 0) {
-	requests = a_request;
-	last_request = a_request;
+    if (nbTasks == 0) {
+       tasks = task;
+       last_task = task;
     }
     else {
-	last_request->next = a_request;
-	last_request = a_request;
+       last_task->next = task;
+       last_task = task;
     }
 
-    nbTask++;
+    nbTasks++;
 
-    printf("add_request: added request with socket '%d'\n", a_request->socket);
-    fflush(stdout);
-
+    printTasksState(&task_mutex);
     /* unlock mutex */
     rc = pthread_mutex_unlock(p_mutex);
 
@@ -251,27 +277,28 @@ void addTask(int socket, char *command, pthread_mutex_t* p_mutex, pthread_cond_t
 *******************************************/
 task_t * getTask(pthread_mutex_t* p_mutex) {
     int rc;
-    task_t * a_request;
+    task_t * task;
 
     rc = pthread_mutex_lock(p_mutex);
 
-    if (nbTask > 0) {
-	a_request = requests;
-	requests = a_request->next;
-	if (requests == NULL) {
-	    last_request = NULL;
-	}
-	nbTask--;
+    if (nbTasks > 0) {
+        task = tasks;
+        tasks = task->next;
+    if (tasks == NULL) {
+        last_task = NULL;
+    }
+        nbTasks--;
     }
     else {
-	a_request = NULL;
+        task = NULL;
     }
 
+    printTasksState(&task_mutex);
     /* unlock mutex */
     rc = pthread_mutex_unlock(p_mutex);
 
     /* return the request to the caller. */
-    return a_request;
+    return task;
 }
 
 /******************************************
@@ -281,32 +308,31 @@ task_t * getTask(pthread_mutex_t* p_mutex) {
 *  2) Appelle la fonction associée        *
 *                                         *
 *******************************************/
-void handle_request(task_t * a_request, int thread_id) {
-    if (a_request) {
-        char *str = (char*)malloc(10*sizeof(char));
-        //a_request->func_ptr("toto");
-	printf("Thread '%d' handled request '%d'\n",
-	       thread_id, a_request->socket);
-	fflush(stdout);
+void handle_request(task_t * task, int thread_id) {
+    if (task) {
         /* parse la commande */
         char * pch = NULL; // TOKEN
         char* username = NULL;
-        printf ("Splitting string \"%s\" into tokens:\n",a_request->command);
-        pch = strtok (a_request->command,"/");
+        printf ("(handle_request)Splitting string \"%s\" into tokens:\n",task->command);
+        pch = strtok (task->command,"/");
 
         /*Dispatche*/
         if(pch==NULL)
         {
-            printf("ERROR : received shit\n");
+            printf("(handle_request)ERROR : received something NULL : %s.\n", task->command);
+            perror("(handle_request)ERROR : close socket.\n"); //Maybe need to flush client datastructure ?
+            close(task->socket);
         }
         //C -> S : CONNEXION/user/
         else if(strcmp(pch,"CONNEXION")==0)
         {
+            printf("(handle_request) : found CONNEXION\n");
             pch = strtok (NULL, "/");
             username = (char*)malloc(sizeof(pch));
             strncpy(username, pch, sizeof(pch));
-            addClient(a_request->socket, username, &client_mutex);
-            printf("handle task CONNEXION\n");
+            printf("(handle_request) :pch is %s\n",username);
+            printf("(handle_request) : add new client %s\n", username);
+            addClient(task->socket, username, &client_mutex);
         }
         //C -> S : SORT/user/
         else if(strcmp(pch,"SORT")==0)
@@ -339,9 +365,10 @@ void handle_request(task_t * a_request, int thread_id) {
             strncpy(username, pch, sizeof(pch));
         }
         else {
-            printf("ERROR : received shit\n");
+            fprintf(stderr, "(handle_request)ERROR : received bad protocol : %s.\n", task->command);
         }
     }
+    printf("FIN handle_request.\n");
 }
 
 
@@ -352,31 +379,52 @@ void handle_request(task_t * a_request, int thread_id) {
 *  parmis les threads disponibles.        *
 *                                         *
 *******************************************/
-void * handle_requests_loop(void* data) {
+void * handle_tasks_loop(void* data) {
     int rc;
     task_t * taskWeDo;
     int thread_id = *((int*)data);
 
-    /* lock the mutex, to access the requests list exclusively. */
+    /* lock the mutex, to access the tasks list exclusively. */
     rc = pthread_mutex_lock(&task_mutex);
 
     while (1) {
-	if (nbTask > 0) { /* a request is pending */
-	    taskWeDo = getTask(&task_mutex);
-	    if (taskWeDo) { /* got a request - handle it and free it */
-		handle_request(taskWeDo, thread_id);
-		free(taskWeDo);
-	    }
-	}
-	else {
-	    rc = pthread_cond_wait(&cond_got_task, &task_mutex);
-	}
+        if (nbTasks > 0) { /* a request is pending */
+            taskWeDo = getTask(&task_mutex);
+            //printf("(handle_tasks_loop) Thread %d got task %s.\n", thread_id, taskWeDo->command);
+            if (taskWeDo) { /* got a request - handle it and free it */
+                printf("(handle_tasks_loop) Thread %d handles task %s.\n", thread_id, taskWeDo->command);
+                handle_request(taskWeDo, thread_id);
+                free(taskWeDo);
+            }
+        }
+        else {
+            printf("(handle_tasks_loop) Thread %d is waiting some task.\n", thread_id);
+            rc = pthread_cond_wait(&cond_got_task, &task_mutex);
+        }
     }
+    //Unreachable code bellow
+    rc = pthread_mutex_lock(&task_mutex);
 }
 
 
 
-
+void printTasksState(pthread_mutex_t* p_mutex) {
+    int rc = pthread_mutex_lock(p_mutex);
+    
+    printf("Etat de la liste des %d taches : \n", nbTasks);
+    if(tasks==NULL) {
+        printf("Aucune tache.\n");
+    } else {
+        int i = 1;
+        task_t * task = tasks;
+        while(task != NULL) {
+            printf("task %d : [socket:%d ; command:%s].\n", i, task->socket, task->command);
+            task = task->next;
+            i++;
+        }
+    }
+    rc = pthread_mutex_unlock(p_mutex);
+}
 
 
 
@@ -388,17 +436,17 @@ void * handle_requests_loop(void* data) {
 
 int main(int argc, char* argv[]) {
     //INITIALIZE SERVER
-    printf("Initialize server...\n");
-    printf("Initialize threads...\n");
-    int        i;                                /* loop counter          */
-    int        thr_id[NB_MAX_THREADS];                /* thread IDs            */
-    pthread_t  p_threads[NB_MAX_THREADS];             /* thread's structures   */
+    printf("(Main)Initialize server...\n");
+    printf("(Main)Initialize threads...\n");
+    int        i;                               /* loop counter          */
+    int        thr_id[NB_MAX_THREADS];          /* thread IDs            */
+    pthread_t  p_threads[NB_MAX_THREADS];       /* thread's structures   */
     for (i=0; i<NB_MAX_THREADS; i++) {
-	thr_id[i] = i;
-	pthread_create(&p_threads[i], NULL, handle_requests_loop, (void*)&thr_id[i]);
-        printf("Thread %d created and ready\n", i);
+        thr_id[i] = i;
+        pthread_create(&p_threads[i], NULL, handle_tasks_loop, (void*)&thr_id[i]);
+        printf("(Main)Thread %d created and ready\n", i);
     }
-    printf("Initialize server socket...\n");
+    printf("(Main)Initialize server socket...\n");
     int port = 2016;
     int socket_server;
     int socket_client;
@@ -412,10 +460,10 @@ int main(int argc, char* argv[]) {
     socket_server = socket(AF_INET, SOCK_STREAM, 0);
    
     if (socket_server < 0) {
-        perror("ERROR opening server socket\n");
+        perror("(Main)ERROR opening server socket\n");
         exit(1);
     } else {
-        puts("The server socket is now open\n");
+        puts("(Main)The server socket is now open\n");
     }
 
     bzero((char *) &server_address, sizeof(server_address));
@@ -428,14 +476,12 @@ int main(int argc, char* argv[]) {
     }
 
 
-    printf("Start listenning with %d simultaneously clients max\n",NB_MAX_CLIENTS);
+    printf("(Main)Start listenning with %d simultaneously clients max\n",NB_MAX_CLIENTS);
     listen(socket_server,NB_MAX_CLIENTS);
-    //What is it for ?/////////////////////
     fd_set readfds, testfds;
     FD_ZERO(&readfds);
     FD_SET(socket_server, &readfds);
     int select_result;
-    ///////////////////////////////////
     while(1) {
         char buffer[256];
         bzero(buffer,256);
@@ -443,28 +489,58 @@ int main(int argc, char* argv[]) {
         int nread;
         int n;
         testfds = readfds;
-        printClientsState(&client_mutex);
-        printf("server waiting\n");
-        select_result = select(FD_SETSIZE, &testfds, (fd_set *)0, (fd_set *)0, (struct timeval *) 0);
-        if(select_result < 1) {
-            perror("server5");
-            exit(1);
+        printf("(Main)server waiting\n");
+
+        while( (select_result = select(FD_SETSIZE, &testfds, (fd_set *)0, (fd_set *)0, (struct timeval *) 0)) < 1) {
+            perror("");
+            fprintf(stderr, "error select : Fenêtre fermee burtalement cote client ?\nselect val : %d (%d)\n", select_result, errno);
+            int rc = pthread_mutex_lock(&client_mutex);
+            printf("Etat de la liste des clients : \n");
+            if(clients==NULL) {
+                printf("Aucun client. Erreur dans le select non geree...\n");
+                exit(1);
+            } else {
+                int i = 1;
+                client_t * client = clients;
+                while(client != NULL) {
+                    //printf("client %d : [name:%s ; socket:%d]\n", i, client->name, client->socket);
+                    if(fcntl(client->socket, F_GETFL) == -1 && errno == EBADF) {
+                        printf("error on socket %d\n", client->socket); //The client with the corrupted file descriptor socket.
+                        printClientsState(&client_mutex);
+                        client->isConnected = 1;
+                        //We must kick it from the fd_set structure (named readfds ? or testfds ? both ?)
+                        FD_CLR(client->socket, &readfds);
+                        FD_CLR(client->socket, &testfds);
+                        printClientsState(&client_mutex);
+                    }
+                    client = client->next;
+                    i++;
+                }
+                continue;
+            }
+            rc = pthread_mutex_unlock(&client_mutex);
         }
         
         for(socket = 0; socket < FD_SETSIZE; socket++) {
-            if(FD_ISSET(socket,&testfds)) {
+            if(FD_ISSET(socket,&testfds)) { //Si une activité est détecté sur un socket
                 if(socket == socket_server) {
                     client_size = sizeof(client_address);
                     socket_client = accept(socket_server, (struct sockaddr *)&client_address, &client_size);
-                    FD_SET(socket_client, &readfds);
-                    printf("adding client on fd %d\n", socket_client);
+                    FD_SET(socket_client, &readfds); //Add socket file descriptor to the set
+                    printf("(Main)New socket connection on %d\n", socket_client);
                 }
                 else {
                     n = read(socket,buffer,255);
+                    if(n == 0) {
+                        perror("n = 0.\n");
+                        break;
+                    }
+                    printf("(Main)Server received %d bytes from %d.\n", n, socket);
+                    printf("(Main)Server received %s from %d.\n", buffer, socket);
                     addTask(socket, buffer, &task_mutex, &cond_got_task);
-                    //sleep(5);
-                    printf("serving client on fd %d : %s\n", socket, buffer);
                 }
+            } else {
+                //puts("no data received since 5 seconds.\n");
             }
         }
     }

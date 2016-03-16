@@ -341,6 +341,12 @@ void handle_request(task_t * task, int thread_id) {
             addClient(task->socket, username, &client_mutex);
 
             //S -> C : SESSION/plateau/
+            char *msg = (char*)malloc((12+strlen(username))*sizeof(char));
+            strcpy(msg, "BIENVENUE/");
+            strcat(msg, username);
+            strcat(msg,"/\n");
+            printf("%s", msg);
+            write(task->socket,msg,strlen(msg)*sizeof(char));
             sendGrid(task->socket);
         }
         //C -> S : SORT/user/
@@ -465,6 +471,12 @@ int main(int argc, char* argv[]) {
     if(argc>1) {
         port = atoi(argv[1]);
     }
+    if(argc>2) {
+        readGridFromFile(argv[2]);
+    } else {
+        readGridFromFile("../res/BasicGrid.txt");
+    }
+    
     printf("setting port : %d\n", port);
     socket_server = socket(AF_INET, SOCK_STREAM, 0);
    
@@ -487,7 +499,7 @@ int main(int argc, char* argv[]) {
 
     printf("(Main)Start listenning with %d simultaneously clients max\n",NB_MAX_CLIENTS);
     
-    readGridFromFile(argv[2]);
+    
 
     listen(socket_server,NB_MAX_CLIENTS);
     fd_set readfds, testfds;
@@ -623,16 +635,12 @@ int sendGrid(int socket){
 *******************************************/
 
 int readGridFromFile(char *filename) {
-    // le fichier est passé en parametre
-    // si pas de parametre, alors le fichier est BasicGrid.txt
-    if(filename == NULL){
-        filename = "../res/BasicGrid.txt";
-        fprintf(stderr, "%s\n", filename);
-    }
+
     FILE* file = fopen(filename, "r"); /* should check the result */
     
     if(file == NULL){
         fprintf(stderr, "Error: Could not open file\n");
+        perror("error : ");
         exit(-1);
     }
 

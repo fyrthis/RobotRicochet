@@ -486,6 +486,9 @@ int main(int argc, char* argv[]) {
 
 
     printf("(Main)Start listenning with %d simultaneously clients max\n",NB_MAX_CLIENTS);
+    
+    readGridFromFile(argv[2]);
+
     listen(socket_server,NB_MAX_CLIENTS);
     fd_set readfds, testfds;
     FD_ZERO(&readfds);
@@ -598,6 +601,7 @@ int sendGrid(int socket){
     fprintf(stderr, "Start sendGrid1\n");
     strcpy(msg, "SESSION/");
     fprintf(stderr, "Start sendGrid2\n");
+    fprintf(stderr, "%s\n", gridStr);
     strcat(msg, gridStr);
     fprintf(stderr, "Start sendGrid3\n");
     strcat(msg,"/\n");
@@ -702,12 +706,8 @@ int readGridFromFile(char *filename) {
         }
         printf("\n");
     }*/
-    for(i = 0; i < size_x; i++){
-        for(j = 0; j < size_y; j++){
-        fprintf(stderr, "%c", gridStr);
-        }
-        printf("\n");
-    }
+
+    fprintf(stderr, "%s", gridStr);
 
     /* may check feof here to make a difference between eof and io failure -- network
        timeout for instance */

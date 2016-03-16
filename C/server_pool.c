@@ -85,7 +85,8 @@ void disconnect1(char * name);
 int strcicmp(char const *a, char const *b);
 
 int sendGrid(int socket);
-
+int readGridFromFile(char *filename);
+char * getCharFromCase(int i, int j);
 
 /***************
 * CLIENTS PART *
@@ -354,30 +355,30 @@ void handle_request(task_t * task, int thread_id) {
         {
             //ICI SE FAIT LA SUPPRESSION D'UN CLIENT
             pch = strtok (NULL, "/");
-            username = (char*)malloc(sizeof(pch));
-            strncpy(username, pch, sizeof(pch));
+            username = (char*)malloc(strlen(pch));
+            strncpy(username, pch, strlen(pch));
             printf(" handle Task SORT\n");
         }
         //C -> S : SOLUTION/user/coups/
         else if(strcmp(pch,"SOLUTION")==0)
         {
             pch = strtok (NULL, "/");
-            username = (char*)malloc(sizeof(pch));
-            strncpy(username, pch, sizeof(pch));
+            username = (char*)malloc(strlen(pch));
+            strncpy(username, pch, strlen(pch));
         }
         //C -> S : ENCHERE/user/coups/
         else if(strcmp(pch,"ENCHERE")==0)
         {
             pch = strtok (NULL, "/");
-            username = (char*)malloc(sizeof(pch));
-            strncpy(username, pch, sizeof(pch));
+            username = (char*)malloc(strlen(pch));
+            strncpy(username, pch, strlen(pch));
         }
         //C -> S : SOLUTION/user/deplacements/
         else if(strcmp(pch,"SOLUTION")==0)
         {
             pch = strtok (NULL, "/");
-            username = (char*)malloc(sizeof(pch));
-            strncpy(username, pch, sizeof(pch));
+            username = (char*)malloc(strlen(pch));
+            strncpy(username, pch, strlen(pch));
         }
         else {
             fprintf(stderr, "(handle_request)ERROR : received bad protocol : %s.\n", task->command);
@@ -477,7 +478,7 @@ int main(int argc, char* argv[]) {
         readGridFromFile("../res/BasicGrid.txt");
     }
     
-    printf("setting port : %d\n", port);
+    printf("\nsetting port : %d\n", port);
     socket_server = socket(AF_INET, SOCK_STREAM, 0);
    
     if (socket_server < 0) {
@@ -608,23 +609,15 @@ int strcicmp(char const *a, char const *b)
 *******************************************/
 
 int sendGrid(int socket){
-    fprintf(stderr, "Start sendGrid\n");
-    char *msg = (char*)malloc(1050);
-    fprintf(stderr, "Start sendGrid1\n");
+    fprintf(stderr, "Sending the Grid:\n");
+    char *msg = (char*)calloc(sizeof(char), 4096);
     strcpy(msg, "SESSION/");
-    fprintf(stderr, "Start sendGrid2\n");
-    fprintf(stderr, "%s\n", gridStr);
     strcat(msg, gridStr);
-    fprintf(stderr, "Start sendGrid3\n");
     strcat(msg,"/\n");
-    fprintf(stderr, "Start sendGrid4\n");
     printf("%s", msg);
-    fprintf(stderr, "Start sendGrid5\n");
     int n = write(socket,msg,strlen(msg)*sizeof(char));
 
-    fprintf(stderr, "Start sendGrid6\n");
-
-    fprintf(stderr, "Grid send\n");
+    fprintf(stderr, "Grid send!\n");
     return 0;
 }
 
@@ -674,7 +667,7 @@ int readGridFromFile(char *filename) {
             exit(0);
         }
     }
-    gridStr = malloc(1024);
+    gridStr = malloc(4096*sizeof(char));
     if(gridStr == NULL){
         printf("\nFailure to allocate for gridStr\n");
         exit(0);
@@ -694,20 +687,27 @@ int readGridFromFile(char *filename) {
 
         while(pch != NULL){
             grid[x][y] = atoi(pch);
-            strcat(gridStr, pch);
-            strcat(gridStr, " ");
+
+            char * caseToChar = calloc(sizeof(char), 27);
+            caseToChar = getCharFromCase(x,y);
+
+            strcat(gridStr, caseToChar);
             pch = strtok(NULL, " ");
             y++;
             if(y == size_x){
                 y = 0;
                 x++;
-                strcat(gridStr, "\n");
             }
         }
     }
 
-    int i = 0, j = 0;
+    // Concat the size of the grid at the end of the grid: SESSION/plateau/size_x/size_y/
+    char * sizeInfo = malloc(6);
+    sprintf(sizeInfo,"/%d/%d", size_x, size_y); 
+    strcat(gridStr, sizeInfo);
+            
     /*
+    int i = 0, j = 0;
     for(i = 0; i < size_x; i++){
         for(j = 0; j < size_y; j++){
             printf("%d ", grid[i][j]);
@@ -725,3 +725,75 @@ int readGridFromFile(char *filename) {
     return 0;
 
 }
+
+char* getCharFromCase(int i, int j){
+    char* chaine = calloc(sizeof(char), (2*8 + 20 + 1));
+    switch(grid[i][j]){
+        case 0:
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 1:
+            sprintf(chaine, "(%d,%d,H)", i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 2:
+            sprintf(chaine, "(%d,%d,D)", i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 3:
+            sprintf(chaine, "(%d,%d,H)(%d,%d,D)", i, j, i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 4:
+            sprintf(chaine, "(%d,%d,B)", i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 5:
+            sprintf(chaine, "(%d,%d,H)(%d,%d,B)", i, j, i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 6:
+            sprintf(chaine, "(%d,%d,D)(%d,%d,B)", i, j, i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 7:
+            sprintf(chaine, "(%d,%d,H)(%d,%d,D)(%d,%d,B)", i, j, i, j, i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 8:
+            sprintf(chaine, "(%d,%d,G)", i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 9:
+            sprintf(chaine, "(%d,%d,H)(%d,%d,G)", i, j, i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 10:
+            sprintf(chaine, "(%d,%d,D)(%d,%d,G)", i, j, i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 11:
+            sprintf(chaine, "(%d,%d,H)(%d,%d,D)(%d,%d,G)", i, j, i, j, i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 12:
+            sprintf(chaine, "(%d,%d,B)(%d,%d,G)", i, j, i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 13:
+            sprintf(chaine, "(%d,%d,H)(%d,%d,B)(%d,%d,G)", i, j, i, j, i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 14:
+            sprintf(chaine, "(%d,%d,D)(%d,%d,B)(%d,%d,G)", i, j, i, j, i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        case 15:
+            sprintf(chaine, "(%d,%d,H)(%d,%d,D)(%d,%d,B)(%d,%d,G)", i, j, i, j, i, j, i, j);
+            fprintf(stderr, "%s", chaine);
+            break;
+        default:;
+    }
+    return chaine;
+}
+

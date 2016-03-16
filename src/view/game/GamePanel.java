@@ -37,7 +37,8 @@ public class GamePanel extends JPanel {
 	private void initializeObservers() {
 		model.getPlayers().addObserver(round);
 		model.getPlayers().addObserver(score);
-		model.getMap().addObserver(grid);
+		model.getGrid().addObserver(grid);
+		System.out.println("initializeObservers Done");
 		
 	}
 

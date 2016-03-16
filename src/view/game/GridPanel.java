@@ -12,12 +12,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import model.Players.Player;
 import view.game.map.Tile;
 
 public class GridPanel extends JPanel implements ComponentListener, Observer {
@@ -46,12 +48,11 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	public GridPanel(String filename){
 		this.addComponentListener(this);
 		initGrid(filename);
-		readSprites();
 	}
 
 	private void initGrid(String filename){
-		parseFile(filename);
-		placeColorRoles();
+		//parseFile(filename);
+		//placeColorRoles();
 	}
 
 	private void parseFile(String filename){
@@ -254,6 +255,26 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		//Should receives a map as arg, then computes it and displays it
+		
+		//receives players as arg ; sort and display
+		System.out.println("updating...");
+		int[][] newGrid = (int[][]) arg;
+		this.size_x = newGrid.length;
+		this.size_y = newGrid[0].length;
+		this.grid = new Tile[size_x][size_y];
+		for(int i = 0; i < newGrid.length; i++){
+			for(int j = 0; j < newGrid[0].length; j++){
+				this.grid[i][j] = new Tile(i, j, newGrid[i][j]);
+			}
+		}
+
+		System.out.println("END updating");
+		//placeColorRoles();
+		readSprites();
+		System.out.println("repaint");
+		this.repaint();
+		System.out.println("revalidate");
+		revalidate();
 	}
 	
 }

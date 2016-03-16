@@ -42,8 +42,8 @@ public class HomePagePanel extends JPanel implements ActionListener {
 			window.signUpSignal();
 		}else if(e.getSource() == playAsGuest) {
 			System.out.println("Catch Play As Guest Event");
-			controller.connect();
 			window.playAsGuestSignal();
+			controller.connect("toto");
 		}else
 			System.out.println("Unknow event occured");
 		

@@ -5,6 +5,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import communication.Client;
+import model.LocalPlayer;
 import model.Model;
 
 public class Controller implements Observer {
@@ -15,14 +16,14 @@ public class Controller implements Observer {
 		this.model=model;
 	}
 	
-	public void connect() {
+	public void connect(String name) {
 		//TODO : Classe de connexion (avec name etc..)
 		Client.getInstance().addObserver(this);
 		Client.getInstance().connect();
-		String name = "toto";
 		try {
 			System.out.println("(Controller) sent : CONNEXION/"+name+"/");
 			Client.getInstance().sendMessage("CONNEXION/"+name+"/");
+			LocalPlayer.setName(name);
 		} catch (IOException e) {
 			System.err.println("Failed to connect");
 			disconnect();
@@ -62,8 +63,16 @@ public class Controller implements Observer {
 			String name = tokens[1];
 			model.playerLeaved(name);
 		//S->C : SESSION/plateau/
-		} else if (tokens.length>1 && tokens[0].equals("SESSION"))
+		} else if (tokens.length>1 && tokens[0].equals("SESSION")) {
 			System.out.println(message);
+			if(tokens.length<4) { System.err.println("probleme"); return; }
+			String gridBuffer = tokens[1];
+			int size_x = Integer.valueOf(tokens[2]);
+			int size_y = Integer.valueOf(tokens[3]);
+			model.getGrid().setGrid(model.getGridFromBuffer(size_x, size_y, gridBuffer));
+			model.getGrid().update();
+			System.out.println("update done");
+		}
 		//S->C : VAINQUEUR/bilan/
 		else if (tokens.length>1 && tokens[0].equals("VAINQUEUR"))
 			System.out.println(message);

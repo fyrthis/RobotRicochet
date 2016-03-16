@@ -177,7 +177,7 @@ void rmClient(int socket, pthread_mutex_t* p_mutex) {
 client_t *findClient(int socket, char * name) {
     client_t * client = clients;
     while(client != NULL) {
-        if(strcicmp(name, client->name)==0 || socket==client->socket) {
+        if(strcicmp(name, client->name)==0/* || socket==client->socket*/) {
             return client;
         }
         client = client->next;
@@ -311,7 +311,7 @@ task_t * getTask(pthread_mutex_t* p_mutex) {
 void handle_request(task_t * task, int thread_id) {
     if (task) {
         /* parse la commande */
-        char * pch = NULL; // TOKEN
+        char * pch = (char*)calloc(strlen(task->command)+1, sizeof(char)); // TOKEN
         char* username = NULL;
         printf ("(handle_request)Splitting string \"%s\" into tokens:\n",task->command);
         pch = strtok (task->command,"/");
@@ -328,8 +328,8 @@ void handle_request(task_t * task, int thread_id) {
         {
             printf("(handle_request) : found CONNEXION\n");
             pch = strtok (NULL, "/");
-            username = (char*)malloc(sizeof(pch));
-            strncpy(username, pch, sizeof(pch));
+            username = (char*)calloc(strlen(pch)+1, sizeof(char));
+            strncpy(username, pch, strlen(pch));
             printf("(handle_request) :pch is %s\n",username);
             printf("(handle_request) : add new client %s\n", username);
             addClient(task->socket, username, &client_mutex);
@@ -532,7 +532,10 @@ int main(int argc, char* argv[]) {
                 else {
                     n = read(socket,buffer,255);
                     if(n == 0) {
-                        perror("n = 0.\n");
+                        printf("Main received empty message from %d.\n", socket);
+                        FD_CLR(socket, &readfds);
+                        FD_CLR(socket, &testfds);
+                        close(socket);
                         break;
                     }
                     printf("(Main)Server received %d bytes from %d.\n", n, socket);

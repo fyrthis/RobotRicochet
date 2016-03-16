@@ -1,0 +1,4 @@
+HOWTO
+Run the server BEFORE running the Java class
+gcc -o server_pool server_pool.c -lpthread
+./server_pool n°port

@@ -63,6 +63,10 @@ task_t * last_task = NULL;
 int nbTasks = 0;
 int nbClients = 0;
 
+int size_x = 0, size_y = 0;
+int **grid;
+int *gridStr;
+
 /*FUNCTIONS*/
 void addClient(int socket, char *name, pthread_mutex_t* p_mutex);
 void rmClient(int socket, pthread_mutex_t* p_mutex);
@@ -79,6 +83,8 @@ void connect1(char * name);
 void disconnect1(char * name);
 
 int strcicmp(char const *a, char const *b);
+
+int sendGrid(int socket);
 
 
 /***************
@@ -333,6 +339,9 @@ void handle_request(task_t * task, int thread_id) {
             printf("(handle_request) :pch is %s\n",username);
             printf("(handle_request) : add new client %s\n", username);
             addClient(task->socket, username, &client_mutex);
+
+            //S -> C : SESSION/plateau/
+            sendGrid(task->socket);
         }
         //C -> S : SORT/user/
         else if(strcmp(pch,"SORT")==0)
@@ -570,3 +579,134 @@ int strcicmp(char const *a, char const *b)
     }
 }
 
+
+
+/****************
+*   GRID PART   *
+*****************/
+
+/******************************************
+*                                         *
+*  Crée une nouvelle tâche dans la liste  *
+*  pour envoyer la grille au client       *
+*                                         *
+*******************************************/
+
+int sendGrid(int socket){
+    char *msg = (char*)malloc((9+strlen(username))*sizeof(char));
+    strcpy(msg, "SESSION/");
+    strcat(msg, username);
+    strcat(msg,"/\n");
+    printf("%s", msg);
+    n = write(sock,msg,strlen(msg)*sizeof(char));
+
+    write(socket,"",sizeof(grid));
+    fprintf(stderr, "Grid send\n");
+    return 0;
+}
+
+/******************************************
+*                                         *
+*  Crée la Map à partir d'un fichier txt. *
+*                                         *
+*******************************************/
+
+int readGridFromFile(char *filename) {
+    // le fichier est passé en parametre
+    // si pas de parametre, alors le fichier est BasicGrid.txt
+    if(filename == NULL){
+        filename = "../res/BasicGrid.txt";
+        fprintf(stderr, "%s\n", filename);
+    }
+    FILE* file = fopen(filename, "r"); /* should check the result */
+    
+    if(file == NULL){
+        fprintf(stderr, "Error: Could not open file\n");
+        exit(-1);
+    }
+
+    int infoSize = 0;
+    char line[128];
+
+    // Ignore comments line
+    while (fgets(line, sizeof(line), file)) {
+        if(strncmp(line, "##", 2) != 0)
+            break;
+    }
+
+    // Get the line size info
+    char * pch = strtok(line, " ");
+    while(pch != NULL){
+        size_x = atoi(pch);
+        printf("size_x: %s\n", pch);
+        pch = strtok(NULL, " \n");
+        size_y = atoi(pch);
+        printf("size_y: %s\n", pch);
+        pch = strtok(NULL, " \n");
+    }
+
+    grid = malloc(size_x * sizeof(int *));
+    gridStr = malloc(size_x * sizeof(char *));
+
+    int x_tmp;
+    for(x_tmp = 0; x_tmp < size_x; x_tmp++){
+        grid[x_tmp] = malloc(size_y * sizeof(int));
+        if(grid[x_tmp] == NULL){
+            printf("\nFailure to allocate for grid[%d]\n", x_tmp);
+            exit(0);
+        }
+    }
+    gridStr = malloc(size_x * size_y * sizeof(char));
+    if(gridStr == NULL){
+        printf("\nFailure to allocate for gridStr\n");
+        exit(0);
+    }
+
+    int x = 0;
+    int y = 0;
+
+    // Get the grid informations
+    while (fgets(line, sizeof(line), file)) {
+       if(strncmp(line, "END", 3) == 0)
+            break;
+
+        char * pch = strtok(line, " ");
+
+        *gridtr = '\0';
+        while(pch != NULL){
+            grid[x][y] = atoi(pch);
+            strcat(gridStr, pch);
+            strcat(gridStr, " ");
+            pch = strtok(NULL, " ");
+            y++;
+            if(y == size_x){
+                y = 0;
+                x++;
+                strcat(gridStr, "\n");
+            }
+        }
+    }
+
+    int i = 0, j = 0;
+    /*
+    for(i = 0; i < size_x; i++){
+        for(j = 0; j < size_y; j++){
+            printf("%d ", grid[i][j]);
+        }
+        printf("\n");
+    }*/
+    for(i = 0; i < size_x; i++){
+        for(j = 0; j < size_y; j++){
+        fprintf(stderr, "%c", gridStr);
+        }
+        printf("\n");
+    }
+
+    /* may check feof here to make a difference between eof and io failure -- network
+       timeout for instance */
+
+    fclose(file);
+
+    return 0;
+
+}

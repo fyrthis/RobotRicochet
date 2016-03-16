@@ -65,7 +65,7 @@ int nbClients = 0;
 
 int size_x = 0, size_y = 0;
 int **grid;
-int *gridStr;
+char *gridStr;
 
 /*FUNCTIONS*/
 void addClient(int socket, char *name, pthread_mutex_t* p_mutex);
@@ -593,14 +593,21 @@ int strcicmp(char const *a, char const *b)
 *******************************************/
 
 int sendGrid(int socket){
-    char *msg = (char*)malloc((9+strlen(username))*sizeof(char));
+    fprintf(stderr, "Start sendGrid\n");
+    char *msg = (char*)malloc(1050);
+    fprintf(stderr, "Start sendGrid1\n");
     strcpy(msg, "SESSION/");
-    strcat(msg, username);
+    fprintf(stderr, "Start sendGrid2\n");
+    strcat(msg, gridStr);
+    fprintf(stderr, "Start sendGrid3\n");
     strcat(msg,"/\n");
+    fprintf(stderr, "Start sendGrid4\n");
     printf("%s", msg);
-    n = write(sock,msg,strlen(msg)*sizeof(char));
+    fprintf(stderr, "Start sendGrid5\n");
+    int n = write(socket,msg,strlen(msg)*sizeof(char));
 
-    write(socket,"",sizeof(grid));
+    fprintf(stderr, "Start sendGrid6\n");
+
     fprintf(stderr, "Grid send\n");
     return 0;
 }
@@ -646,7 +653,6 @@ int readGridFromFile(char *filename) {
     }
 
     grid = malloc(size_x * sizeof(int *));
-    gridStr = malloc(size_x * sizeof(char *));
 
     int x_tmp;
     for(x_tmp = 0; x_tmp < size_x; x_tmp++){
@@ -656,7 +662,7 @@ int readGridFromFile(char *filename) {
             exit(0);
         }
     }
-    gridStr = malloc(size_x * size_y * sizeof(char));
+    gridStr = malloc(1024);
     if(gridStr == NULL){
         printf("\nFailure to allocate for gridStr\n");
         exit(0);
@@ -665,6 +671,8 @@ int readGridFromFile(char *filename) {
     int x = 0;
     int y = 0;
 
+    *gridStr = '\0';
+    
     // Get the grid informations
     while (fgets(line, sizeof(line), file)) {
        if(strncmp(line, "END", 3) == 0)
@@ -672,7 +680,6 @@ int readGridFromFile(char *filename) {
 
         char * pch = strtok(line, " ");
 
-        *gridtr = '\0';
         while(pch != NULL){
             grid[x][y] = atoi(pch);
             strcat(gridStr, pch);

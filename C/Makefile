@@ -1,7 +1,7 @@
 
 CC=gcc
 CFLAGS=
-LDFLAGS= -lpthread
+LDFLAGS= -lpthread -lm
 EXEC=serveur
 
 # Ensemble des exécutables à produire

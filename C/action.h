@@ -3,6 +3,13 @@
 
 #include <string.h>
 
+#include "client.h"
+
+int currentSolution = -1;
+int size_x = 0, size_y = 0;
+int **grid;
+char *gridStr;
+
 
 int sendMessageAll(char *msg, pthread_mutex_t* p_mutex);
 int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex);

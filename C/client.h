@@ -1,7 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <string.h>
+
+#define __USE_GNU 
+#include <pthread.h>     /* pthread functions and data structures     */
+
+/*MUTEX & CONDITIONS*/
+#ifdef _WIN32
+    // Windows (x64 and x86)
+    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+#elif __unix__ // all unices, not all compilers
+    // Unix
+    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+#elif __linux__
+    // linux
+    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+#elif __APPLE__
+    // Mac OS
+    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+#endif
 
 typedef struct client {
     int socket;

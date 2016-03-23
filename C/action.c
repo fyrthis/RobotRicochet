@@ -71,7 +71,7 @@ int bienvenue(char *username, int socket) {
     strcat(msg, username);
     strcat(msg,"/\n");
     printf("%s", msg);
-    write(task->socket,msg,strlen(msg)*sizeof(char));
+    write(socket,msg,strlen(msg)*sizeof(char));
 
     return 0;
 }

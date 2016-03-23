@@ -17,6 +17,12 @@
 #include <time.h>
 #include <math.h>
 
+#include "connexion.h"
+#include "grid.h"
+
+#include <ctype.h>
+#include <unistd.h>
+
 /* CONSTANTS */
 #define NB_MAX_THREADS 8
 #define NB_MAX_CLIENTS 50
@@ -109,9 +115,6 @@ task_t * getTask(pthread_mutex_t* p_mutex);
 void handle_request(task_t * task, int thread_id);
 void * handle_tasks_loop(void* data);
 void printTasksState(pthread_mutex_t* p_mutex);
-
-void connect1(char * name);
-void disconnect1(char * name);
 
 int strcicmp(char const *a, char const *b);
 char * append_strings(const char * old, const char * new);
@@ -352,43 +355,6 @@ task_t * getTask(pthread_mutex_t* p_mutex) {
     return task;
 }
 
-void sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
-    int rc = pthread_mutex_lock(p_mutex);
-    
-    if(clients==NULL) {
-        printf("(SendMessageAll)Aucun client. Should never happened\n");
-    //} else if(clients) { TODO : Si qu'un client
-    //    printf("(SendMessageAll)Un seul client. Should never happened\n");
-    } else {
-        client_t * client = clients;
-        while(client != NULL) {
-            if(client->isConnected==0) {
-                write(client->socket,msg,strlen(msg)*sizeof(char));
-            }
-            client = client->next;
-        }
-    }
-    rc = pthread_mutex_unlock(p_mutex); 
-}
-
-void sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { //Except client with this name
-    int rc = pthread_mutex_lock(p_mutex);
-    fprintf(stderr, "\ttest : %s\n", msg);
-    if(clients==NULL) {
-        printf("(SendMessageAll)Aucun client. Should never happened\n");
-    } else {
-        client_t * client = clients;
-        while(client != NULL) {
-            if(client->isConnected==0 && strcmp(client->name, name)!=0) {
-                fprintf(stderr, "Sending message to %s...\n", client->name);
-                write(client->socket,msg,strlen(msg)*sizeof(char));
-                fprintf(stderr, "Send message to %s !\n", client->name);
-            }
-            client = client->next;
-        }
-    }
-    rc = pthread_mutex_unlock(p_mutex); 
-}
 
 /******************************************
 *                                         *
@@ -424,29 +390,16 @@ void handle_request(task_t * task, int thread_id) {
             printf("(handle_request) : add new client %s\n", username);
             addClient(task->socket, username, &client_mutex);
 
-            //S -> C : BIENVENUE/user/
-            char *msg = (char*)malloc((12+strlen(username))*sizeof(char));
-            strcpy(msg, "BIENVENUE/");
-            strcat(msg, username);
-            strcat(msg,"/\n");
-            printf("%s", msg);
-            write(task->socket,msg,strlen(msg)*sizeof(char));
-
-            //S -> C : CONNECTE/user/
-            char *msg2 = (char*)malloc((11+strlen(username))*sizeof(char));
-            strcpy(msg2, "CONNECTE/");
-            strcat(msg2, username);
-            strcat(msg2,"/\n");
-            printf("%s", msg2);
-            sendMessageAllExceptOne(msg2, username, &client_mutex);
-
+            bienvenue(username, task->socket);
+            connexion(username, task->socket);
+            
             //S -> C : SESSION/plateau/
-            sendGrid(task->socket);
+            sendGrid(gridStr, task->socket);
 
             //S -> C : TOUR/enigme/       bilan to do
             setEnigma();
             setBilanCurrentSession();
-            sendEnigma(task->socket);
+            sendEnigmaBilan(enigma, bilan, task->socket);
         }
         //C -> S : SORT/user/
         else if(strcmp(pch,"SORT")==0)
@@ -482,15 +435,7 @@ void handle_request(task_t * task, int thread_id) {
             printf("(handle_request) : add new client %s\n", username);
             
 
-            //S -> C : DECONNEXION/user/
-            char *msg = (char*)malloc((14+strlen(username))*sizeof(char));
-            strcpy(msg, "DECONNEXION/");
-            strcat(msg, username);
-            strcat(msg,"/\n");
-            printf("%s", msg);
-            sendMessageAllExceptOne(msg, username, &client_mutex);
-            close(socket);
-            printf(" handle Task SORT\n");
+            deconnexion(username, task->socket);
         }
         //C -> S : SOLUTION/user/coups/    ( a gerer plus tard : //C -> S : SOLUTION/user/deplacements/  )
         else if(strcmp(pch,"SOLUTION")==0)
@@ -511,22 +456,8 @@ void handle_request(task_t * task, int thread_id) {
                 currentSolution = atoi(pch);
 
                 fprintf(stderr, "Solution trouvée par %s\n", activePlayer);
-                char *msgActivePlayer = (char*)malloc(12*sizeof(char));
-                strcpy(msgActivePlayer, "TUASTROUVE/");
-                fprintf(stderr, "%s\n", msgActivePlayer);
-                write(task->socket,msgActivePlayer,strlen(msgActivePlayer)*sizeof(char));
-
-                // On indique aux autres players qu'un joueur a proposé une solution
-                int currentSolutionLength = 1;
-                if(nbTour >= 10)
-                    currentSolutionLength = floor(log10(abs(currentSolutionLength))) + 1;
-      
-                char *msgOtherPlayers = (char*)malloc((13+strlen(activePlayer)+currentSolutionLength)*sizeof(char));
-                sprintf(msgOtherPlayers, "ILATROUVE/%s/%d/", activePlayer, currentSolution);
-               
-                fprintf(stderr, "%s\n", msgOtherPlayers);
-                
-				sendMessageAllExceptOne(msgOtherPlayers, activePlayer, &client_mutex);
+                tuAsTrouve(task->socket);
+                ilATrouve(task->socket);
 /*
                 client_t *firstClient = clients;
                 while(clients != NULL){
@@ -646,7 +577,7 @@ int main(int argc, char* argv[]) {
     int socket_client;
     struct sockaddr_in server_address;
     struct sockaddr_in client_address = { 0 };
-    int client_size;// = sizeof(client_address);
+    socklen_t client_size;// = sizeof(client_address);
     if(argc>1) {
         port = atoi(argv[1]);
     }
@@ -689,7 +620,6 @@ int main(int argc, char* argv[]) {
         char buffer[256];
         bzero(buffer,256);
         int socket;
-        int nread;
         int n;
         testfds = readfds;
         printf("(Main)server waiting\n");
@@ -748,7 +678,7 @@ int main(int argc, char* argv[]) {
                         printf("debug : 2");
                         while(client != NULL){
                             printf("debug : 3");
-                            if(strcmp(client->socket, socket) == 0) {
+                            if(client->socket == socket) {
                                 printf("debug : 4");
                                 client->isConnected = 1;
                                 break;
@@ -780,14 +710,6 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void connect1(char * name) {
-    printf("connect %s\n", name);
-}
-
-void disconnect1(char * name) {
-    printf("disconnect %s\n", name);
-}
-
 //Fonction de comparaison de strings, insensitifs à la casse
 int strcicmp(char const *a, char const *b)
 {
@@ -814,29 +736,7 @@ char * append_strings(const char * old, const char * new)
     return out;
 }
 
-/****************
-*   GRID PART   *
-*****************/
 
-/******************************************
-*                                         *
-*  Crée une nouvelle tâche dans la liste  *
-*  pour envoyer la grille au client       *
-*                                         *
-*******************************************/
-
-int sendGrid(int socket){
-    fprintf(stderr, "Sending the Grid:\n");
-    char *msg = (char*)calloc(sizeof(char), 4096);
-    strcpy(msg, "SESSION/");
-    strcat(msg, gridStr);
-    strcat(msg,"/\n");
-    printf("%s", msg);
-    int n = write(socket,msg,strlen(msg)*sizeof(char));
-
-    fprintf(stderr, "Grid send!\n");
-    return 0;
-}
 
 /******************************************
 *                                         *
@@ -1014,34 +914,6 @@ char* getCharFromCase(int i, int j){
     return chaine;
 }
 
-
-/******************
-*   ENIGMA PART   *
-*******************/
-
-/******************************************
-*                                         *
-*  Envoie une nouvelle enigme/bilan au    *
-*  client                                 *
-*                                         *
-*******************************************/
-
-int sendEnigma(int socket){
-    fprintf(stderr, "Sending the Enigma:\n");
-    char *msg = (char*)calloc(sizeof(char), strlen(enigma)+strlen(bilan)+7);
-    strcpy(msg, "TOUR/");
-    strcat(msg, enigma);
-    strcat(msg,"/");
-    strcat(msg, bilan);
-    strcat(msg,"/\n");
-
-    printf("%s", msg);
-    int n = write(socket,msg,strlen(msg)*sizeof(char));
-
-    fprintf(stderr, "Enigma + bilan send!\n");
-    return 0;
-}
-
 /*********************************************
 *                                            *
 *  Crée une nouvelle enigme en initialisant  *
@@ -1105,7 +977,6 @@ int setEnigma(){
 *********************************************/
 
 int setBilanCurrentSession(){
-    int i = 0;
     fprintf(stderr, "Setting the bilan of the current session:\n");
 
     if(clients == NULL) {
@@ -1138,7 +1009,7 @@ int setBilanCurrentSession(){
         int scoreLength = 1;
         if(clients->score >= 10)
             scoreLength = floor(log10(abs(clients->score))) + 1;
-        fprintf(stderr, "scoreLength : %d\tclientNameLength : %d\n", scoreLength, strlen(clients->name));
+        fprintf(stderr, "scoreLength : %d\tclientNameLength : %zu\n", scoreLength, strlen(clients->name));
         fprintf(stderr, "name : %s\n", clients->name);
         char *user = (char *)calloc(sizeof(char), strlen(clients->name)+scoreLength+3);
         sprintf(user, "(%s,%d)", clients->name, clients->score);

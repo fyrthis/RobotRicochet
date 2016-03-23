@@ -1,3 +1,6 @@
+#ifndef GAME_STATE_H
+#define GAME_STATE_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -16,3 +19,7 @@ int x_cible = -1;
 int y_cible = -1;
 
 char lettreCible;
+
+int currentSolution = -1;
+
+#endif

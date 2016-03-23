@@ -1,14 +1,14 @@
+#ifndef ACTION_H
+#define ACTION_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <string.h>
 
 #include "client.h"
+#include "game_state.h"
 
-int currentSolution = -1;
-int size_x = 0, size_y = 0;
-int **grid;
-char *gridStr;
 
 
 int sendMessageAll(char *msg, pthread_mutex_t* p_mutex);
@@ -53,3 +53,5 @@ int bonneSolution(int socket);
 int mauvaiseSolution(char *username, int socket);
 int finResolution(int socket);
 int tropLong(char *username, int socket);
+
+#endif

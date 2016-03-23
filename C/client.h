@@ -1,3 +1,6 @@
+#ifndef CLIENT_H
+#define CLIENT_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,3 +41,5 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex);
 void rmClient(int socket, pthread_mutex_t* p_mutex);
 client_t *findClient(int socket, char * name);
 void printClientsState(pthread_mutex_t* p_mutex);
+
+#endif

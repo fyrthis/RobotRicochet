@@ -1,3 +1,7 @@
+#ifndef UTILS_H
+#define UTILS_H
+
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,3 +13,5 @@
 int strcicmp(char const *a, char const *b);
 char * append_strings(const char * old, const char * new);
 char* getCharFromCase(int i, int j);
+
+#endif

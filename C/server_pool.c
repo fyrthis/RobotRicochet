@@ -17,7 +17,6 @@
 #include <time.h>
 #include <math.h>
 
-#include "connexion.h"
 #include "grid.h"
 
 #include <ctype.h>

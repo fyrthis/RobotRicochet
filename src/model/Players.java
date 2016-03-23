@@ -17,17 +17,12 @@ public class Players extends Observable {
 			isConnected = true;
 		}
 
-		public String getName() {
-			return name;
-		}
-
-		public int getScore() {
-			return nbPoints;
-		}
-
-		public int getCoups() {
-			return nbCoups;
-		}
+		public String getName() { return name; }
+		public int getScore() { return nbPoints; }
+		public int getCoups() { return nbCoups; }
+		
+		public void setScore(int score) { this.nbPoints = score; }
+		public void setNbCoups(int nbCoups) { this.nbCoups = nbCoups; }
 	}
 
 	List<Player> players;

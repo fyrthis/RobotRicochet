@@ -33,11 +33,38 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	private int size_x, size_y;
 	private int spriteLength;
 	private int wallSpriteLength;
+	private int targetSpriteLength;
 	
 	private Image wallV;
 	private Image wallH;
 	private Image emptySprite;
 
+	private Image redPawnSprite;
+	private Image redTarget1Sprite;
+	private Image redTarget2Sprite;
+	private Image redTarget3Sprite;
+	private Image redTarget4Sprite;
+	
+	private Image bluePawnSprite;
+	private Image blueTarget1Sprite;
+	private Image blueTarget2Sprite;
+	private Image blueTarget3Sprite;
+	private Image blueTarget4Sprite;
+	
+	private Image greenPawnSprite;
+	private Image greenTarget1Sprite;
+	private Image greenTarget2Sprite;
+	private Image greenTarget3Sprite;
+	private Image greenTarget4Sprite;
+	
+	private Image yellowPawnSprite;
+	private Image yellowTarget1Sprite;
+	private Image yellowTarget2Sprite;
+	private Image yellowTarget3Sprite;
+	private Image yellowTarget4Sprite;
+	
+	private Image mainTargetSprite;
+	
 	public GridPanel(){
 		this.addComponentListener(this);
 		setBackground(Color.gray);
@@ -145,6 +172,32 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 			wallH = ImageIO.read(new File("res/horizontalWallSprite.png"));
 			wallV = ImageIO.read(new File("res/verticalWallSprite.png"));
 			
+			mainTargetSprite = ImageIO.read(new File("res/mainTargetSprite.png"));
+			
+			redPawnSprite = ImageIO.read(new File("res/redPawnSprite.png"));
+			redTarget1Sprite = ImageIO.read(new File("res/redTarget1Sprite.png"));
+			redTarget2Sprite = ImageIO.read(new File("res/redTarget2Sprite.png"));
+			redTarget3Sprite = ImageIO.read(new File("res/redTarget3Sprite.png"));
+			redTarget4Sprite = ImageIO.read(new File("res/redTarget4Sprite.png"));
+			
+			bluePawnSprite = ImageIO.read(new File("res/bluePawnSprite.png"));
+			blueTarget1Sprite = ImageIO.read(new File("res/blueTarget1Sprite.png"));
+			blueTarget2Sprite = ImageIO.read(new File("res/blueTarget2Sprite.png"));
+			blueTarget3Sprite = ImageIO.read(new File("res/blueTarget3Sprite.png"));
+			blueTarget4Sprite = ImageIO.read(new File("res/blueTarget4Sprite.png"));
+			
+			greenPawnSprite = ImageIO.read(new File("res/greenPawnSprite.png"));
+			greenTarget1Sprite = ImageIO.read(new File("res/greenTarget1Sprite.png"));
+			greenTarget2Sprite = ImageIO.read(new File("res/greenTarget2Sprite.png"));
+			greenTarget3Sprite = ImageIO.read(new File("res/greenTarget3Sprite.png"));
+			greenTarget4Sprite = ImageIO.read(new File("res/greenTarget4Sprite.png"));
+			
+			yellowPawnSprite = ImageIO.read(new File("res/yellowPawnSprite.png"));
+			yellowTarget1Sprite = ImageIO.read(new File("res/yellowTarget1Sprite.png"));
+			yellowTarget2Sprite = ImageIO.read(new File("res/yellowTarget2Sprite.png"));
+			yellowTarget3Sprite = ImageIO.read(new File("res/yellowTarget3Sprite.png"));
+			yellowTarget4Sprite = ImageIO.read(new File("res/yellowTarget4Sprite.png"));
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -153,6 +206,7 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	
 	public void paint(Graphics g)
 	{
+		System.out.println("---> call paint");
 		Graphics2D g2 = (Graphics2D)g;
 		super.paint(g2);
 		
@@ -173,8 +227,8 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 		}
 
 		// On va remplir les murs en fonction de la valeur de grid[][]
-		for ( int xloop = 0 ; xloop < size_x ; xloop++ ){
-			for ( int yloop = 0 ; yloop < size_y ; yloop++ ){
+		for ( int yloop = 0 ; yloop < size_y ; yloop++ ){
+			for ( int xloop = 0 ; xloop < size_x ; xloop++ ){
 				int y = spriteLength*yloop;
 				int x = spriteLength*xloop;
 				int side1 = spriteLength;
@@ -225,6 +279,89 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 				}
 			}
 		}
+		if(symbolsGrid != null){
+			for ( int y = 0; y < symbolsGrid.length; y++){
+				for ( int x = 0; x < symbolsGrid.length; x++ ){
+					int targetMargin = (spriteLength-targetSpriteLength)/2;
+					if(this.symbolsGrid[x][y] != null && this.symbolsGrid[x][y].getValue() != 0){
+						System.out.print("["+x+","+y+"] = "+this.symbolsGrid[x][y] + " | ");
+						switch(this.symbolsGrid[x][y].getValue()){
+						// TARGET
+						case 99:
+							g2.drawImage(mainTargetSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
+							break;
+						// ROUGE
+						case 21:
+							g2.drawImage(redPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							break;
+						case 22:
+							g2.drawImage(redTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 23:
+							g2.drawImage(redTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 24:
+							g2.drawImage(redTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 25:
+							g2.drawImage(redTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						// BLEU
+						case 31:
+							g2.drawImage(bluePawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							break;
+						case 32:
+							g2.drawImage(blueTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 33:
+							g2.drawImage(blueTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 34:
+							g2.drawImage(blueTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 35:
+							g2.drawImage(blueTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						// VERT
+						case 41:
+							g2.drawImage(greenPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							break;
+						case 42:
+							g2.drawImage(greenTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 43:
+							g2.drawImage(greenTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 44:
+							g2.drawImage(greenTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 45:
+							g2.drawImage(greenTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						// JAUNE
+						case 51:
+							g2.drawImage(yellowPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							break;
+						case 52:
+							g2.drawImage(yellowTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 53:
+							g2.drawImage(yellowTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 54:
+							g2.drawImage(yellowTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						case 55:
+							g2.drawImage(yellowTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							break;
+						default:;
+						}
+					}
+				}
+			}
+		}
+
+		System.out.println("---> end call paint");
 	}
 	
 	public String toString(){
@@ -255,25 +392,29 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		//Should receives a map as arg, then computes it and displays it
-		
-		//receives players as arg ; sort and display
 		System.out.println("updating...");
-		int[][] newGrid = (int[][]) arg;
-		this.size_x = newGrid.length;
-		this.size_y = newGrid[0].length;
+		Integer[][][] newGrid = (Integer[][][]) arg;
+		this.size_x = newGrid[0].length;
+		this.size_y = newGrid[0][0].length;
 		this.grid = new Tile[size_x][size_y];
-		for(int i = 0; i < newGrid.length; i++){
-			for(int j = 0; j < newGrid[0].length; j++){
-				this.grid[i][j] = new Tile(i, j, newGrid[i][j]);
+		for(int i = 0; i < newGrid[0].length; i++){
+			for(int j = 0; j < newGrid[0][0].length; j++){
+				this.grid[i][j] = new Tile(i, j, newGrid[0][i][j]);
 			}
 		}
 
+		if(newGrid[1] != null){
+			this.symbolsGrid = new Tile[size_x][size_y];
+			for(int i = 0; i < newGrid[1].length; i++){
+				for(int j = 0; j < newGrid[1][1].length; j++){
+					this.symbolsGrid[i][j] = new Tile(i, j, newGrid[1][i][j]);
+				}
+			}
+		}
 		System.out.println("END updating");
 		//placeColorRoles();
 		readSprites();
-		System.out.println("repaint");
 		this.repaint();
-		System.out.println("revalidate");
 		revalidate();
 	}
 	

@@ -26,18 +26,28 @@ public class Controller implements Observer {
 			LocalPlayer.setName(name);
 		} catch (IOException e) {
 			System.err.println("Failed to connect");
-			disconnect();
+			disconnect(name);
 		}
 	}
-	public void disconnect() {
-		System.out.println("(Controller) sent : SORT/toto/");
+	public void disconnect(String name) {
+		System.out.println("(Controller) sent : SORT/"+name+"/");
 		try {
-			Client.getInstance().sendMessage("SORT/titi/");
+			Client.getInstance().sendMessage("SORT/"+name+"/");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		Client.getInstance().deleteObserver(this);
 		Client.getInstance().disconnect();
+	}
+	public void sendSolution(String name, int solutionInt){
+		String solution = String.valueOf(solutionInt);
+		System.out.println("(Controller) sent : SOLUTION/"+name+"/"+solution+"/");
+		try {
+			Client.getInstance().sendMessage("SOLUTION/"+name+"/"+solution+"/");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -62,7 +72,7 @@ public class Controller implements Observer {
 			if(tokens.length<2) { System.err.println("probleme"); return; }
 			String name = tokens[1];
 			model.playerLeaved(name);
-		//S->C : SESSION/plateau/
+		//S->C : SESSION/plateau/size_x/size_y
 		} else if (tokens.length>1 && tokens[0].equals("SESSION")) {
 			System.out.println(message);
 			if(tokens.length<4) { System.err.println("probleme"); return; }
@@ -77,11 +87,31 @@ public class Controller implements Observer {
 		else if (tokens.length>1 && tokens[0].equals("VAINQUEUR"))
 			System.out.println(message);
 		//S->C : TOUR/enigme/bilan/
-		else if (tokens.length>2 && tokens[0].equals("TOUR"))
+		else if (tokens.length>1 && tokens[0].equals("TOUR")){
 			System.out.println(message);
+			if(tokens.length==2){
+				// S->C : TOUR/enigme/
+				String buffer = tokens[1];
+				System.out.println("Starting Setting Robot...");
+				model.setRobotsFromBuffer(buffer);
+				model.getGrid().update();
+			}
+			else if(tokens.length==3){
+				//S->C : TOUR/enigme/bilan/
+				System.out.println("Starting Setting Robot with bilan of the current session...");
+				String enigmaBuffer = tokens[1];
+				String bilanBuffer = tokens[2];
+				model.setRobotsFromBuffer(enigmaBuffer);
+				model.setBilanCurrentSession(bilanBuffer);
+				model.getGrid().update();
+			}
+			else { System.err.println("probleme"); return; }
+		}
 		//S->C : TUASTROUVE/
-		else if (tokens.length>0 && tokens[0].equals("TUASTROUVE"))
+		else if (tokens.length>0 && tokens[0].equals("TUASTROUVE")){
 			System.out.println(message);
+			// model.setAuctionPhase();
+		}	
 		//S->C : ILATROUVE/user/coups/
 		else if (tokens.length>2 && tokens[0].equals("ILATROUVE"))
 			System.out.println(message);

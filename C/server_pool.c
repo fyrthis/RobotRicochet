@@ -14,6 +14,9 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include <time.h>
+#include <math.h>
+
 /* CONSTANTS */
 #define NB_MAX_THREADS 8
 #define NB_MAX_CLIENTS 50
@@ -44,6 +47,7 @@ typedef struct client {
     int socket;
     int isConnected; //0 if true
     char *name;
+    int score;
     struct client * next;
 }client_t;
 
@@ -62,10 +66,37 @@ task_t * last_task = NULL;
 
 int nbTasks = 0;
 int nbClients = 0;
+int nbClientsConnecte = 0;
 
 int size_x = 0, size_y = 0;
 int **grid;
 char *gridStr;
+
+char *enigma;
+char *bilan;
+
+int phase = 0;
+int nbTour = 1;
+int currentSolution = -1;
+char *activePlayer;
+
+// Variable qui permet de savoir si le client qui se connecte
+// est le premier ou pas
+int firstLaunch = 0;
+
+// Coordonnées des robots    
+int x_r = -1;
+int y_r = -1;
+int x_b = -1;
+int y_b = -1;
+int x_j = -1;
+int y_j = -1;
+int x_v = -1;
+int y_v = -1;
+int x_cible = -1;
+int y_cible = -1;
+
+char lettreCible;
 
 /*FUNCTIONS*/
 void addClient(int socket, char *name, pthread_mutex_t* p_mutex);
@@ -83,10 +114,20 @@ void connect1(char * name);
 void disconnect1(char * name);
 
 int strcicmp(char const *a, char const *b);
+char * append_strings(const char * old, const char * new);
 
 int sendGrid(int socket);
 int readGridFromFile(char *filename);
 char * getCharFromCase(int i, int j);
+
+void sendMessageAll(char *msg, pthread_mutex_t* p_mutex);
+void sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex);
+
+int setEnigma();
+int sendEnigma(int socket);
+
+int setBilan();
+int sendBilan(int socket);
 
 /***************
 * CLIENTS PART *
@@ -121,8 +162,10 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
     /*Précédemment connecté, reprise de partie*/
         } else {
             client->isConnected=0;
+            client->socket = socket;
             printf("(addClient)Client %s se reconnecte !\n", name);
             rc = pthread_mutex_unlock(p_mutex);
+            nbClientsConnecte++;
         }
         return;
     }
@@ -135,6 +178,7 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
     client->socket = socket;
     client->name = name;
     client->isConnected = 0;
+    client->score = 0;
     client->next = NULL;
 
     
@@ -308,6 +352,44 @@ task_t * getTask(pthread_mutex_t* p_mutex) {
     return task;
 }
 
+void sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
+    int rc = pthread_mutex_lock(p_mutex);
+    
+    if(clients==NULL) {
+        printf("(SendMessageAll)Aucun client. Should never happened\n");
+    //} else if(clients) { TODO : Si qu'un client
+    //    printf("(SendMessageAll)Un seul client. Should never happened\n");
+    } else {
+        client_t * client = clients;
+        while(client != NULL) {
+            if(client->isConnected==0) {
+                write(client->socket,msg,strlen(msg)*sizeof(char));
+            }
+            client = client->next;
+        }
+    }
+    rc = pthread_mutex_unlock(p_mutex); 
+}
+
+void sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { //Except client with this name
+    int rc = pthread_mutex_lock(p_mutex);
+    fprintf(stderr, "\ttest : %s\n", msg);
+    if(clients==NULL) {
+        printf("(SendMessageAll)Aucun client. Should never happened\n");
+    } else {
+        client_t * client = clients;
+        while(client != NULL) {
+            if(client->isConnected==0 && strcmp(client->name, name)!=0) {
+                fprintf(stderr, "Sending message to %s...\n", client->name);
+                write(client->socket,msg,strlen(msg)*sizeof(char));
+                fprintf(stderr, "Send message to %s !\n", client->name);
+            }
+            client = client->next;
+        }
+    }
+    rc = pthread_mutex_unlock(p_mutex); 
+}
+
 /******************************************
 *                                         *
 *  Traite la tâche passée en paramètre :  *
@@ -333,6 +415,7 @@ void handle_request(task_t * task, int thread_id) {
         //C -> S : CONNEXION/user/
         else if(strcmp(pch,"CONNEXION")==0)
         {
+            //ADD THE CLIENT
             printf("(handle_request) : found CONNEXION\n");
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));
@@ -341,14 +424,29 @@ void handle_request(task_t * task, int thread_id) {
             printf("(handle_request) : add new client %s\n", username);
             addClient(task->socket, username, &client_mutex);
 
-            //S -> C : SESSION/plateau/
+            //S -> C : BIENVENUE/user/
             char *msg = (char*)malloc((12+strlen(username))*sizeof(char));
             strcpy(msg, "BIENVENUE/");
             strcat(msg, username);
             strcat(msg,"/\n");
             printf("%s", msg);
             write(task->socket,msg,strlen(msg)*sizeof(char));
+
+            //S -> C : CONNECTE/user/
+            char *msg2 = (char*)malloc((11+strlen(username))*sizeof(char));
+            strcpy(msg2, "CONNECTE/");
+            strcat(msg2, username);
+            strcat(msg2,"/\n");
+            printf("%s", msg2);
+            sendMessageAllExceptOne(msg2, username, &client_mutex);
+
+            //S -> C : SESSION/plateau/
             sendGrid(task->socket);
+
+            //S -> C : TOUR/enigme/       bilan to do
+            setEnigma();
+            setBilanCurrentSession();
+            sendEnigma(task->socket);
         }
         //C -> S : SORT/user/
         else if(strcmp(pch,"SORT")==0)
@@ -358,23 +456,103 @@ void handle_request(task_t * task, int thread_id) {
             username = (char*)malloc(strlen(pch));
             strncpy(username, pch, strlen(pch));
             printf(" handle Task SORT\n");
+
+            if(clients == NULL) {
+                printf("(HandleRequest) Aucun client. Should never happened\n");
+            }
+
+            else {
+                int rc2 = pthread_mutex_lock(&client_mutex);
+                client_t *client = clients;
+                while(client != NULL){
+                    if(strcmp(client->name, username) == 0) {
+                        client->isConnected = 1;
+                        break;
+                    }
+                    client = client->next;
+                }
+                rc2 = pthread_mutex_lock(&client_mutex);
+            }
+            int rc3 = pthread_mutex_lock(&client_mutex);
+            nbClientsConnecte--;
+            rc3 = pthread_mutex_lock(&client_mutex);
+            
+
+            printf("(handle_request) :pch is %s\n",username);
+            printf("(handle_request) : add new client %s\n", username);
+            
+
+            //S -> C : DECONNEXION/user/
+            char *msg = (char*)malloc((14+strlen(username))*sizeof(char));
+            strcpy(msg, "DECONNEXION/");
+            strcat(msg, username);
+            strcat(msg,"/\n");
+            printf("%s", msg);
+            sendMessageAllExceptOne(msg, username, &client_mutex);
+            close(socket);
+            printf(" handle Task SORT\n");
         }
-        //C -> S : SOLUTION/user/coups/
+        //C -> S : SOLUTION/user/coups/    ( a gerer plus tard : //C -> S : SOLUTION/user/deplacements/  )
         else if(strcmp(pch,"SOLUTION")==0)
         {
+            int rc = pthread_mutex_lock(&task_mutex);
+
             pch = strtok (NULL, "/");
             username = (char*)malloc(strlen(pch));
             strncpy(username, pch, strlen(pch));
+
+
+            // si la phase est toujours a 0, c'est que le serveur a recu la premiere (et unique) solution
+            if(phase == 0){
+                phase = 1;
+                activePlayer = (char*)malloc(strlen(pch));
+                strncpy(activePlayer, username, strlen(username));
+                pch = strtok(NULL, "/");
+                currentSolution = atoi(pch);
+
+                fprintf(stderr, "Solution trouvée par %s\n", activePlayer);
+                char *msgActivePlayer = (char*)malloc(12*sizeof(char));
+                strcpy(msgActivePlayer, "TUASTROUVE/");
+                fprintf(stderr, "%s\n", msgActivePlayer);
+                write(task->socket,msgActivePlayer,strlen(msgActivePlayer)*sizeof(char));
+
+                // On indique aux autres players qu'un joueur a proposé une solution
+                int currentSolutionLength = 1;
+                if(nbTour >= 10)
+                    currentSolutionLength = floor(log10(abs(currentSolutionLength))) + 1;
+      
+                char *msgOtherPlayers = (char*)malloc((13+strlen(activePlayer)+currentSolutionLength)*sizeof(char));
+                sprintf(msgOtherPlayers, "ILATROUVE/%s/%d/", activePlayer, currentSolution);
+               
+                fprintf(stderr, "%s\n", msgOtherPlayers);
+                
+				sendMessageAllExceptOne(msgOtherPlayers, activePlayer, &client_mutex);
+/*
+                client_t *firstClient = clients;
+                while(clients != NULL){
+                    fprintf(stderr, "Indication au player %s, sauf au joueur actif %s\n", clients->name, activePlayer);
+                    // On souhaite envoyer l'information seulement aux players autre que l'activePlayer
+                    if(strcmp(activePlayer, clients->name) != 0){
+                        // Quelle difference entre clients->socket et task->socket????
+                        write(/*task->socket*//*clients->socket,msgOtherPlayers,strlen(msgOtherPlayers)*sizeof(char));
+                        fprintf(stderr, "\t...Phase de reflexion terminée pour %s dont le numero de socket est .\n", clients->name, clients->socket);
+                    }
+                    clients = clients->next;
+                }
+                clients = firstClient;*/
+            }
+            // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé de
+            // SOLUTION/user/coups en ENCHERE/user/coups
+            else {
+                char *msg = (char*)malloc(50*sizeof(char));
+                sprintf(msg, "Trop tard: une solution a déjà été trouvée...\n");
+                fprintf(stderr, "%s", msg);
+                exit(1);
+            }
+            rc = pthread_mutex_unlock(&task_mutex);
         }
         //C -> S : ENCHERE/user/coups/
         else if(strcmp(pch,"ENCHERE")==0)
-        {
-            pch = strtok (NULL, "/");
-            username = (char*)malloc(strlen(pch));
-            strncpy(username, pch, strlen(pch));
-        }
-        //C -> S : SOLUTION/user/deplacements/
-        else if(strcmp(pch,"SOLUTION")==0)
         {
             pch = strtok (NULL, "/");
             username = (char*)malloc(strlen(pch));
@@ -518,7 +696,7 @@ int main(int argc, char* argv[]) {
 
         while( (select_result = select(FD_SETSIZE, &testfds, (fd_set *)0, (fd_set *)0, (struct timeval *) 0)) < 1) {
             perror("");
-            fprintf(stderr, "error select : Fenêtre fermee burtalement cote client ?\nselect val : %d (%d)\n", select_result, errno);
+            fprintf(stderr, "error select : Fenêtre fermee brutalement cote client ?\nselect val : %d (%d)\n", select_result, errno);
             int rc = pthread_mutex_lock(&client_mutex);
             printf("Etat de la liste des clients : \n");
             if(clients==NULL) {
@@ -533,6 +711,7 @@ int main(int argc, char* argv[]) {
                         printf("error on socket %d\n", client->socket); //The client with the corrupted file descriptor socket.
                         printClientsState(&client_mutex);
                         client->isConnected = 1;
+                        nbClientsConnecte--;
                         //We must kick it from the fd_set structure (named readfds ? or testfds ? both ?)
                         FD_CLR(client->socket, &readfds);
                         FD_CLR(client->socket, &testfds);
@@ -558,9 +737,33 @@ int main(int argc, char* argv[]) {
                     n = read(socket,buffer,255);
                     if(n == 0) {
                         printf("Main received empty message from %d.\n", socket);
+                        printf("debug : 0.0");
                         FD_CLR(socket, &readfds);
+                        printf("debug : 0.1");
                         FD_CLR(socket, &testfds);
-                        close(socket);
+                        //TODO : chercher le client responsable responsable, et isConnected = false;
+                        printf("debug : 1");
+                        int rc2 = pthread_mutex_lock(&client_mutex);
+                        client_t *client = clients;
+                        printf("debug : 2");
+                        while(client != NULL){
+                            printf("debug : 3");
+                            if(strcmp(client->socket, socket) == 0) {
+                                printf("debug : 4");
+                                client->isConnected = 1;
+                                break;
+                            }
+                            printf("debug : 5");
+                            client = client->next;
+                        }
+                        printf("debug : 6");
+                        if(client==NULL) printf("should be Unreachable\n");
+                        rc2 = pthread_mutex_unlock(&client_mutex);
+                        printf("should be Unreachable 1\n");
+                        sprintf(buffer, "SORT/%s/", client->name);
+                        printf("should be Unreachable 2\n");
+                        addTask(socket, buffer, &task_mutex, &cond_got_task);
+                        printf("should be Unreachable 3\n");
                         break;
                     }
                     printf("(Main)Server received %d bytes from %d.\n", n, socket);
@@ -595,7 +798,21 @@ int strcicmp(char const *a, char const *b)
     }
 }
 
+char * append_strings(const char * old, const char * new)
+{
+    // find the size of the string to allocate
+    const size_t old_len = strlen(old), new_len = strlen(new);
+    const size_t out_len = old_len + new_len + 1;
 
+    // allocate a pointer to the new string
+    char *out = malloc(out_len);
+
+    // concat both strings and return
+    memcpy(out, old, old_len);
+    memcpy(out + old_len, new, new_len + 1);
+
+    return out;
+}
 
 /****************
 *   GRID PART   *
@@ -797,3 +1014,144 @@ char* getCharFromCase(int i, int j){
     return chaine;
 }
 
+
+/******************
+*   ENIGMA PART   *
+*******************/
+
+/******************************************
+*                                         *
+*  Envoie une nouvelle enigme/bilan au    *
+*  client                                 *
+*                                         *
+*******************************************/
+
+int sendEnigma(int socket){
+    fprintf(stderr, "Sending the Enigma:\n");
+    char *msg = (char*)calloc(sizeof(char), strlen(enigma)+strlen(bilan)+7);
+    strcpy(msg, "TOUR/");
+    strcat(msg, enigma);
+    strcat(msg,"/");
+    strcat(msg, bilan);
+    strcat(msg,"/\n");
+
+    printf("%s", msg);
+    int n = write(socket,msg,strlen(msg)*sizeof(char));
+
+    fprintf(stderr, "Enigma + bilan send!\n");
+    return 0;
+}
+
+/*********************************************
+*                                            *
+*  Crée une nouvelle enigme en initialisant  *
+*  les coordoonées du robot aléatoirement    *
+*                                            *
+*********************************************/
+
+int setEnigma(){
+    // nbRobots*nbCoordonnées*tailleCoordonnée + nbLettres + nbVirgule + parenthèses + lettreCible
+    enigma = malloc(sizeof(char)*5*2*2 + 10 + 10 + 2 + 1);
+    
+    if(firstLaunch == 0){
+        // Generation aleatoire des positions des robots
+        srand(time(NULL));
+        
+        // Rouge
+        x_r = rand() % size_x;
+        y_r = rand() % size_y;
+        // Bleu
+        x_b = rand() % size_x;
+        y_b = rand() % size_y;
+        // Jaune
+        x_j = rand() % size_x;
+        y_j = rand() % size_y;
+        // Vert
+        x_v = rand() % size_x;
+        y_v = rand() % size_y;
+
+        // Cible
+        x_cible = rand() % size_x;
+        y_cible = rand() % size_y;
+
+        // LettreCible
+        int cible = rand() % 4;
+        switch(cible){
+            case 0:
+                lettreCible = 'r';
+                break;
+            case 1:
+                lettreCible = 'b';
+                break;
+            case 2:
+                lettreCible = 'j';
+                break;
+            case 3:
+                lettreCible = 'v';
+                break;
+            default:;
+        }
+        firstLaunch = -1;
+    }
+
+    sprintf(enigma, "(%dr,%dr,%db,%db,%dj,%dj,%dv,%dv,%dc,%dc,%c)", x_r, y_r, x_b, y_b, x_j, y_j, x_v, y_v, x_cible, y_cible, lettreCible);
+    return 0;
+}
+
+/*********************************************
+*                                            *
+*    Set le bilan de la session courante     *
+*                                            *
+*********************************************/
+
+int setBilanCurrentSession(){
+    int i = 0;
+    fprintf(stderr, "Setting the bilan of the current session:\n");
+
+    if(clients == NULL) {
+        fprintf(stderr, "ERREUR: la liste des clients est nulle\n");
+        exit(EXIT_FAILURE);
+    }
+
+    client_t* first_client = clients;
+
+    int nbTourLength = 1;
+    if(nbTour >= 10)
+        nbTourLength = floor(log10(abs(nbTour))) + 1;
+        
+    int sizeAll = nbTourLength;
+    while(clients != NULL){
+        int scoreLength = 1;
+        if(clients->score >= 10)
+            scoreLength = floor(log10(abs(clients->score))) + 1;
+        sizeAll += (strlen(clients->name) + scoreLength + 3);
+        clients = clients->next;
+    }
+
+    clients = first_client;
+    bilan = (char *) malloc(sizeAll);
+    sprintf(bilan, "%d", nbTour);    
+    fprintf(stderr, "%s", bilan);
+    fprintf(stderr, "SizeAll : %d\n", sizeAll);
+    fprintf(stderr, "toto1\n");
+    while(clients != NULL){
+        int scoreLength = 1;
+        if(clients->score >= 10)
+            scoreLength = floor(log10(abs(clients->score))) + 1;
+        fprintf(stderr, "scoreLength : %d\tclientNameLength : %d\n", scoreLength, strlen(clients->name));
+        fprintf(stderr, "name : %s\n", clients->name);
+        char *user = (char *)calloc(sizeof(char), strlen(clients->name)+scoreLength+3);
+        sprintf(user, "(%s,%d)", clients->name, clients->score);
+        fprintf(stderr, "userBuffer : %s\n", user);
+        
+        sprintf(bilan,"%s%s", bilan, user);
+        clients = clients->next;
+    }
+
+    clients = first_client;
+
+    fprintf(stderr, "Bilan : %s\n", bilan);
+    fprintf(stderr, "Bilan current session set!\n");
+
+    return 0;
+}

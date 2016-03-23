@@ -27,4 +27,6 @@ public class PlayerNamePanel extends JPanel {
 		add(playerName, c);
 		
 	}
+	
+	public JTextField getPlayerName(){ return this.playerName; }
 }

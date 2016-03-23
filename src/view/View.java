@@ -4,18 +4,20 @@ import java.awt.Component;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import controller.Controller;
 import model.Model;
+import utils.Phase;
 import view.game.GamePanel;
+import view.game.InteractionPanel;
 import view.welcome.HomePagePanel;
 import view.welcome.SignIn;
 import view.welcome.SignUp;
+import controller.Controller;
 
 public class View extends JFrame {
 	private static final long serialVersionUID = -3880026026104218593L;
 
 	JPanel connectionWindow;
-	JPanel window;
+	GamePanel gamePane;
 	Model model;
 	Controller controller ;
 	
@@ -36,9 +38,9 @@ public class View extends JFrame {
 				remove(c);
 		}
 		this.getContentPane().getComponent(0).setVisible(false);
-		window = new GamePanel(model);
-		add(window);
-		window.setVisible(true);
+		gamePane = new GamePanel(model);
+		add(gamePane);
+		gamePane.setVisible(true);
 		this.revalidate();
 		this.repaint();
 	}
@@ -49,7 +51,7 @@ public class View extends JFrame {
 			if(c!=connectionWindow)
 				remove(c);
 		}
-		controller.disconnect();
+		controller.disconnect(gamePane.getPlayerNamePanel().getPlayerName().getText());
 		connectionWindow.setVisible(true);
 	}
 
@@ -69,6 +71,17 @@ public class View extends JFrame {
 		}
 		add(new SignIn());
 		connectionWindow.setVisible(false);
+	}
+	
+	// TO CONTINUE...
+	public void sendSolutionSignal(int solution) {
+		for(Component c : getContentPane().getComponents()) {
+			if(c!=connectionWindow)
+				remove(c);
+		}
+		controller.sendSolution("toto", solution);
+		connectionWindow.setVisible(false);
+		
 	}
 
 }

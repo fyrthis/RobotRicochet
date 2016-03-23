@@ -147,6 +147,9 @@ public class Tile {
 		case 55:
 			rslt = "J";
 			break;
+		case 99:
+			rslt = "T";
+			break;
 		default:;
 		}
 		return rslt;

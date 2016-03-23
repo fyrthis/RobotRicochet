@@ -4,17 +4,26 @@ import java.util.Observable;
 
 public class Grid extends Observable {
 	
-	int[][] grid;
+	Integer[][][] grid;
+	char target;
 	
-	public void setGrid(int[][] grid){
-		this.grid = grid;
+	public Grid(){
+		this.grid = new Integer[2][][];
+		this.target = 'n';
 	}
 	
+	public void setGrid(Integer[][] grid){ this.grid[0] = grid; }
+	public void setSymbolGrid(Integer[][] symbolGrid){ this.grid[1] = symbolGrid; }
+	public void setSymbol(int x, int y, int s){ this.grid[1][x][y] = s; }
+	public void setTarget(char c){ this.target = c; }
+	
+	public Integer[][][] getGrid(){ return this.grid; }
+	public int getSizeX(){ return this.grid[0].length; }
+	public int getSizeY(){ return this.grid[0][0].length; }
+	
 	public void update() {
-		System.out.println(this.countObservers());
 		this.setChanged();
 		this.notifyObservers(grid);
-		System.out.println("notifyObserver");
 	}
 
 }

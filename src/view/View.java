@@ -41,6 +41,7 @@ public class View extends JFrame {
 		
 		gamePane = new GamePanel(model);
 		add(gamePane);
+		gamePane.setVisible(false);
 		
 		try {
 			controller.connect(name);

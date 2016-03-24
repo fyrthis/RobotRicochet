@@ -1,6 +1,6 @@
 
 CC=gcc
-CFLAGS=
+CFLAGS= -Wall
 LDFLAGS= -lpthread -lm
 EXEC=serveur
 

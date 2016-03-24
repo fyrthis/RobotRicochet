@@ -236,7 +236,7 @@ int main(int argc, char* argv[]) {
     if(argc>2) {
         readGridFromFile(argv[2]);
     } else {
-        readGridFromFile("../res/BasicGrid.txt");
+        readGridFromFile("./res/BasicGrid.txt");
     }
     
     printf("\nsetting port : %d\n", port);
@@ -319,33 +319,33 @@ int main(int argc, char* argv[]) {
                     n = read(socket,buffer,255);
                     if(n == 0) {
                         printf("Main received empty message from %d.\n", socket);
-                        printf("debug : 0.0");
+                        printf("debug : 0.0\n");
                         FD_CLR(socket, &readfds);
-                        printf("debug : 0.1");
+                        printf("debug : 0.1\n");
                         FD_CLR(socket, &testfds);
                         //TODO : chercher le client responsable responsable, et isConnected = false;
-                        printf("debug : 1");
+                        printf("debug : 1\n");
                         int rc2 = pthread_mutex_lock(&client_mutex);
                         client_t *client = clients;
-                        printf("debug : 2");
+                        printf("debug : 2\n");
                         while(client != NULL){
-                            printf("debug : 3");
+                            printf("debug : 3\n");
                             if(client->socket == socket) {
-                                printf("debug : 4");
+                                printf("debug : 4\n");
                                 client->isConnected = 1;
                                 break;
                             }
-                            printf("debug : 5");
+                            printf("debug : 5\n");
                             client = client->next;
                         }
                         printf("debug : 6");
-                        if(client==NULL) printf("should be Unreachable\n");
+                        if(client==NULL) printf("error : client null\n");
                         rc2 = pthread_mutex_unlock(&client_mutex);
-                        printf("should be Unreachable 1\n");
+                        printf("debug : 6\n");
                         sprintf(buffer, "SORT/%s/", client->name);
-                        printf("should be Unreachable 2\n");
+                        printf("debug : 7\n");
                         addTask(socket, buffer, &task_mutex, &cond_got_task);
-                        printf("should be Unreachable 3\n");
+                        printf("debug : 8\n");
                         break;
                     }
                     printf("(Main)Server received %d bytes from %d.\n", n, socket);

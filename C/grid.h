@@ -5,7 +5,7 @@
 #include <pthread.h>     /* pthread functions and data structures     */
 
 #include <stdlib.h>      /* rand() and srand() functions              */
-
+#include "utils.h"		 /* getCharFromCase()						  */
 
 extern int size_x;// = 0;
 extern int size_y;// = 0;

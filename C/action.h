@@ -30,7 +30,7 @@ int deconnexion(char *username, int socket);
 *************************/
 
 // Grid Part
-int sendGrid(char **gridStr, int socket);
+int sendGrid(char *gridStr, int socket);
 // Enigma + Bilan Parts
 int sendEnigmaBilan(char *enigma, char *bilan, int socket);
 int tuAsTrouve(int socket);

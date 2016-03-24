@@ -21,8 +21,7 @@ int readGridFromFile(char *filename) {
     FILE* file = fopen(filename, "r"); /* should check the result */
     
     if(file == NULL){
-        fprintf(stderr, "Error: Could not open file\n");
-        perror("error : ");
+        perror("Error in readGridFromFile function ");
         exit(-1);
     }
 
@@ -77,7 +76,7 @@ int readGridFromFile(char *filename) {
             grid[x][y] = atoi(pch);
 
             char * caseToChar = calloc(sizeof(char), 27);
-            caseToChar = getCharFromCase(x,y);
+            caseToChar = getCharFromCase(grid[x][y], x, y);
 
             strcat(gridStr, caseToChar);
             pch = strtok(NULL, " ");

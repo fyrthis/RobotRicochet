@@ -103,6 +103,7 @@ int deconnexion(char *username, int socket) {
     sendMessageAllExceptOne(msg, username, &client_mutex);
     close(socket);
     fprintf(stderr, " handle Task SORT\n");
+    return 0;
 }
 
 
@@ -176,9 +177,11 @@ int ilATrouve(char *activePlayer, int solution, int socket) {
     fprintf(stderr, "%s\n", msgOtherPlayers);
     
 	sendMessageAllExceptOne(msgOtherPlayers, activePlayer, &client_mutex);
+    return 0;
 }
 
 int finReflexion(int socket) {
+    return 0;
 }
 
 /********************
@@ -198,6 +201,7 @@ int nouvelleEnchere(char *username, int nbCoups, int socket) {
 }
 
 int finEnchere(char *username, int nbCoups, int socket) {
+    return 0;
 
 }
 

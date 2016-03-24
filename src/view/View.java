@@ -61,6 +61,8 @@ public class View extends JFrame {
 		this.getContentPane().getComponent(0).setVisible(false);
 		
 		add(gamePane);
+		gamePane.revalidate();
+		gamePane.repaint();
 		gamePane.setVisible(true);
 		this.revalidate();
 		this.repaint();

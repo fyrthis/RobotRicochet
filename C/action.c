@@ -8,7 +8,7 @@
 
 int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
     if(pthread_mutex_lock(p_mutex) < 0){
-    	perror("Error : on sendMessageAll, cannot lock the p_mutex\n");
+    	perror("Error on sendMessageAll, cannot lock the p_mutex\n");
     }
     
     if(clients==NULL) {
@@ -25,7 +25,7 @@ int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
         }
     }
     if(pthread_mutex_unlock(p_mutex) < 0){
-    	perror("Error : on sendMessageAll, cannot unlock the p_mutex\n");
+    	perror("Error on sendMessageAll, cannot unlock the p_mutex\n");
     }
 
     return 0;
@@ -33,7 +33,7 @@ int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
 
 int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { //Except client with this name
     if(pthread_mutex_lock(p_mutex) < 0){
-    	perror("Error : on sendMessageAllExceptOne, cannot lock the p_mutex\n");
+    	perror("Error on sendMessageAllExceptOne, cannot lock the p_mutex\n");
     }
     fprintf(stderr, "\ttest : %s\n", msg);
     
@@ -51,7 +51,7 @@ int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { /
         }
     }
     if(pthread_mutex_unlock(p_mutex) < 0){
-    	perror("Error : on sendMessageAllExceptOne, cannot lock the p_mutex\n");
+    	perror("Error on sendMessageAllExceptOne, cannot lock the p_mutex\n");
     }
 
     return 0;
@@ -124,7 +124,7 @@ int sendGrid(char *gridStr, int socket) {
     strcat(msg,"/\n");
     printf("%s", msg);
     if(write(socket,msg,strlen(msg)*sizeof(char)) < 0){
-    	perror("Erreur : in sendGrid, cannot write on socket\n");
+    	perror("Erreur in sendGrid, cannot write on socket\n");
     }
 
     fprintf(stderr, "Grid send!\n");
@@ -137,7 +137,7 @@ int sendGrid(char *gridStr, int socket) {
 
 int sendEnigmaBilan(char *enigma, char *bilan, int socket) {
     fprintf(stderr, "Sending the Enigma:\n");
-    char *msg = (char*)calloc(sizeof(char), strlen(enigma)+strlen(bilan)+7);
+    char *msg = (char*)calloc(sizeof(char), strlen(enigma)+strlen(bilan)+9);
     strcpy(msg, "TOUR/");
     strcat(msg, enigma);
     strcat(msg,"/");
@@ -146,7 +146,7 @@ int sendEnigmaBilan(char *enigma, char *bilan, int socket) {
 
     printf("%s", msg);
     if(write(socket,msg,strlen(msg)*sizeof(char)) < 0) {
-    	perror("Erreur : in sendEnigmaBilan, cannot write on socket\n");
+    	perror("Erreur in sendEnigmaBilan, cannot write on socket\n");
     }
 
     fprintf(stderr, "Enigma + bilan send!\n");
@@ -154,11 +154,11 @@ int sendEnigmaBilan(char *enigma, char *bilan, int socket) {
 }
 
 int tuAsTrouve(int socket) {
-	char *msgActivePlayer = (char*)malloc(12*sizeof(char));
+	char *msgActivePlayer = (char*)malloc(13*sizeof(char));
     strcpy(msgActivePlayer, "TUASTROUVE/");
     fprintf(stderr, "%s\n", msgActivePlayer);
     if(write(socket,msgActivePlayer,strlen(msgActivePlayer)*sizeof(char))){
-    	perror("Erreur : in tuAsTrouve, cannot write on socket\n");
+    	perror("Erreur in tuAsTrouve, cannot write on socket\n");
     }
 
     fprintf(stderr, "Sending %s to activePlayer", msgActivePlayer);
@@ -171,7 +171,7 @@ int ilATrouve(char *activePlayer, int solution, int socket) {
     if(solution >= 10)
         currentSolutionLength = floor(log10(abs(currentSolutionLength))) + 1;
 
-    char *msgOtherPlayers = (char*)malloc((13+strlen(activePlayer)+currentSolutionLength)*sizeof(char));
+    char *msgOtherPlayers = (char*)malloc((14+strlen(activePlayer)+currentSolutionLength)*sizeof(char));
     sprintf(msgOtherPlayers, "ILATROUVE/%s/%d/", activePlayer, currentSolution);
    
     fprintf(stderr, "%s\n", msgOtherPlayers);

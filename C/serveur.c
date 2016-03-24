@@ -97,9 +97,9 @@ void handle_request(task_t * task, int thread_id) {
                 }
                 if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
             }
-            if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
+            if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex on locking variable nbClientsConnecte ");
             nbClientsConnecte--;
-            if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
+            if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex on unlocking variable nbClientsConnecte ");
             
 
             printf("(handle_request) :pch is %s\n",username);
@@ -130,8 +130,8 @@ void handle_request(task_t * task, int thread_id) {
                 tuAsTrouve(task->socket);
                 ilATrouve(activePlayer, currentSolution, task->socket);
             }
-            // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé de
-            // SOLUTION/user/coups en ENCHERE/user/coups
+            // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé :
+            // au lieu de SOLUTION/user/coups on envoie ENCHERE/user/coups
             else {
                 char *msg = (char*)malloc(50*sizeof(char));
                 sprintf(msg, "Trop tard: une solution a déjà été trouvée...\n");

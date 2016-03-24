@@ -129,6 +129,7 @@ void handle_request(task_t * task, int thread_id) {
                 fprintf(stderr, "Solution trouvée par %s\n", activePlayer);
                 tuAsTrouve(task->socket);
                 ilATrouve(activePlayer, currentSolution, task->socket);
+                finReflexion();
             }
             // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé :
             // au lieu de SOLUTION/user/coups on envoie ENCHERE/user/coups

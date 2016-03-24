@@ -12,9 +12,9 @@ int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
     }
     
     if(clients==NULL) {
-        printf("(SendMessageAll)Aucun client. Should never happened\n");
+        printf("(sendMessageAll)Aucun client. Should never happened\n");
     //} else if(clients) { TODO : Si qu'un client
-    //    printf("(SendMessageAll)Un seul client. Should never happened\n");
+    //    printf("(sendMessageAll)Un seul client. Should never happened\n");
     } else {
         client_t * client = clients;
         while(client != NULL) {
@@ -38,7 +38,7 @@ int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { /
     fprintf(stderr, "\ttest : %s\n", msg);
     
     if(clients==NULL) {
-        printf("(SendMessageAll)Aucun client. Should never happened\n");
+        printf("(sendMessageAll)Aucun client. Should never happened\n");
     } else {
         client_t * client = clients;
         while(client != NULL) {
@@ -180,7 +180,10 @@ int ilATrouve(char *activePlayer, int solution, int socket) {
     return 0;
 }
 
-int finReflexion(int socket) {
+int finReflexion() {
+    char *msg = (char*) malloc (15*sizeof(char));
+    sprintf(msg, "FINREFLEXION/");
+    sendMessageAll(msg, &client_mutex);
     return 0;
 }
 

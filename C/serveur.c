@@ -84,7 +84,7 @@ void handle_request(task_t * task, int thread_id) {
             }
 
             else {
-                int rc2 = pthread_mutex_lock(&client_mutex);
+                if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
                 client_t *client = clients;
                 while(client != NULL){
                     if(strcmp(client->name, username) == 0) {
@@ -93,11 +93,11 @@ void handle_request(task_t * task, int thread_id) {
                     }
                     client = client->next;
                 }
-                rc2 = pthread_mutex_lock(&client_mutex);
+                if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
             }
-            int rc3 = pthread_mutex_lock(&client_mutex);
+            if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
             nbClientsConnecte--;
-            rc3 = pthread_mutex_lock(&client_mutex);
+            if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
             
 
             printf("(handle_request) :pch is %s\n",username);
@@ -109,7 +109,7 @@ void handle_request(task_t * task, int thread_id) {
         //C -> S : SOLUTION/user/coups/    ( a gerer plus tard : //C -> S : SOLUTION/user/deplacements/  )
         else if(strcmp(pch,"SOLUTION")==0)
         {
-            int rc = pthread_mutex_lock(&task_mutex);
+            if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
 
             pch = strtok (NULL, "/");
             username = (char*)malloc(strlen(pch));
@@ -126,20 +126,7 @@ void handle_request(task_t * task, int thread_id) {
 
                 fprintf(stderr, "Solution trouvée par %s\n", activePlayer);
                 tuAsTrouve(task->socket);
-                ilATrouve(task->socket);
-/*
-                client_t *firstClient = clients;
-                while(clients != NULL){
-                    fprintf(stderr, "Indication au player %s, sauf au joueur actif %s\n", clients->name, activePlayer);
-                    // On souhaite envoyer l'information seulement aux players autre que l'activePlayer
-                    if(strcmp(activePlayer, clients->name) != 0){
-                        // Quelle difference entre clients->socket et task->socket????
-                        write(/*task->socket*//*clients->socket,msgOtherPlayers,strlen(msgOtherPlayers)*sizeof(char));
-                        fprintf(stderr, "\t...Phase de reflexion terminée pour %s dont le numero de socket est .\n", clients->name, clients->socket);
-                    }
-                    clients = clients->next;
-                }
-                clients = firstClient;*/
+                ilATrouve(activePlayer, currentSolution, task->socket);
             }
             // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé de
             // SOLUTION/user/coups en ENCHERE/user/coups
@@ -149,7 +136,7 @@ void handle_request(task_t * task, int thread_id) {
                 fprintf(stderr, "%s", msg);
                 exit(1);
             }
-            rc = pthread_mutex_unlock(&task_mutex);
+            if(pthread_mutex_unlock(&task_mutex) != 0) perror("error mutex");
         }
         //C -> S : ENCHERE/user/coups/
         else if(strcmp(pch,"ENCHERE")==0)
@@ -175,12 +162,11 @@ void handle_request(task_t * task, int thread_id) {
 *******************************************/
 // serveur.c
 void * handle_tasks_loop(void* data) {
-    int rc;
     task_t * taskWeDo;
     int thread_id = *((int*)data);
 
     /* lock the mutex, to access the tasks list exclusively. */
-    rc = pthread_mutex_lock(&task_mutex);
+    if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
 
     while (1) {
         if (nbTasks > 0) { /* a request is pending */
@@ -194,11 +180,11 @@ void * handle_tasks_loop(void* data) {
         }
         else {
             printf("(handle_tasks_loop) Thread %d is waiting some task.\n", thread_id);
-            rc = pthread_cond_wait(&cond_got_task, &task_mutex);
+            if(pthread_cond_wait(&cond_got_task, &task_mutex) != 0) perror("error mutex");
         }
     }
     //Unreachable code bellow
-    rc = pthread_mutex_lock(&task_mutex);
+    if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
 }
 
 
@@ -279,7 +265,7 @@ int main(int argc, char* argv[]) {
         while( (select_result = select(FD_SETSIZE, &testfds, (fd_set *)0, (fd_set *)0, (struct timeval *) 0)) < 1) {
             perror("");
             fprintf(stderr, "error select : Fenêtre fermee brutalement cote client ?\nselect val : %d (%d)\n", select_result, errno);
-            int rc = pthread_mutex_lock(&client_mutex);
+            if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
             printf("Etat de la liste des clients : \n");
             if(clients==NULL) {
                 printf("Aucun client. Erreur dans le select non geree...\n");
@@ -304,7 +290,7 @@ int main(int argc, char* argv[]) {
                 }
                 continue;
             }
-            rc = pthread_mutex_unlock(&client_mutex);
+            if(pthread_mutex_unlock(&client_mutex) != 0) perror("error mutex");
         }
         
         for(socket = 0; socket < FD_SETSIZE; socket++) {
@@ -325,7 +311,7 @@ int main(int argc, char* argv[]) {
                         FD_CLR(socket, &testfds);
                         //TODO : chercher le client responsable responsable, et isConnected = false;
                         printf("debug : 1\n");
-                        int rc2 = pthread_mutex_lock(&client_mutex);
+                        if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
                         client_t *client = clients;
                         printf("debug : 2\n");
                         while(client != NULL){
@@ -340,7 +326,7 @@ int main(int argc, char* argv[]) {
                         }
                         printf("debug : 6");
                         if(client==NULL) printf("error : client null\n");
-                        rc2 = pthread_mutex_unlock(&client_mutex);
+                        if(pthread_mutex_unlock(&client_mutex) != 0) perror("error mutex");
                         printf("debug : 6\n");
                         sprintf(buffer, "SORT/%s/", client->name);
                         printf("debug : 7\n");

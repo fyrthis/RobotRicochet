@@ -23,13 +23,13 @@ public class Controller implements Observer {
 		//TODO : Classe de connexion (avec name etc..)
 		Client.getInstance().addObserver(this);
 		Client.getInstance().connect();
-		System.out.println("(Controller) sent : CONNEXION/"+name+"/");
+		System.out.println("(Client:"+LocalPlayer.getInstance().getName()+")(Controller) sent : CONNEXION/"+name+"/");
 		Client.getInstance().sendMessage("CONNEXION/"+name+"/");
 		LocalPlayer.getInstance().setName(name);
 
 	}
 	public void disconnect(String name) {
-		System.out.println("(Controller) sent : SORT/"+name+"/");
+		System.out.println("(Client:"+LocalPlayer.getInstance().getName()+")(Controller) sent : SORT/"+name+"/");
 		try {
 			Client.getInstance().sendMessage("SORT/"+name+"/");
 		} catch (IOException e) {
@@ -41,7 +41,7 @@ public class Controller implements Observer {
 	
 	public void sendSolution(String name, int solutionInt){
 		String solution = String.valueOf(solutionInt);
-		System.out.println("(Controller) sent : SOLUTION/"+name+"/"+solution+"/");
+		System.out.println("(Client:"+LocalPlayer.getInstance().getName()+")(Controller) sent : SOLUTION/"+name+"/"+solution+"/");
 		try {
 			Client.getInstance().sendMessage("SOLUTION/"+name+"/"+solution+"/");
 		} catch (IOException e) {
@@ -54,7 +54,7 @@ public class Controller implements Observer {
 	public void update(Observable o, Object arg) {
 		String message = (String) arg;
 		String[] tokens = message.split("/");
-		System.out.println("(Controller) received : "+message);
+		System.out.println("(Client:"+LocalPlayer.getInstance().getName()+")(Controller) received : "+message);
 		
 		//S->C : BIENVENUE/user/
 		if (tokens.length>1 && tokens[0].equals("BIENVENUE")) {
@@ -75,7 +75,7 @@ public class Controller implements Observer {
 			else if(tokens.length > 3)
 				try {
 					DebutSession.session(tokens[1], Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]));
-				}catch(NumberFormatException e){ System.err.println("received wrong Session/plateau protocol"); }
+				}catch(NumberFormatException e){ System.err.println("(Client:"+LocalPlayer.getInstance().getName()+")received wrong Session/plateau protocol"); }
 		}
 		
 		//S->C : VAINQUEUR/bilan/
@@ -137,7 +137,7 @@ public class Controller implements Observer {
 		} else {
 			//DO NOTHING
 			try {
-				throw new ProtocolException("received unknown protocol");
+				throw new ProtocolException("(Client:"+LocalPlayer.getInstance().getName()+")received unknown protocol : "+message);
 			} catch (ProtocolException e) {
 				e.printStackTrace();
 			}

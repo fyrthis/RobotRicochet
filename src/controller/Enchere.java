@@ -4,7 +4,7 @@ import model.Model;
 
 public class Enchere extends Controller {
 
-	private Enchere(Model model) { super(model);	}
+	private Enchere(Model model) { super(model); }
 
 	//ENCHERE/user/coups/
 	//(C -> S) Enchère d'une solution trouvée par 'user' en 'coups' déplacements.

@@ -95,11 +95,11 @@ void handle_request(task_t * task, int thread_id) {
                     }
                     client = client->next;
                 }
-                if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
+                if(pthread_mutex_unlock(&client_mutex) != 0) perror("error mutex");
             }
             if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex on locking variable nbClientsConnecte ");
             nbClientsConnecte--;
-            if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex on unlocking variable nbClientsConnecte ");
+            if(pthread_mutex_unlock(&client_mutex) != 0) perror("error mutex on unlocking variable nbClientsConnecte ");
             
 
             printf("(handle_request) :pch is %s\n",username);
@@ -189,7 +189,7 @@ void * handle_tasks_loop(void* data) {
         }
     }
     //Unreachable code bellow
-    if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
+    if(pthread_mutex_unlock(&task_mutex) != 0) perror("error mutex");
     puts("handle_task_loop ended");
 }
 

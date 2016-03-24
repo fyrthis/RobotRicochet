@@ -27,6 +27,8 @@ int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
     if(pthread_mutex_unlock(p_mutex) < 0){
     	perror("Error : on sendMessageAll, cannot unlock the p_mutex\n");
     }
+
+    return 0;
 }
 
 int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { //Except client with this name
@@ -51,6 +53,8 @@ int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { /
     if(pthread_mutex_unlock(p_mutex) < 0){
     	perror("Error : on sendMessageAllExceptOne, cannot lock the p_mutex\n");
     }
+
+    return 0;
 }
 
 

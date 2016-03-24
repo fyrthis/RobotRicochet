@@ -42,7 +42,6 @@ public class View extends JFrame {
 		gamePane = new GamePanel(model);
 		add(gamePane);
 		gamePane.setVisible(false);
-		
 		try {
 			controller.connect(name);
 		} catch (ConnectException e) {
@@ -55,8 +54,9 @@ public class View extends JFrame {
 			JOptionPane.showMessageDialog(this, "I/O error...");
 			return;
 		}
+		
 		for(Component c : getContentPane().getComponents()) {
-			if(c!=connectionWindow)
+			if(c!=connectionWindow && c!=gamePane)
 				remove(c);
 		}
 		this.getContentPane().getComponent(0).setVisible(false);

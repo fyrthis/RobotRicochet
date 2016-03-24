@@ -39,6 +39,9 @@ public class View extends JFrame {
 		String name = dialog.getName();
 		if(name == null) return; //user a annulé.
 		
+		gamePane = new GamePanel(model);
+		add(gamePane);
+		
 		try {
 			controller.connect(name);
 		} catch (ConnectException e) {
@@ -57,8 +60,7 @@ public class View extends JFrame {
 		}
 		this.getContentPane().getComponent(0).setVisible(false);
 		
-		gamePane = new GamePanel(model);
-		add(gamePane);
+
 		gamePane.setVisible(true);
 		this.revalidate();
 		this.repaint();

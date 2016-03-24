@@ -8,11 +8,11 @@ fi
 make -C C/ cleanall
 make -C C/
 # compile *.java files
-javac $(find ./src/* | grep .java)
+javac -d binaries $(find ./src/* | grep .java)
 
 
 # launch server
-valgrind --track-origins=yes ./C/serveur
+valgrind --track-origins=yes ./C/serveur &
 
 #We suppose here server takes 5 seconds to be ready
 sleep 5
@@ -22,5 +22,5 @@ sleep 5
 NB_CLIENTS=$1
 for (( i = 0; i < $NB_CLIENTS; i++ )); do
 	#statements
-	java ./bin/launcher/Launcher
+	java -cp ./binaries/ launcher.Launcher &
 done

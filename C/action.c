@@ -19,7 +19,7 @@ int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
         client_t * client = clients;
         while(client != NULL) {
             if(client->isConnected==0) {
-                if(write(client->socket,msg,strlen(msg)*sizeof(char)) < 0){
+                if(write(client->socket,msg,(strlen(msg)*sizeof(char))) < 0){
                     perror("Erreur in tuAsTrouve, cannot write on socket\n");
                 }
                 else {
@@ -48,7 +48,7 @@ int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { /
         client_t * client = clients;
         while(client != NULL) {
             if(client->isConnected==0 && strcmp(client->name, name)!=0) {
-                if(write(client->socket,msg,strlen(msg)*sizeof(char)) < 0){
+                if(write(client->socket,msg,(strlen(msg)*sizeof(char))) < 0){
                     perror("Erreur in tuAsTrouve, cannot write on socket\n");
                 }
                 else {
@@ -189,7 +189,7 @@ int ilATrouve(char *activePlayer, int solution, int socket) {
     if(solution >= 10)
         currentSolutionLength = floor(log10(abs(currentSolutionLength))) + 1;
 
-    char *msgOtherPlayers = (char*)calloc(sizeof(char), (14+strlen(activePlayer)+currentSolutionLength));
+    char *msgOtherPlayers = (char*)calloc(15+strlen(activePlayer)+currentSolutionLength, sizeof(char));
     sprintf(msgOtherPlayers, "ILATROUVE/%s/%d/\n", activePlayer, currentSolution);
    
     fprintf(stderr, "%s\n", msgOtherPlayers);

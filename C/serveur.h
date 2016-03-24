@@ -23,6 +23,9 @@
 #include <ctype.h>
 #include <unistd.h>
 
+#define __USE_GNU 
+#include <pthread.h>
+
 /* CONSTANTS */
 #define NB_MAX_THREADS 8
 #define NB_MAX_CLIENTS 50
@@ -33,6 +36,7 @@
 #include "grid.h"
 #include "client.h"
 
+extern pthread_cond_t  cond_got_task;//   = PTHREAD_COND_INITIALIZER;
 
 char *enigma;
 char *bilan;

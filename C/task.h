@@ -12,8 +12,6 @@
 /*MUTEX & CONDITIONS*/
 extern pthread_mutex_t task_mutex;// = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
 
-extern pthread_cond_t  cond_got_task;//   = PTHREAD_COND_INITIALIZER;
-
 typedef struct task {
     int socket;
     char *command;

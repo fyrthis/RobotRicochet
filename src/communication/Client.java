@@ -33,7 +33,7 @@ public class Client extends Observable implements Runnable {
 	
 	private boolean connected = false;
 	
-	private int port = 2016;
+	private int port = 2017;
 	private String hostname = "127.0.0.1";
 
 	public void connect() {

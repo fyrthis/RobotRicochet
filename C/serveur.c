@@ -22,6 +22,8 @@
 
 #include "serveur.h"
 
+pthread_cond_t  cond_got_task   = PTHREAD_COND_INITIALIZER;
+
 // client_t * clients = NULL;  --> ça pourrait très bien être le serveur qui intialise tout .. !!
 
 /******************************************
@@ -182,7 +184,8 @@ void * handle_tasks_loop(void* data) {
         }
         else {
             printf("(handle_tasks_loop) Thread %d is waiting some task.\n", thread_id);
-            if(pthread_cond_wait(&cond_got_task, &task_mutex) != 0) perror("error mutex");
+            if(pthread_cond_wait(&cond_got_task, &task_mutex) != 0) perror("err condition wait ");
+            printf("awaken");
         }
     }
     //Unreachable code bellow
@@ -213,7 +216,7 @@ int main(int argc, char* argv[]) {
         printf("(Main)Thread %d created and ready\n", i);
     }
     printf("(Main)Initialize server socket...\n");
-    int port = 2016;
+    int port = 2017;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;
@@ -339,11 +342,13 @@ int main(int argc, char* argv[]) {
                         sprintf(buffer, "SORT/%s/", client->name);
                         printf("debug : 7\n");
                         addTask(socket, buffer, &task_mutex, &cond_got_task);
+
                         printf("debug : 8\n");
                         break;
                     }
                     printf("(Main)Server received %d bytes from %d.\n", n, socket);
                     printf("(Main)Server received %s from %d.\n", buffer, socket);
+                    printf("Dans Main on a l'adresse = %d\n", &cond_got_task);
                     addTask(socket, buffer, &task_mutex, &cond_got_task);
                 }
             } else {

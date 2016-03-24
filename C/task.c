@@ -21,8 +21,6 @@
     pthread_mutex_t task_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
 #endif
 
-pthread_cond_t  cond_got_task   = PTHREAD_COND_INITIALIZER;
-
 task_t * tasks = NULL;
 task_t * last_task = NULL;
 
@@ -76,13 +74,14 @@ void addTask(int socket, char *command, pthread_mutex_t* p_mutex, pthread_cond_t
 
     printTasksState(&task_mutex);
     /* unlock mutex */
-    if(pthread_mutex_lock(p_mutex) < 0){
+    if(pthread_mutex_unlock(p_mutex) < 0){
         perror("Error : on addTask, cannot unlock the p_mutex\n");
     }
     /* signal the condition variable - there's a new request to handle */
-    if(pthread_cond_signal(p_cond_var) < 0){
-        perror("Error : on addTask, p_thread_cond_signal\n");
-    }
+    puts("signal cond...");
+    printf("Dans task on a l'adresse = %d\n", p_cond_var);
+    if(pthread_cond_signal(p_cond_var) != 0) perror("signal new task");
+    puts("ok!\n");
 }
 
 /******************************************
@@ -114,7 +113,7 @@ task_t * getTask(pthread_mutex_t* p_mutex) {
         task = NULL;
     }
 
-    printTasksState(&task_mutex);
+    printTasksState(p_mutex);
     /* unlock mutex */
     if(pthread_mutex_unlock(p_mutex) < 0) {
         perror("Error : on getTask, cannot lock the p_mutex\n");
@@ -142,7 +141,7 @@ void printTasksState(pthread_mutex_t* p_mutex) {
             i++;
         }
     }
-    if(pthread_mutex_lock(p_mutex) < 0) {
+    if(pthread_mutex_unlock(p_mutex) < 0) {
         perror("Error : on printTasksState, cannot unlock the p_mutex\n");
     }
 }

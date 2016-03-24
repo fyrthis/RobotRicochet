@@ -32,7 +32,7 @@ char * append_strings(const char * old, const char * new) {
     return out;
 }
 
-char* getCharFromCase(int grid, int i, int j) { //J'ai remplacé grid[i][j] par int grid, pour que utils reste indépendant de tous
+char* getCharFromCase(int grid, int i, int j) { //J'ai remplacé grid[i][j] par int grid, pour que utils reste indépendant de tous   
     char* chaine = calloc(sizeof(char), (2*8 + 20 + 1));
     switch(grid){
         case 0:

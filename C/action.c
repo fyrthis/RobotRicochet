@@ -112,6 +112,7 @@ int deconnexion(char *username, int socket) {
 
 int sendGrid(char **gridStr, int socket) {
     fprintf(stderr, "Sending the Grid:\n");
+   /*Here is the mistake : do not put a char** into a strcat !!*/
     char *msg = (char*)calloc(sizeof(char), 4096);
     strcpy(msg, "SESSION/");
     strcat(msg, gridStr);

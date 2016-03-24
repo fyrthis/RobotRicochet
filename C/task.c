@@ -78,10 +78,7 @@ void addTask(int socket, char *command, pthread_mutex_t* p_mutex, pthread_cond_t
         perror("Error : on addTask, cannot unlock the p_mutex\n");
     }
     /* signal the condition variable - there's a new request to handle */
-    puts("signal cond...");
-    printf("Dans task on a l'adresse = %d\n", p_cond_var);
     if(pthread_cond_signal(p_cond_var) != 0) perror("signal new task");
-    puts("ok!\n");
 }
 
 /******************************************

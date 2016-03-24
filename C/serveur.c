@@ -348,7 +348,6 @@ int main(int argc, char* argv[]) {
                     }
                     printf("(Main)Server received %d bytes from %d.\n", n, socket);
                     printf("(Main)Server received %s from %d.\n", buffer, socket);
-                    printf("Dans Main on a l'adresse = %d\n", &cond_got_task);
                     addTask(socket, buffer, &task_mutex, &cond_got_task);
                 }
             } else {

@@ -12,7 +12,7 @@ javac $(find ./src/* | grep .java)
 
 
 # launch server
-./C/serveur
+valgrind --track-origins=yes ./C/serveur
 
 #We suppose here server takes 5 seconds to be ready
 sleep 5

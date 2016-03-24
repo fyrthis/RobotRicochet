@@ -162,6 +162,8 @@ void handle_request(task_t * task, int thread_id) {
 *******************************************/
 // serveur.c
 void * handle_tasks_loop(void* data) {
+
+    puts("handle_task_loop began");
     task_t * taskWeDo;
     int thread_id = *((int*)data);
 
@@ -185,6 +187,7 @@ void * handle_tasks_loop(void* data) {
     }
     //Unreachable code bellow
     if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
+    puts("handle_task_loop ended");
 }
 
 

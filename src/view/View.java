@@ -40,7 +40,7 @@ public class View extends JFrame {
 		if(name == null) return; //user a annulé.
 		
 		gamePane = new GamePanel(model);
-		
+		add(gamePane);
 		
 		try {
 			controller.connect(name);
@@ -60,7 +60,7 @@ public class View extends JFrame {
 		}
 		this.getContentPane().getComponent(0).setVisible(false);
 		
-		add(gamePane);
+		
 		gamePane.revalidate();
 		gamePane.repaint();
 		gamePane.setVisible(true);

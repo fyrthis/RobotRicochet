@@ -235,6 +235,11 @@ int main(int argc, char* argv[]) {
         puts("(Main)The server socket is now open\n");
     }
 
+
+    /* A enlver ultérieurement, sert à éviter le bind already in use */
+    if (setsockopt(socket_server, SOL_SOCKET, SO_REUSEADDR, &(int){ 1 }, sizeof(int)) < 0)
+        perror("setsockopt(SO_REUSEADDR) failed");
+    /* ************************************************************** */
     bzero((char *) &server_address, sizeof(server_address));
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;

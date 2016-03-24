@@ -5,20 +5,21 @@ if [[ $# < 1 ]]; then
 fi
 
 # compile *.c files
-./C/make
+make -C C/ cleanall
+make -C C/
 # compile *.java files
-javac -verbose $(find ./src/* | grep .java)
+javac $(find ./src/* | grep .java)
 
 
 # launch server
-./C/server
+./C/serveur
 
 #We suppose here server takes 5 seconds to be ready
 sleep 5
 
 # launch N clients
 
-NB_CLIENTS = $1
+NB_CLIENTS=$1
 for (( i = 0; i < $NB_CLIENTS; i++ )); do
 	#statements
 	java ./bin/launcher/Launcher

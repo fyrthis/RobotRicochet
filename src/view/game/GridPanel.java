@@ -12,14 +12,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import model.Players.Player;
 import view.game.map.Tile;
 
 public class GridPanel extends JPanel implements ComponentListener, Observer {

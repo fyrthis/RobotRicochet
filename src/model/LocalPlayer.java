@@ -1,14 +1,35 @@
 package model;
 
-public class LocalPlayer {
+import java.util.Observable;
+
+public class LocalPlayer extends Observable {
 	
-	public static String name;
-	public static int score;
+	public String name;
+	public int score;
 	
 	private LocalPlayer(){}
+	private static class LocalPlayerHolder
+	{		
+		private final static LocalPlayer instance = new LocalPlayer(); 
+	}
+	public static LocalPlayer getInstance()
+	{
+		return LocalPlayerHolder.instance;
+	}
 	
-	public static void setName(String n){	name = n; }
-	public static void addScore(int n){	score += n; }
+	public void setName(String n) {
+		name = n;
+		setChanged();
+		notifyObservers();
+	}
+	
+	public void addScore(int n) {
+		score += n; 
+	}
+
+	public String getName() {
+		return name;
+	}
 	
 
 }

@@ -1,6 +1,8 @@
 package controller;
 
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -15,19 +17,15 @@ public class Controller implements Observer {
 	public Controller(Model model) {
 		this.model=model;
 	}
-	
-	public void connect(String name) {
+
+	public void connect(String name) throws ConnectException, UnknownHostException, IOException {
 		//TODO : Classe de connexion (avec name etc..)
 		Client.getInstance().addObserver(this);
 		Client.getInstance().connect();
-		try {
-			System.out.println("(Controller) sent : CONNEXION/"+name+"/");
-			Client.getInstance().sendMessage("CONNEXION/"+name+"/");
-			LocalPlayer.setName(name);
-		} catch (IOException e) {
-			System.err.println("Failed to connect");
-			disconnect(name);
-		}
+		System.out.println("(Controller) sent : CONNEXION/"+name+"/");
+		Client.getInstance().sendMessage("CONNEXION/"+name+"/");
+		LocalPlayer.getInstance().setName(name);
+
 	}
 	public void disconnect(String name) {
 		System.out.println("(Controller) sent : SORT/"+name+"/");
@@ -59,20 +57,20 @@ public class Controller implements Observer {
 		if (tokens.length>1 && tokens[0].equals("BIENVENUE")) {
 			//Should be the first message received.. should we test it ?
 			System.out.println(message);
-			
-		//S->C : CONNECTE/user/
+
+			//S->C : CONNECTE/user/
 		} else if (tokens.length>1 && tokens[0].equals("CONNECTE")) {
 			System.out.println(message);
 			if(tokens.length<2) { System.err.println("probleme"); return; }
 			String name = tokens[1];
 			model.playerConnected(name);
-		//S->C :DECONNEXION/user/
+			//S->C :DECONNEXION/user/
 		} else if (tokens.length>1 && tokens[0].equals("DECONNEXION")) {
 			System.out.println(message);
 			if(tokens.length<2) { System.err.println("probleme"); return; }
 			String name = tokens[1];
 			model.playerLeaved(name);
-		//S->C : SESSION/plateau/size_x/size_y
+			//S->C : SESSION/plateau/size_x/size_y
 		} else if (tokens.length>1 && tokens[0].equals("SESSION")) {
 			System.out.println(message);
 			if(tokens.length<4) { System.err.println("probleme"); return; }

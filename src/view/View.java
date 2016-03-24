@@ -1,17 +1,19 @@
 package view;
 import java.awt.Component;
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import model.Model;
-import utils.Phase;
-import view.game.GamePanel;
-import view.game.InteractionPanel;
-import view.welcome.HomePagePanel;
-import view.welcome.SignIn;
-import view.welcome.SignUp;
 import controller.Controller;
+import model.LocalPlayer;
+import model.Model;
+import utils.AskNameDialog;
+import view.game.GamePanel;
+import view.welcome.HomePagePanel;
 
 public class View extends JFrame {
 	private static final long serialVersionUID = -3880026026104218593L;
@@ -33,11 +35,28 @@ public class View extends JFrame {
 	}
 
 	public void playAsGuestSignal() {
+		AskNameDialog dialog = new AskNameDialog();
+		String name = dialog.getName();
+		if(name == null) return; //user a annulé.
+		
+		try {
+			controller.connect(name);
+		} catch (ConnectException e) {
+			JOptionPane.showMessageDialog(this, "Server seems to be offline.");
+			return;
+		} catch (UnknownHostException e) {
+			JOptionPane.showMessageDialog(this, "Server not found.");
+			return;
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, "I/O error...");
+			return;
+		}
 		for(Component c : getContentPane().getComponents()) {
 			if(c!=connectionWindow)
 				remove(c);
 		}
 		this.getContentPane().getComponent(0).setVisible(false);
+		
 		gamePane = new GamePanel(model);
 		add(gamePane);
 		gamePane.setVisible(true);
@@ -51,26 +70,28 @@ public class View extends JFrame {
 			if(c!=connectionWindow)
 				remove(c);
 		}
-		controller.disconnect(gamePane.getPlayerNamePanel().getPlayerName().getText());
+		controller.disconnect(LocalPlayer.getInstance().getName());
 		connectionWindow.setVisible(true);
 	}
 
 	public void signUpSignal() {
-		for(Component c : getContentPane().getComponents()) {
-			if(c!=connectionWindow)
-				remove(c);
-		}
-		add(new SignUp());
-		connectionWindow.setVisible(false);
+//		for(Component c : getContentPane().getComponents()) {
+//			if(c!=connectionWindow)
+//				remove(c);
+//		}
+//		add(new SignUp());
+//		connectionWindow.setVisible(false);
+		JOptionPane.showMessageDialog(this, "Not implemented yet.");
 	}
 
 	public void signInSignal() {
-		for(Component c : getContentPane().getComponents()) {
-			if(c!=connectionWindow)
-				remove(c);
-		}
-		add(new SignIn());
-		connectionWindow.setVisible(false);
+//		for(Component c : getContentPane().getComponents()) {
+//			if(c!=connectionWindow)
+//				remove(c);
+//		}
+//		add(new SignIn());
+//		connectionWindow.setVisible(false);
+		JOptionPane.showMessageDialog(this, "Not implemented yet.");
 	}
 	
 	// TO CONTINUE...
@@ -81,7 +102,6 @@ public class View extends JFrame {
 		}
 		controller.sendSolution("toto", solution);
 		connectionWindow.setVisible(false);
-		
 	}
 
 }

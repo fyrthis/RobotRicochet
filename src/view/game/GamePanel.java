@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 
 import utils.Phase;
+import model.LocalPlayer;
 import model.Model;
 
 public class GamePanel extends JPanel {
@@ -25,8 +26,6 @@ public class GamePanel extends JPanel {
 	InteractionPanel interaction;
 	
 	Model model;
-
-	public PlayerNamePanel getPlayerNamePanel(){ return this.playerName; }
 	
 	public GamePanel(Model model) {
 		this.model = model;
@@ -51,7 +50,7 @@ public class GamePanel extends JPanel {
 		timer.setPreferredSize(new Dimension(0, 0));
 		state = new StatePanel();
 		state.setPreferredSize(new Dimension(0, 0));
-		playerName = new PlayerNamePanel();
+		playerName = new PlayerNamePanel(LocalPlayer.getInstance().getName());
 		playerName.setPreferredSize(new Dimension(0, 0));
 		round = new RoundBoardPanel();
 		round.setPreferredSize(new Dimension(0, 0));

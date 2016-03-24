@@ -10,7 +10,7 @@ public class PlayerNamePanel extends JPanel {
 	private static final long serialVersionUID = -3456497639330063809L;
 	JTextField playerName;
 
-	public PlayerNamePanel() {
+	public PlayerNamePanel(String name) {
 		setBackground(Color.blue);
 		
 		setLayout(new GridBagLayout());
@@ -21,12 +21,11 @@ public class PlayerNamePanel extends JPanel {
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		
-		playerName = new JTextField("Bob Dylan");
+		playerName = new JTextField(name);
 		playerName.setEditable(false);
 		playerName.setHorizontalAlignment(JTextField.CENTER);
 		add(playerName, c);
 		
 	}
-	
-	public JTextField getPlayerName(){ return this.playerName; }
+
 }

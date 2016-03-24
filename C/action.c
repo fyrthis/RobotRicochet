@@ -71,7 +71,7 @@ int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { /
 
 int bienvenue(char *username, int socket) {
 	//S -> C : BIENVENUE/user/
-    char *msg = (char*)malloc((12+strlen(username))*sizeof(char));
+    char *msg = (char*)malloc((13+strlen(username))*sizeof(char));
     strcpy(msg, "BIENVENUE/");
     strcat(msg, username);
     strcat(msg,"/\n");
@@ -83,7 +83,7 @@ int bienvenue(char *username, int socket) {
 
 int connexion(char *username, int socket) {
     //S -> C : CONNECTE/user/
-    char *msg2 = (char*)malloc((11+strlen(username))*sizeof(char));
+    char *msg2 = (char*)malloc((12+strlen(username))*sizeof(char));
     strcpy(msg2, "CONNECTE/");
     strcat(msg2, username);
     strcat(msg2,"/\n");
@@ -95,7 +95,7 @@ int connexion(char *username, int socket) {
 
 int deconnexion(char *username, int socket) {
 	//S -> C : DECONNEXION/user/
-    char *msg = (char*)malloc((14+strlen(username))*sizeof(char));
+    char *msg = (char*)malloc((15+strlen(username))*sizeof(char));
     strcpy(msg, "DECONNEXION/");
     strcat(msg, username);
     strcat(msg,"/\n");

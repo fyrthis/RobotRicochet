@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include <string.h>
+
 #include "utils.h"
 
 
@@ -31,9 +32,9 @@ char * append_strings(const char * old, const char * new) {
     return out;
 }
 
-char* getCharFromCase(int i, int j) {
+char* getCharFromCase(int grid, int i, int j) { //J'ai remplacé grid[i][j] par int grid, pour que utils reste indépendant de tous
     char* chaine = calloc(sizeof(char), (2*8 + 20 + 1));
-    switch(grid[i][j]){
+    switch(grid){
         case 0:
             //fprintf(stderr, "%s", chaine);
             break;

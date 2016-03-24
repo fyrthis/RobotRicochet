@@ -20,9 +20,18 @@
 #include <time.h>
 #include <math.h>
 
+#ifndef GRID_H 
 #include "grid.h"
+#endif
+
+
+#ifndef CLIENT_H    
 #include "client.h"
+#endif
+
+#ifndef TASK_H 
 #include "task.h"
+#endif
 
 #include <ctype.h>
 #include <unistd.h>
@@ -31,34 +40,21 @@
 #define NB_MAX_THREADS 8
 #define NB_MAX_CLIENTS 50
 
+#include "game_state.h"
+#include "task.h"
 
-int x_r = -1;
-int y_r = -1;
-int x_b = -1;
-int y_b = -1;
-int x_j = -1;
-int y_j = -1;
-int x_v = -1;
-int y_v = -1;
-int x_cible = -1;
-int y_cible = -1;
-
-
-char *gridStr;
 
 char *enigma;
 char *bilan;
 
 int phase = 0;
 int nbTour = 1;
-int currentSolution = -1;
 char *activePlayer;
 
 // Variable qui permet de savoir si le client qui se connecte
 // est le premier ou pas
 int firstLaunch = 0;
 
-char lettreCible;
 
 void handle_request(task_t * task, int thread_id);
 void * handle_tasks_loop(void* data);

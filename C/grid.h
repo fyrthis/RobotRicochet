@@ -7,9 +7,10 @@
 #include <stdlib.h>      /* rand() and srand() functions              */
 
 
-int size_x = 0, size_y = 0;
-int **grid;
-char *gridStr;
+extern int size_x;// = 0;
+extern int size_y;// = 0;
+extern int **grid;
+extern char *gridStr;
 
 int readGridFromFile(char *filename);
 

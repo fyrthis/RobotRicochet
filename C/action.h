@@ -7,8 +7,10 @@
 #include <string.h>
 
 #include "client.h"
-#include "game_state.h"
 
+#include "game_state.h"
+#include "client.h" //Pour envoyer les messages à tout le monde.
+ 
 
 
 int sendMessageAll(char *msg, pthread_mutex_t* p_mutex);

@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <string.h>
 
 #include "grid.h"
 
+int size_x = 0;
+int size_y = 0;
+int **grid = NULL;
+char *gridStr = NULL;
 
 /******************************************
 *                                         *

@@ -8,20 +8,10 @@
 #define __USE_GNU 
 #include <pthread.h>     /* pthread functions and data structures     */
 
-/*MUTEX & CONDITIONS*/
-#ifdef _WIN32
-    // Windows (x64 and x86)
-    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
-#elif __unix__ // all unices, not all compilers
-    // Unix
-    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
-#elif __linux__
-    // linux
-    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
-#elif __APPLE__
-    // Mac OS
-    pthread_mutex_t client_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
-#endif
+#include "utils.h"
+
+
+extern pthread_mutex_t client_mutex;
 
 typedef struct client {
     int socket;
@@ -31,11 +21,11 @@ typedef struct client {
     struct client * next;
 }client_t;
 
-client_t * clients = NULL;
-client_t * last_client = NULL;
+extern client_t * clients;// = NULL;
+extern client_t * last_client;// = NULL;
 
-int nbClients = 0;
-int nbClientsConnecte = 0;
+extern int nbClients;// = 0;
+extern int nbClientsConnecte;// = 0;
 
 void addClient(int socket, char *name, pthread_mutex_t* p_mutex);
 void rmClient(int socket, pthread_mutex_t* p_mutex);

@@ -22,6 +22,8 @@
 
 #include "serveur.h"
 
+// client_t * clients = NULL;  --> ça pourrait très bien être le serveur qui intialise tout .. !!
+
 /******************************************
 *                                         *
 *  Traite la tâche passée en paramètre :  *

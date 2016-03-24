@@ -7,19 +7,19 @@
 #include <string.h>
 
 // Coordonnées des robots    
-int x_r = -1;
-int y_r = -1;
-int x_b = -1;
-int y_b = -1;
-int x_j = -1;
-int y_j = -1;
-int x_v = -1;
-int y_v = -1;
-int x_cible = -1;
-int y_cible = -1;
+extern int x_r;// = -1;
+extern int y_r;// = -1;
+extern int x_b;// = -1;
+extern int y_b;// = -1;
+extern int x_j;// = -1;
+extern int y_j;// = -1;
+extern int x_v;// = -1;
+extern int y_v;// = -1;
+extern int x_cible;// = -1;
+extern int y_cible;// = -1;
 
-char lettreCible;
+extern char lettreCible;
 
-int currentSolution = -1;
+extern int currentSolution;// = -1;
 
 #endif

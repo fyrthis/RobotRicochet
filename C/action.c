@@ -145,7 +145,7 @@ int sendEnigmaBilan(char *enigma, char *bilan, int socket) {
     strcat(msg,"/\n");
 
     printf("%s", msg);
-    if(write(socket,msg,strlen(msg)*sizeof(char)) < 0) {
+    if(write(socket,msg,(strlen(msg)+1)*sizeof(char)) < 0) {
     	perror("Erreur in sendEnigmaBilan, cannot write on socket\n");
     }
 
@@ -157,7 +157,7 @@ int tuAsTrouve(int socket) {
 	char *msgActivePlayer = (char*)malloc(13*sizeof(char));
     strcpy(msgActivePlayer, "TUASTROUVE/");
     fprintf(stderr, "%s\n", msgActivePlayer);
-    if(write(socket,msgActivePlayer,strlen(msgActivePlayer)*sizeof(char))){
+    if(write(socket,msgActivePlayer,(strlen(msgActivePlayer)+1)*sizeof(char))){
     	perror("Erreur in tuAsTrouve, cannot write on socket\n");
     }
 

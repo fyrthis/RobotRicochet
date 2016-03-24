@@ -36,7 +36,7 @@ int sendGrid(char *gridStr, int socket);
 int sendEnigmaBilan(char *enigma, char *bilan, int socket);
 int tuAsTrouve(int socket);
 int ilATrouve(char *username, int solution, int socket);
-int finReflexion(int socket);
+int finReflexion();
 
 
 /********************

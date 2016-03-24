@@ -114,14 +114,14 @@ void handle_request(task_t * task, int thread_id) {
             if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
 
             pch = strtok (NULL, "/");
-            username = (char*)malloc(strlen(pch));
+            username = (char*)malloc(strlen(pch)+1);
             strncpy(username, pch, strlen(pch));
 
 
             // si la phase est toujours a 0, c'est que le serveur a recu la premiere (et unique) solution
             if(phase == 0){
                 phase = 1;
-                activePlayer = (char*)malloc(strlen(pch));
+                activePlayer = (char*)malloc(strlen(pch)+1);
                 strncpy(activePlayer, username, strlen(username));
                 pch = strtok(NULL, "/");
                 currentSolution = atoi(pch);
@@ -145,7 +145,7 @@ void handle_request(task_t * task, int thread_id) {
         else if(strcmp(pch,"ENCHERE")==0)
         {
             pch = strtok (NULL, "/");
-            username = (char*)malloc(strlen(pch));
+            username = (char*)malloc(strlen(pch)+1);
             strncpy(username, pch, strlen(pch));
         }
         else {
@@ -186,7 +186,6 @@ void * handle_tasks_loop(void* data) {
         else {
             printf("(handle_tasks_loop) Thread %d is waiting some task.\n", thread_id);
             if(pthread_cond_wait(&cond_got_task, &task_mutex) != 0) perror("err condition wait ");
-            printf("awaken");
         }
     }
     //Unreachable code bellow

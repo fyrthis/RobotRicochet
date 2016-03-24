@@ -44,6 +44,7 @@ public class View extends JFrame {
 		gamePane.setVisible(false);
 		try {
 			controller.connect(name);
+			gamePane.setNamePlayer(name);
 		} catch (ConnectException e) {
 			JOptionPane.showMessageDialog(this, "Server seems to be offline.");
 			return;
@@ -62,8 +63,8 @@ public class View extends JFrame {
 		this.getContentPane().getComponent(0).setVisible(false);
 		
 		
-		gamePane.revalidate();
-		gamePane.repaint();
+
+
 		gamePane.setVisible(true);
 		this.revalidate();
 		this.repaint();

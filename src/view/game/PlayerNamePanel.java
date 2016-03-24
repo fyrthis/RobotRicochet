@@ -28,4 +28,9 @@ public class PlayerNamePanel extends JPanel {
 		
 	}
 
+	public void setNamePlayer(String name) {
+		playerName.setText(name);
+		
+	}
+
 }

@@ -135,4 +135,9 @@ public class GamePanel extends JPanel {
 		this.add(interaction, c);
 	}
 
+
+	public void setNamePlayer(String name) {
+		playerName.setNamePlayer(name);
+	}
+
 }

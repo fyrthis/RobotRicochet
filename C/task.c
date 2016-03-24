@@ -23,10 +23,10 @@
 
 pthread_cond_t  cond_got_task   = PTHREAD_COND_INITIALIZER;
 
-extern task_t * tasks = NULL;
-extern task_t * last_task = NULL;
+task_t * tasks = NULL;
+task_t * last_task = NULL;
 
-extern int nbTasks = 0;
+int nbTasks = 0;
 
 /******************************************
 *                                         *

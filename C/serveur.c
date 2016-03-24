@@ -446,7 +446,7 @@ int setBilanCurrentSession(){
     }
 
     clients = first_client;
-    bilan = (char *) malloc(sizeAll);
+    bilan = (char *) malloc(sizeAll+1);
     sprintf(bilan, "%d", nbTour);    
     fprintf(stderr, "%s", bilan);
     fprintf(stderr, "SizeAll : %d\n", sizeAll);
@@ -457,7 +457,7 @@ int setBilanCurrentSession(){
             scoreLength = floor(log10(abs(clients->score))) + 1;
         fprintf(stderr, "scoreLength : %d\tclientNameLength : %zu\n", scoreLength, strlen(clients->name));
         fprintf(stderr, "name : %s\n", clients->name);
-        char *user = (char *)calloc(sizeof(char), strlen(clients->name)+scoreLength+3);
+        char *user = (char *)calloc(sizeof(char), strlen(clients->name)+scoreLength+4);
         sprintf(user, "(%s,%d)", clients->name, clients->score);
         fprintf(stderr, "userBuffer : %s\n", user);
         

@@ -16,6 +16,6 @@ int y_v = -1;
 int x_cible = -1;
 int y_cible = -1;
 
-char lettreCible = NULL;
+char lettreCible = ' ';
 
 int currentSolution = -1;

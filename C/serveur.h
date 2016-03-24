@@ -20,19 +20,6 @@
 #include <time.h>
 #include <math.h>
 
-#ifndef GRID_H 
-#include "grid.h"
-#endif
-
-
-#ifndef CLIENT_H    
-#include "client.h"
-#endif
-
-#ifndef TASK_H 
-#include "task.h"
-#endif
-
 #include <ctype.h>
 #include <unistd.h>
 
@@ -42,6 +29,9 @@
 
 #include "game_state.h"
 #include "task.h"
+#include "action.h"
+#include "grid.h"
+#include "client.h"
 
 
 char *enigma;

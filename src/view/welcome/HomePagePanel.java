@@ -43,7 +43,7 @@ public class HomePagePanel extends JPanel implements ActionListener {
 		}else if(e.getSource() == playAsGuest) {
 			System.out.println("Catch Play As Guest Event");
 			window.playAsGuestSignal();
-			controller.connect("yaya");
+			controller.connect("toto");
 		}else
 			System.out.println("Unknow event occured");
 		

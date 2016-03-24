@@ -77,7 +77,7 @@ void handle_request(task_t * task, int thread_id) {
         {
             //ICI SE FAIT LA SUPPRESSION D'UN CLIENT
             pch = strtok (NULL, "/");
-            username = (char*)malloc(strlen(pch));
+            username = (char*)calloc(strlen(pch), sizeof(char));
             strncpy(username, pch, strlen(pch));
             printf(" handle Task SORT\n");
 
@@ -114,14 +114,14 @@ void handle_request(task_t * task, int thread_id) {
             if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
 
             pch = strtok (NULL, "/");
-            username = (char*)malloc(strlen(pch)+1);
+            username = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(username, pch, strlen(pch));
 
 
             // si la phase est toujours a 0, c'est que le serveur a recu la premiere (et unique) solution
             if(phase == 0){
                 phase = 1;
-                activePlayer = (char*)malloc(strlen(pch)+1);
+                activePlayer = (char*)calloc(strlen(pch)+1, sizeof(char));
                 strncpy(activePlayer, username, strlen(username));
                 pch = strtok(NULL, "/");
                 currentSolution = atoi(pch);
@@ -134,7 +134,7 @@ void handle_request(task_t * task, int thread_id) {
             // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé :
             // au lieu de SOLUTION/user/coups on envoie ENCHERE/user/coups
             else {
-                char *msg = (char*)malloc(50*sizeof(char));
+                char *msg = (char*)calloc(50, sizeof(char));
                 sprintf(msg, "Trop tard: une solution a déjà été trouvée...\n");
                 fprintf(stderr, "%s", msg);
                 exit(1);
@@ -145,7 +145,7 @@ void handle_request(task_t * task, int thread_id) {
         else if(strcmp(pch,"ENCHERE")==0)
         {
             pch = strtok (NULL, "/");
-            username = (char*)malloc(strlen(pch)+1);
+            username = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(username, pch, strlen(pch));
         }
         else {
@@ -369,7 +369,7 @@ int main(int argc, char* argv[]) {
 //serveur.c
 int setEnigma(){
     // nbRobots*nbCoordonnées*tailleCoordonnée + nbLettres + nbVirgule + parenthèses + lettreCible
-    enigma = malloc(sizeof(char)*5*2*2 + 10 + 10 + 2 + 1);
+    enigma = calloc(5*2*2 + 10 + 10 + 2 + 1, sizeof(char));
     
     if(firstLaunch == 0){
         // Generation aleatoire des positions des robots

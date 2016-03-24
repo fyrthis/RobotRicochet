@@ -19,7 +19,12 @@ int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
         client_t * client = clients;
         while(client != NULL) {
             if(client->isConnected==0) {
-                write(client->socket,msg,strlen(msg)*sizeof(char));
+                if(write(client->socket,msg,strlen(msg)*sizeof(char)) < 0){
+                    perror("Erreur in tuAsTrouve, cannot write on socket\n");
+                }
+                else {
+                    fprintf(stderr, "Message send to all : %s\n", msg);
+                }
             }
             client = client->next;
         }
@@ -43,9 +48,12 @@ int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { /
         client_t * client = clients;
         while(client != NULL) {
             if(client->isConnected==0 && strcmp(client->name, name)!=0) {
-                fprintf(stderr, "Sending message to %s...\n", client->name);
-                write(client->socket,msg,strlen(msg)*sizeof(char));
-                fprintf(stderr, "Send message to %s !\n", client->name);
+                if(write(client->socket,msg,strlen(msg)*sizeof(char)) < 0){
+                    perror("Erreur in tuAsTrouve, cannot write on socket\n");
+                }
+                else {
+                    fprintf(stderr, "Message send to %s : %s\n", client->name, msg);
+                }
             }
             client = client->next;
         }
@@ -71,19 +79,24 @@ int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { /
 
 int bienvenue(char *username, int socket) {
 	//S -> C : BIENVENUE/user/
-    char *msg = (char*)malloc((13+strlen(username))*sizeof(char));
+    char *msg = (char*)calloc(sizeof(char), 13+strlen(username));
     strcpy(msg, "BIENVENUE/");
     strcat(msg, username);
     strcat(msg,"/\n");
     printf("%s", msg);
-    write(socket,msg,strlen(msg)*sizeof(char));
+    if(write(socket,msg,strlen(msg)*sizeof(char)) < 0){
+        perror("Erreur in bienvenue(), cannot write on socket\n");
+    }
+    else {
+        fprintf(stderr, "Message send to %s : %s\n", username, msg);
+    }
 
     return 0;
 }
 
 int connexion(char *username, int socket) {
     //S -> C : CONNECTE/user/
-    char *msg2 = (char*)malloc((12+strlen(username))*sizeof(char));
+    char *msg2 = (char*)calloc(sizeof(char), (12+strlen(username)));
     strcpy(msg2, "CONNECTE/");
     strcat(msg2, username);
     strcat(msg2,"/\n");
@@ -95,7 +108,7 @@ int connexion(char *username, int socket) {
 
 int deconnexion(char *username, int socket) {
 	//S -> C : DECONNEXION/user/
-    char *msg = (char*)malloc((15+strlen(username))*sizeof(char));
+    char *msg = (char*)calloc(sizeof(char), 15+strlen(username));
     strcpy(msg, "DECONNEXION/");
     strcat(msg, username);
     strcat(msg,"/\n");
@@ -126,8 +139,10 @@ int sendGrid(char *gridStr, int socket) {
     if(write(socket,msg,strlen(msg)*sizeof(char)) < 0){
     	perror("Erreur in sendGrid, cannot write on socket\n");
     }
+    else {
+        fprintf(stderr, "Grid send!\n");
+    }
 
-    fprintf(stderr, "Grid send!\n");
     return 0;
 }
 
@@ -148,20 +163,23 @@ int sendEnigmaBilan(char *enigma, char *bilan, int socket) {
     if(write(socket,msg,(strlen(msg)+1)*sizeof(char)) < 0) {
     	perror("Erreur in sendEnigmaBilan, cannot write on socket\n");
     }
+    else {
+        fprintf(stderr, "Enigma + bilan send!\n");
+    }
 
-    fprintf(stderr, "Enigma + bilan send!\n");
     return 0;
 }
 
 int tuAsTrouve(int socket) {
-	char *msgActivePlayer = (char*)malloc(13*sizeof(char));
-    strcpy(msgActivePlayer, "TUASTROUVE/");
+	char *msgActivePlayer = (char*)calloc(sizeof(char), 13);
+    strcpy(msgActivePlayer, "TUASTROUVE/\n");
     fprintf(stderr, "%s\n", msgActivePlayer);
-    if(write(socket,msgActivePlayer,(strlen(msgActivePlayer)+1)*sizeof(char))){
+    if(write(socket,msgActivePlayer,(strlen(msgActivePlayer)+1)*sizeof(char)) < 0){
     	perror("Erreur in tuAsTrouve, cannot write on socket\n");
     }
-
-    fprintf(stderr, "Sending %s to activePlayer", msgActivePlayer);
+    else {
+        fprintf(stderr, "Message send to activePlayer : %s\n", msgActivePlayer);
+    }
     return 0;
 }
 
@@ -171,8 +189,8 @@ int ilATrouve(char *activePlayer, int solution, int socket) {
     if(solution >= 10)
         currentSolutionLength = floor(log10(abs(currentSolutionLength))) + 1;
 
-    char *msgOtherPlayers = (char*)malloc((14+strlen(activePlayer)+currentSolutionLength)*sizeof(char));
-    sprintf(msgOtherPlayers, "ILATROUVE/%s/%d/", activePlayer, currentSolution);
+    char *msgOtherPlayers = (char*)calloc(sizeof(char), (14+strlen(activePlayer)+currentSolutionLength));
+    sprintf(msgOtherPlayers, "ILATROUVE/%s/%d/\n", activePlayer, currentSolution);
    
     fprintf(stderr, "%s\n", msgOtherPlayers);
     
@@ -181,8 +199,8 @@ int ilATrouve(char *activePlayer, int solution, int socket) {
 }
 
 int finReflexion() {
-    char *msg = (char*) malloc (15*sizeof(char));
-    sprintf(msg, "FINREFLEXION/");
+    char *msg = (char*) calloc (sizeof(char), 15);
+    sprintf(msg, "FINREFLEXION/\n");
     sendMessageAll(msg, &client_mutex);
     return 0;
 }

@@ -105,8 +105,8 @@ public class View extends JFrame {
 		controller.sendSolution("toto", solution);
 	}
 	
-	public void bet(int stroke) {
-		controller.sendBetSignal("toto", stroke);
+	public void betSignal(int stroke) {
+		controller.sendBet("toto", stroke);
 	}
 
 }

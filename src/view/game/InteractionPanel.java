@@ -137,7 +137,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 			else {
 				try {
 					int stroke = Integer.valueOf(betStr);
-					window.bet(stroke);
+					window.betSignal(stroke);
 				}
 				catch(NumberFormatException e1){
 					System.err.println("Erreur: vous essayez d'insérer autre chose qu'un nombre !");

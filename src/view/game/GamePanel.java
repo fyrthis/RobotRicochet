@@ -5,9 +5,8 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
 
-import utils.Phase;
-import model.LocalPlayer;
 import model.Model;
+import utils.Phase;
 
 public class GamePanel extends JPanel {
 	
@@ -47,19 +46,19 @@ public class GamePanel extends JPanel {
 
 	private void initializeAllComponents() {
 		// Note : Need to set preferred size of component otherwise conflict occur with grid constraints
-		timer = new TimerPanel();
+		timer = new TimerPanel(model);
 		timer.setPreferredSize(new Dimension(0, 0));
-		state = new StatePanel();
+		state = new StatePanel(model);
 		state.setPreferredSize(new Dimension(0, 0));
-		playerName = new PlayerNamePanel(LocalPlayer.getInstance().getName());
+		playerName = new PlayerNamePanel(model.getPlayers().getlocalPlayer().getName());
 		playerName.setPreferredSize(new Dimension(0, 0));
-		round = new RoundBoardPanel();
+		round = new RoundBoardPanel(model);
 		round.setPreferredSize(new Dimension(0, 0));
-		grid = new GridPanel();
+		grid = new GridPanel(model);
 		grid.setPreferredSize(new Dimension(0, 0));
-		score = new ScoreBoardPanel();
+		score = new ScoreBoardPanel(model);
 		score.setPreferredSize(new Dimension(0, 0));
-		interaction = new InteractionPanel();
+		interaction = new InteractionPanel(model);
 		interaction.setPanelByPhase(Phase.INITIALISATION);
 		interaction.setPreferredSize(new Dimension(0, 0));
 		

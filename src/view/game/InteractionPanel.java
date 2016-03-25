@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import model.Model;
 import utils.Phase;
 import view.View;
 
@@ -34,8 +35,11 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 	JLabel betLabel;
 	
 	// Phase de resolution
+	Model model;
 	
-	public InteractionPanel() {
+	public InteractionPanel(Model model) {
+		super();
+		this.model=model;
 		setBackground(Color.green);
 		layout = new GroupLayout(this);
 	}

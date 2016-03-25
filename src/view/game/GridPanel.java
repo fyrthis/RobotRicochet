@@ -5,19 +5,15 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import model.Model;
 import view.game.map.Tile;
 
 public class GridPanel extends JPanel implements ComponentListener, Observer {
@@ -63,14 +59,20 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	
 	private Image mainTargetSprite;
 	
-	public GridPanel(){
+	Model model;
+	
+	public GridPanel(Model model){
+		super();
+		this.model=model;
 		this.addComponentListener(this);
 		setBackground(Color.gray);
 		initGrid("res/BasicGrid.txt");
 		readSprites();
 	}
 	
-	public GridPanel(String filename){
+	public GridPanel(String filename, Model model){
+		super();
+		this.model=model;
 		this.addComponentListener(this);
 		initGrid(filename);
 	}
@@ -78,89 +80,6 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	private void initGrid(String filename){
 		//parseFile(filename);
 		//placeColorRoles();
-	}
-
-	private void parseFile(String filename){
-		boolean isSizeLine = true;
-		FileInputStream fstream;
-		try {
-			fstream = new FileInputStream(filename);
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			String strLine;
-			int y = 0;
-
-			//Read File Line By Line
-			while ((strLine = br.readLine()) != null){
-				if(!strLine.contains("##") && !strLine.equals("END")){
-					int space = strLine.indexOf(" ");
-					int end = strLine.length();
-					int nextSpace = strLine.indexOf(" ", space+1);
-					if(isSizeLine){
-						this.size_x = Integer.parseInt(strLine.substring(0, space));
-						this.size_y = Integer.parseInt(strLine.substring(space+1, end));
-						isSizeLine = false;
-
-						this.grid = new Tile[this.size_x][this.size_y];
-					}
-					else {
-						this.grid[0][y] = new Tile(0, 0, Integer.parseInt(strLine.substring(0, space)));
-						for(int x = 1; x < this.size_x-1; x++){
-							this.grid[x][y] = new Tile(x, y, Integer.parseInt(strLine.substring(space+1, nextSpace)));
-							space = strLine.indexOf(" ", space+1);
-							nextSpace = strLine.indexOf(" ", space+1);
-						}
-						this.grid[size_x-1][y] = new Tile(size_x-1, 0, Integer.parseInt(strLine.substring(space+1, end)));
-						y++;
-					}
-				}
-			}
-			
-			br.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	private void placeColorRoles(){
-		/* ## X1 : PLAYER
-		 * ## X2 : CIRCLE
-		 * ## X3 : TRIANGLE
-		 * ## X4 : CROSS
-		 * ## X5 : PLANET
-		 */
-		symbolsGrid = new Tile[size_x][size_y];
-		// ROUGE
-		symbolsGrid[0][0] = new Tile(0, 0, 21);
-		symbolsGrid[14][4] = new Tile(14, 4, 22);
-		symbolsGrid[7][5] = new Tile(7, 5, 23);
-		symbolsGrid[1][13] = new Tile(1, 13, 24);
-		symbolsGrid[14][13] = new Tile(14, 13, 25);
-		// BLEU
-		symbolsGrid[1][2] = new Tile(1, 2, 31);
-		symbolsGrid[6][10] = new Tile(6, 10, 32);
-		symbolsGrid[13][9] = new Tile(13, 9, 33);
-		symbolsGrid[5][2] = new Tile(5, 2, 34);
-		symbolsGrid[9][4] = new Tile(9, 4, 35);
-		// VERT
-		symbolsGrid[12][5] = new Tile(12, 5, 41);
-		symbolsGrid[2][4] = new Tile(2, 4, 42);
-		symbolsGrid[13][1] = new Tile(13, 1, 43);
-		symbolsGrid[10][14] = new Tile(10, 14, 44);
-		symbolsGrid[3][14] = new Tile(3, 14, 45);
-		// JAUNE
-		symbolsGrid[7][4] = new Tile(7, 4, 51);
-		symbolsGrid[9][11] = new Tile(9, 11, 52);
-		symbolsGrid[4][9] = new Tile(4, 9, 53);
-		symbolsGrid[12][6] = new Tile(12, 6, 54);
-		symbolsGrid[1][6] = new Tile(1, 6, 55);
-		// MIX
-		symbolsGrid[7][12] = new Tile(7, 12, 88);
-
 	}
 	
 	public void readSprites(){

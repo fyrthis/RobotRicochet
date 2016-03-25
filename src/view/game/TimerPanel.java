@@ -6,11 +6,16 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import model.Model;
+
 public class TimerPanel extends JPanel {
 	private static final long serialVersionUID = -650268772194032577L;
 	private JTextField timer;
+	Model model;
 
-	public TimerPanel() {
+	public TimerPanel(Model model) {
+		super();
+		this.model = model;
 		setBackground(Color.blue);
 		
 		setLayout(new GridBagLayout());
@@ -26,4 +31,5 @@ public class TimerPanel extends JPanel {
 		timer.setHorizontalAlignment(JTextField.CENTER);
 		add(timer, c);
 	}
+
 }

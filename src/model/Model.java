@@ -2,7 +2,8 @@ package model;
 
 import java.util.StringTokenizer;
 
-import model.Players.Player;
+import players.AbstractPlayer;
+import players.Players;
 
 public class Model {
 	
@@ -144,7 +145,7 @@ public class Model {
 			String[] playerTokens = tokenizer.nextToken().split(",");
 			playerName = playerTokens[0];
 			scorePlayer = Integer.parseInt(playerTokens[1]);
-			for(Player p : players.players){
+			for(AbstractPlayer p : players.getPlayers()){
 				if(p.getName().equals(playerName))
 					p.setScore(scorePlayer);
 			}

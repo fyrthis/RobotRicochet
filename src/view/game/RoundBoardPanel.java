@@ -11,7 +11,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import model.Players.Player;
+import model.Model;
+import players.AbstractPlayer;
 
 public class RoundBoardPanel extends JPanel implements Observer {
 	private static final long serialVersionUID = 6809209443540036320L;
@@ -22,9 +23,12 @@ public class RoundBoardPanel extends JPanel implements Observer {
     GridBagConstraints c = new GridBagConstraints();
     JTable table;;
     JScrollPane scrollPane;
+	private Model model;
 
 
-	public RoundBoardPanel() {
+	public RoundBoardPanel(Model model) {
+		super();
+		this.model=model;
 		setBackground(Color.yellow);
 		
 		setLayout(new GridBagLayout());
@@ -59,10 +63,10 @@ public class RoundBoardPanel extends JPanel implements Observer {
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		//receives players as arg ; sort and display
-		List<Player> players = (List<Player>)arg;
+		List<AbstractPlayer> players = (List<AbstractPlayer>)arg;
 		Object[][] data = new Object[players.size()][3];
 		for(int i = 0; i<players.size() ; i++) {
-			Player p = players.get(i);
+			AbstractPlayer p = players.get(i);
 			Object[] obj = {i, p.getName(), p.getCoups() }; 
 			data[i] = obj;
 		}

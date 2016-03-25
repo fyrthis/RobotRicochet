@@ -12,8 +12,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
 
-import model.LocalPlayer;
-import model.Players.Player;
+import model.Model;
+import players.Players.Player;
 
 public class ScoreBoardPanel extends JPanel implements Observer {
 	private static final long serialVersionUID = -8480066475856062513L;
@@ -21,8 +21,11 @@ public class ScoreBoardPanel extends JPanel implements Observer {
 	String[] columnNames = {"Pos.", "Player", "Score"};
 	JTable table;
 	JScrollPane scrollPane;
-
-	public ScoreBoardPanel() {
+	Model model;
+	
+	public ScoreBoardPanel(Model model) {
+		super();
+		this.model=model;
 		setBackground(Color.yellow);
 		
 		setLayout(new GridBagLayout());
@@ -58,6 +61,7 @@ public class ScoreBoardPanel extends JPanel implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
+		@SuppressWarnings("unchecked")
 		ArrayList<Player> players = (ArrayList<Player>) arg;
 		ArrayList<Player> sortConnectedPlayers = new ArrayList<>();
 		
@@ -74,10 +78,10 @@ public class ScoreBoardPanel extends JPanel implements Observer {
 		Object[][] data = new Object[sortConnectedPlayers.size()+1][3];
 		int i=0;
 		for(Player p : players) {
-			if(LocalPlayer.getInstance().getScore() < p.getScore()) {
+			if(model.getPlayers().getlocalPlayer().getScore() < p.getScore()) {
 				data[i][0] = (i+1)+".";
-				data[i][1] = LocalPlayer.getInstance().getName();
-				data[i][2] = LocalPlayer.getInstance().getScore();
+				data[i][1] = model.getPlayers().getlocalPlayer().getName();
+				data[i][2] = model.getPlayers().getlocalPlayer().getScore();
 				i++;
 			}
 			data[i][0] = (i+1)+".";

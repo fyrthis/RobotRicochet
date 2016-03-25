@@ -9,7 +9,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import controller.Controller;
-import model.LocalPlayer;
 import model.Model;
 import utils.AskNameDialog;
 import utils.Phase;
@@ -83,7 +82,7 @@ public class View extends JFrame {
 			if(c!=connectionWindow)
 				remove(c);
 		}
-		controller.disconnect(LocalPlayer.getInstance().getName());
+		controller.disconnect(model.getPlayers().getlocalPlayer().getName());
 		connectionWindow.setVisible(true);
 	}
 
@@ -109,11 +108,11 @@ public class View extends JFrame {
 	
 	// TO CONTINUE...
 	public void sendSolutionSignal(int solution) {
-		controller.sendSolution(LocalPlayer.getInstance().getName(), solution);
+		controller.sendSolution(model.getPlayers().getlocalPlayer().getName(), solution);
 	}
 	
 	public void betSignal(int stroke) {
-		controller.sendBet(LocalPlayer.getInstance().getName(), stroke);
+		controller.sendBet(model.getPlayers().getlocalPlayer().getName(), stroke);
 	}
 
 }

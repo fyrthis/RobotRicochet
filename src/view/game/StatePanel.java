@@ -6,14 +6,19 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import model.Model;
+
 public class StatePanel extends JPanel {
 	private static final long serialVersionUID = -5838924958575253423L;
 	private String reflexion = "Phase de réflexion";
 	//private String enchere = "Phase d'enchères";
 	//private String resolution = "Phase de résolution";
 	private JTextField stateTitle;
+	Model model;
 	
-	public StatePanel() {
+	public StatePanel(Model model) {
+		super();
+		this.model=model;
 		setBackground(Color.green);
 		
 		setLayout(new GridBagLayout());

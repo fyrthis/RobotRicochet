@@ -71,7 +71,7 @@ public class ScoreBoardPanel extends JPanel implements Observer {
 		sortByScore(sortConnectedPlayers);
 		
 		//On remplit le JTable
-		Object[][] data = new Object[sortConnectedPlayers.size()][3];
+		Object[][] data = new Object[sortConnectedPlayers.size()+1][3];
 		int i=1;
 		for(Player p : players) {
 			if(LocalPlayer.getInstance().getScore() < p.getScore()) {

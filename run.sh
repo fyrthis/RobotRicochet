@@ -15,7 +15,7 @@ javac -d binaries $(find ./src/* | grep .java)
 valgrind --track-origins=yes ./C/serveur &
 
 #We suppose here server takes 5 seconds to be ready
-sleep 5
+#sleep 5
 
 # launch N clients
 

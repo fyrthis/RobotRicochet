@@ -8,11 +8,11 @@
 
 int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
     if(pthread_mutex_lock(p_mutex) < 0){
-    	perror("Error on sendMessageAll, cannot lock the p_mutex\n");
+    	perror("(Server:action.c:sendMessageAll) : Error on sendMessageAll, cannot lock the p_mutex\n");
     }
     
     if(clients==NULL) {
-        printf("(sendMessageAll)Aucun client. Should never happened\n");
+        printf("(Server:action.c:sendMessageAll) : Aucun client. Should never happened\n");
     //} else if(clients) { TODO : Si qu'un client
     //    printf("(sendMessageAll)Un seul client. Should never happened\n");
     } else {
@@ -20,17 +20,17 @@ int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
         while(client != NULL) {
             if(client->isConnected==0) {
                 if(write(client->socket,msg,(strlen(msg)*sizeof(char))) < 0){
-                    perror("Erreur in tuAsTrouve, cannot write on socket\n");
+                    perror("(Server:action.c:sendMessageAll) : Erreur in tuAsTrouve, cannot write on socket\n");
                 }
                 else {
-                    fprintf(stderr, "Message send to all : %s\n", msg);
+                    fprintf(stderr, "(Server:action.c:sendMessageAll) : Message send to all : %s\n", msg);
                 }
             }
             client = client->next;
         }
     }
     if(pthread_mutex_unlock(p_mutex) < 0){
-    	perror("Error on sendMessageAll, cannot unlock the p_mutex\n");
+    	perror("(Server:action.c:sendMessageAll) : Error on sendMessageAll, cannot unlock the p_mutex\n");
     }
 
     return 0;
@@ -38,28 +38,28 @@ int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
 
 int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { //Except client with this name
     if(pthread_mutex_lock(p_mutex) < 0){
-    	perror("Error on sendMessageAllExceptOne, cannot lock the p_mutex\n");
+    	perror("(Server:action.c:sendMessageAllExceptOne) : Error on sendMessageAllExceptOne, cannot lock the p_mutex\n");
     }
     fprintf(stderr, "\ttest : %s\n", msg);
     
     if(clients==NULL) {
-        printf("(sendMessageAll)Aucun client. Should never happened\n");
+        printf("(Server:action.c:sendMessageAllExceptOne) : Aucun client. Should never happened\n");
     } else {
         client_t * client = clients;
         while(client != NULL) {
             if(client->isConnected==0 && strcmp(client->name, name)!=0) {
                 if(write(client->socket,msg,(strlen(msg)*sizeof(char))) < 0){
-                    perror("Erreur in tuAsTrouve, cannot write on socket\n");
+                    perror("(Server:action.c:sendMessageAllExceptOne) : Erreur in tuAsTrouve, cannot write on socket\n");
                 }
                 else {
-                    fprintf(stderr, "Message send to %s : %s\n", client->name, msg);
+                    fprintf(stderr, "(Server:action.c:sendMessageAllExceptOne) : Message send to %s : %s\n", client->name, msg);
                 }
             }
             client = client->next;
         }
     }
     if(pthread_mutex_unlock(p_mutex) < 0){
-    	perror("Error on sendMessageAllExceptOne, cannot lock the p_mutex\n");
+    	perror("(Server:action.c:sendMessageAllExceptOne) : cannot unlock the p_mutex\n");
     }
 
     return 0;
@@ -84,10 +84,10 @@ int bienvenue(char *username, int socket) {
     sprintf(msg, "BIENVENUE/%s/\n", username);
     printf("%s", msg);
     if(write(socket,msg,strlen(msg)*sizeof(char)) < 0){
-        perror("Erreur in bienvenue(), cannot write on socket\n");
+        perror("(Server:action.c:bienvenue) :  cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "Message send to %s : %s\n", username, msg);
+        fprintf(stderr, "(Server:action.c:bienvenue) : Message send to %s : %s\n", username, msg);
     }
 
     return 0;
@@ -109,7 +109,7 @@ int deconnexion(char *username, int socket) {
     sprintf(msg, "DECONNEXION/%s/\n", username);
     sendMessageAllExceptOne(msg, username, &client_mutex);
     close(socket);
-    fprintf(stderr, " handle Task SORT\n");
+
     return 0;
 }
 
@@ -124,17 +124,17 @@ int deconnexion(char *username, int socket) {
 
 // S -> C : SESSION/plateau/
 int sendGrid(char *gridStr, int socket) {
-    fprintf(stderr, "Sending the Grid:\n");
+    fprintf(stderr, "(Server:action.c:sendGrid) : Sending the Grid:\n");
    /*Here is the mistake : do not put a char** into a strcat !!*/
     char *msg = (char*)calloc(4096, sizeof(char));
     
     sprintf(msg, "SESSION/%s/\n", gridStr);
     printf("%s", msg);
     if(write(socket,msg,strlen(msg)*sizeof(char)) < 0){
-    	perror("Erreur in sendGrid, cannot write on socket\n");
+    	perror("(Server:action.c:sendGrid) : Erreur in sendGrid, cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "Grid send!\n");
+        fprintf(stderr, "(Server:action.c:sendGrid) : Grid send!\n");
     }
 
     return 0;
@@ -150,17 +150,17 @@ int sendGrid(char *gridStr, int socket) {
 
 // S -> C : TOUR/enigme/bilan
 int sendEnigmaBilan(char *enigma, char *bilan, int socket) {
-    fprintf(stderr, "Sending the Enigma:\n");
+    fprintf(stderr, "(Server:action.c:sendEnigmaBilan) : Sending the Enigma:\n");
     char *msg = (char*)calloc(strlen(enigma)+strlen(bilan)+9, sizeof(char));
     
     sprintf(msg, "TOUR/%s/%s/\n", enigma, bilan);
 
     printf("%s", msg);
     if(write(socket,msg,(strlen(msg)*sizeof(char))) < 0) {
-    	perror("Erreur in sendEnigmaBilan, cannot write on socket\n");
+    	perror("(Server:action.c:sendEnigmaBilan) : Erreur in sendEnigmaBilan, cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "Enigma + bilan send!\n");
+        fprintf(stderr, "(Server:action.c:sendEnigmaBilan) : Enigma + bilan send!\n");
     }
 
     return 0;
@@ -173,10 +173,10 @@ int tuAsTrouve(int socket) {
     sprintf(msgActivePlayer, "TUASTROUVE/\n");
     fprintf(stderr, "%s\n", msgActivePlayer);
     if(write(socket,msgActivePlayer,(strlen(msgActivePlayer))*sizeof(char)) < 0){
-    	perror("Erreur in tuAsTrouve, cannot write on socket\n");
+    	perror("(Server:action.c:tuAsTrouve) : Erreur in tuAsTrouve, cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "Message send to activePlayer : %s\n", msgActivePlayer);
+        fprintf(stderr, "(Server:action.c:tuAsTrouve) : Message send to activePlayer : %s\n", msgActivePlayer);
     }
     return 0;
 }
@@ -188,7 +188,7 @@ int ilATrouve(char *activePlayer, int solution, int socket) {
     char *msgOtherPlayers = (char*)calloc(15+strlen(activePlayer)+currentSolutionLength, sizeof(char));
     sprintf(msgOtherPlayers, "ILATROUVE/%s/%d/\n", activePlayer, currentSolution);
    
-    fprintf(stderr, "%s\n", msgOtherPlayers);
+    fprintf(stderr, "(Server:action.c:ilATrouve) : %s\n", msgOtherPlayers);
     
 	sendMessageAllExceptOne(msgOtherPlayers, activePlayer, &client_mutex);
     return 0;
@@ -210,12 +210,12 @@ int finReflexion() {
 int validation(int socket) {
     char *msg = (char*)calloc(13, sizeof(char));
     sprintf(msg, "VALIDATION/\n");
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, "(Server:action.c:validation) : %s\n", msg);
     if(write(socket,msg,(strlen(msg))*sizeof(char)) < 0){
-        perror("Erreur in validation(), cannot write on socket\n");
+        perror("(Server:action.c:validation) : Erreur in validation(), cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "Message send to the bet sender : %s\n", msg);
+        fprintf(stderr, "(Server:action.c:validation) : Message send to the bet sender : %s\n", msg);
     }
     return 0;
 }
@@ -224,12 +224,12 @@ int validation(int socket) {
 int echec(char *username, int socket) {
 	char *msg = (char*)calloc(9 + strlen(username), sizeof(char));
     sprintf(msg, "ECHEC/%s/\n", username);
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, "(Server:action.c:echec) : %s\n", msg);
     if(write(socket,msg,(strlen(msg))*sizeof(char)) < 0){
-        perror("Erreur in echec(), cannot write on socket\n");
+        perror("(Server:action.c:echec) : Erreur in echec(), cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "Message send to the bet sender : %s\n", msg);
+        fprintf(stderr, "(Server:action.c:echec) : Message send to the bet sender : %s\n", msg);
     }
     return 0;
 }
@@ -239,12 +239,12 @@ int nouvelleEnchere(char *username, int nbCoups, int socket) {
     int nbCoupsLength = getIntLength(nbCoups);
 	char *msg = (char*)calloc(20 + strlen(username) + nbCoupsLength, sizeof(char));
     sprintf(msg, "NOUVELLEENCHERE/%s/%d/\n", username, nbCoups);
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, "(Server:action.c:nouvelleEnchere) : %s\n", msg);
     if(write(socket,msg,(strlen(msg))*sizeof(char)) < 0){
-        perror("Erreur in nouvelleEnchere(), cannot write on socket\n");
+        perror("(Server:action.c:nouvelleEnchere) : Erreur in nouvelleEnchere(), cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "Message send to the bet sender : %s\n", msg);
+        fprintf(stderr, "(Server:action.c:nouvelleEnchere) : Message send to the bet sender : %s\n", msg);
     }
     return 0;
 }
@@ -254,12 +254,12 @@ int finEnchere(char *username, int nbCoups, int socket) {
     int nbCoupsLength = getIntLength(nbCoups);
     char *msg = (char*)calloc(15 + strlen(username) + nbCoupsLength, sizeof(char));
     sprintf(msg, "FINENCHERE/%s/%d/\n", username, nbCoups);
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, "(Server:action.c:finEnchere) : %s\n", msg);
     if(write(socket,msg,(strlen(msg))*sizeof(char)) < 0){
-        perror("Erreur in nouvelleEnchere(), cannot write on socket\n");
+        perror("(Server:action.c:finEnchere) : Erreur in nouvelleEnchere(), cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "Message send to the bet sender : %s\n", msg);
+        fprintf(stderr, "(Server:action.c:finEnchere) : Message send to the bet sender : %s\n", msg);
     }
     return 0;
 }
@@ -272,7 +272,7 @@ int finEnchere(char *username, int nbCoups, int socket) {
 int solutionActive(char *username, char *deplacements, int socket) {
 	char *msg = (char*)calloc(15 + strlen(username) + strlen(deplacements), sizeof(char));
     sprintf(msg, "SASOLUTION/%s/%s/\n", username, deplacements);
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, "(Server:action.c:solutionActive) : %s\n", msg);
     sendMessageAllExceptOne(msg, username, &client_mutex);
     return 0;
 }
@@ -281,7 +281,7 @@ int solutionActive(char *username, char *deplacements, int socket) {
 int bonneSolution(int socket) {
 	char *msg = (char*)calloc(8, sizeof(char));
     sprintf(msg, "BONNE/\n");
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, "(Server:action.c:bonneSolution) : %s\n", msg);
     sendMessageAll(msg, &client_mutex);
     return 0;
 }
@@ -290,7 +290,7 @@ int bonneSolution(int socket) {
 int mauvaiseSolution(char *username, int socket) {
 	char *msg = (char*)calloc(12 + strlen(username), sizeof(char));
     sprintf(msg, "MAUVAISE/%s/\n", username);
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, "(Server:action.c:bonneSolution) : %s\n", msg);
     sendMessageAll(msg, &client_mutex);
     return 0;
 }
@@ -299,7 +299,7 @@ int mauvaiseSolution(char *username, int socket) {
 int finResolution(int socket) {
 	char *msg = (char*)calloc(10, sizeof(char));
     sprintf(msg, "FINRESO/\n");
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, "(Server:action.c:finResolution) : %s\n", msg);
     sendMessageAll(msg, &client_mutex);
     return 0;
 }
@@ -308,12 +308,12 @@ int finResolution(int socket) {
 int tropLong(char *username, int socket) {
 	char *msg = (char*)calloc(12 + strlen(username), sizeof(char));
     sprintf(msg, "TROPLONG/%s/\n", username);
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, "(Server:action.c:tropLong) : %s\n", msg);
     if(write(socket,msg,(strlen(msg))*sizeof(char)) < 0){
-        perror("Erreur in tropLong(), cannot write on socket\n");
+        perror("(Server:action.c:tropLong) : Erreur in tropLong(), cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "Message send to the bet sender : %s\n", msg);
+        fprintf(stderr, "(Server:action.c:tropLong) : Message send to the bet sender : %s\n", msg);
     }
     return 0;
 }

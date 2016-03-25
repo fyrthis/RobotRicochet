@@ -84,26 +84,5 @@ public class Players extends Observable {
 		notifyObservers(players);
 	}
 	
-//	public void sortScores() {
-//		sort(players);
-//	}
-//	public void sortRound() {
-//		sort(round);
-//	}
-//	
-//	private void sort(List<Player> list) {
-//		//Pour les coups, il va y avoir des chagements un par un, donc c'est déjà presque trié => tri par insertion !
-//		int n = list.size();
-//		for(int i = 2; i<n; i++)
-//			for (int k = i; k > 1 && list.get(k).nbCoups < list.get(k-1).nbCoups; k--) 
-//				swap(list, k, k-1);
-//	}
-//	
-//	private void swap(List<Player> list, int i, int j) {
-//		Player p = list.get(i);
-//		list.set(i, list.get(j));
-//		list.set(j, p);
-//	}
-	
 
 }

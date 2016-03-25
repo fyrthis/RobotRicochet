@@ -72,15 +72,15 @@ public class ScoreBoardPanel extends JPanel implements Observer {
 		
 		//On remplit le JTable
 		Object[][] data = new Object[sortConnectedPlayers.size()+1][3];
-		int i=1;
+		int i=0;
 		for(Player p : players) {
 			if(LocalPlayer.getInstance().getScore() < p.getScore()) {
-				data[i][0] = i+".";
+				data[i][0] = (i+1)+".";
 				data[i][1] = LocalPlayer.getInstance().getName();
 				data[i][2] = LocalPlayer.getInstance().getScore();
 				i++;
 			}
-			data[i][0] = i+".";
+			data[i][0] = (i+1)+".";
 			data[i][1] = p.getName();
 			data[i][2] = p.getScore();
 			i++;

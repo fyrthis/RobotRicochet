@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
 
+import utils.Phase;
 import communication.Client;
 import communication.ProtocolException;
 import model.LocalPlayer;
@@ -26,7 +27,6 @@ public class Controller implements Observer {
 		System.out.println("(Client:"+LocalPlayer.getInstance().getName()+")(Controller) sent : CONNEXION/"+name+"/");
 		Client.getInstance().sendMessage("CONNEXION/"+name+"/");
 		LocalPlayer.getInstance().setName(name);
-
 	}
 	public void disconnect(String name) {
 		System.out.println("(Client:"+LocalPlayer.getInstance().getName()+")(Controller) sent : SORT/"+name+"/");
@@ -48,6 +48,10 @@ public class Controller implements Observer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// On va enregistrer le contexte de l'état courant du jeu au moment où un joueur envoie une solution
+		// durant la phase de reflexion
+		model.getGameState().setPhase(Phase.REFLEXION);
+		model.getGameState().setCurrentSolution(solutionInt);
 	}
 	
 	public void sendBet(String name, int solutionInt){
@@ -71,10 +75,6 @@ public class Controller implements Observer {
 			System.out.print("["+i+"]"+tokens[i]+"\t");
 		}
 		System.out.println();
-		System.out.println("long recue : "+tokens[0].length()+" ==? "+"ILATROUVE : "+"ILATROUVE".length());
-		for(int i = 0; i < tokens[0].length() ; i++) {
-			System.out.println("debug:"+tokens[0].charAt(i)+"!");
-		}
 
 		//S->C : BIENVENUE/user/
 		if (tokens.length>1 && tokens[0].compareTo("BIENVENUE")==0) {

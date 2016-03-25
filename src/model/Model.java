@@ -8,16 +8,17 @@ public class Model {
 	
 	Players players;
 	Grid grid;
-	State state;
+	GameState gameState;
 	
 	public Model() {
 		players = new Players();
 		grid = new Grid();
-		state = new State();
+		gameState = new GameState();
 	}
 
 	public Players getPlayers() { return players; }
 	public Grid getGrid() { return grid; }
+	public GameState getGameState() { return gameState; }
 
 	public void playerConnected(String name) {
 		players.add(name);	
@@ -134,7 +135,7 @@ public class Model {
 		int scorePlayer = 0;
 		
 		int tour = Integer.parseInt(buffer.substring(0, 1));
-		this.state.setTour(tour);
+		this.gameState.setTour(tour);
 		buffer = buffer.substring(2, buffer.length()-1);
 		System.out.println(buffer);
 		

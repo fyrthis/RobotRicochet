@@ -1,4 +1,7 @@
 package view.game;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -25,7 +28,7 @@ public class TimerPanel extends JPanel {
 	public TimerPanel(Model model){
 		super();
 		this.model = model;
-		/*
+		
 		setBackground(Color.blue);
 
 		setLayout(new GridBagLayout());
@@ -35,14 +38,14 @@ public class TimerPanel extends JPanel {
 		c.gridy = 0;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
+		add(title);
 
-		timerField = new JTextField("30");
-		timerField.setEditable(false);
-		timerField.setHorizontalAlignment(JTextField.CENTER);
-		add(timerField, c);
-		 */
-		this.time = new JTextField("0");
-
+		c.gridy = 1;
+		time = new JTextField("0");
+		time.setEditable(false);
+		time.setHorizontalAlignment(JTextField.CENTER);
+		add(time, c);
+		
 		int delay = 1000; //milliseconds
 		ActionListener taskPerformer = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -55,7 +58,7 @@ public class TimerPanel extends JPanel {
 	}
 
 	public void update(){
-		Integer currentTime = Integer.getInteger(time.getText());
+		Integer currentTime = Integer.parseInt(time.getText());
 		currentTime++;
 		time.setText(currentTime.toString());
 	}

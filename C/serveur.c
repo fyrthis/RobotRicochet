@@ -141,6 +141,7 @@ void handle_request(task_t * task, int thread_id) {
                 if(pthread_mutex_unlock(&client_mutex) != 0) perror("error mutex");
                 pch = strtok(NULL, "/");
                 currentSolution = atoi(pch);
+                activePlayer->score = currentSolution;
 
                 fprintf(stderr, "Solution trouvée par %s\n", activePlayer->name);
                 tuAsTrouve(task->socket);
@@ -181,7 +182,7 @@ void handle_request(task_t * task, int thread_id) {
                 if(activePlayer != NULL){
                     // si l'enchère propose une solution moins bonne que celle de l'activePlayer
                     // alors le serveur renvoie ECHEC/activePlayer
-                    if(betSolution >= activePlayer->score) {
+                    if(setBilanCurrentSessionolution >= activePlayer->score) {
                         echec(activePlayer->name, task->socket);
                     }
                     // sinon, l'enchère est meilleure que la solution courante:

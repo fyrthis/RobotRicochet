@@ -115,5 +115,10 @@ int readGridFromFile(char *filename) {
 
 
 int isValideSolution(char *deplacements) {
-    
+    int ok = 0;
+
+    // deplacements de la forme: RDRHVDVHVDRB
+
+
+    return ok;
 }

@@ -11,7 +11,7 @@ class Reflexion extends Controller {
 	//(S -> C) Bilan de la session, description de l'énigme courante et initialisation de la phase de réflexion
 	static void tour(String enigme, String bilan) {
 		model.setRobotsFromBuffer(enigme);
-		if(bilan != null || bilan.length()>0)
+		if(bilan != null && bilan.length()>0)
 			model.setBilanCurrentSession(bilan);
 		model.getGrid().update();
 

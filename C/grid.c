@@ -21,7 +21,7 @@ int readGridFromFile(char *filename) {
     FILE* file = fopen(filename, "r"); /* should check the result */
     
     if(file == NULL){
-        perror("Error in readGridFromFile function ");
+        perror("(Server:grid.c:readGridFromFile) : Error in readGridFromFile function ");
         exit(-1);
     }
 
@@ -37,10 +37,10 @@ int readGridFromFile(char *filename) {
     char * pch = strtok(line, " ");
     while(pch != NULL){
         size_x = atoi(pch);
-        printf("size_x: %s\n", pch);
+        printf("(Server:grid.c:readGridFromFile) : size_x: %s\n", pch);
         pch = strtok(NULL, " \n");
         size_y = atoi(pch);
-        printf("size_y: %s\n", pch);
+        printf("(Server:grid.c:readGridFromFile) : size_y: %s\n", pch);
         pch = strtok(NULL, " \n");
     }
 
@@ -50,13 +50,13 @@ int readGridFromFile(char *filename) {
     for(x_tmp = 0; x_tmp < size_x; x_tmp++){
         grid[x_tmp] = malloc(size_y * sizeof(int));
         if(grid[x_tmp] == NULL){
-            printf("\nFailure to allocate for grid[%d]\n", x_tmp);
+            printf("(Server:grid.c:readGridFromFile) : Failure to allocate for grid[%d]\n", x_tmp);
             exit(0);
         }
     }
     gridStr = malloc(4096*sizeof(char));
     if(gridStr == NULL){
-        printf("\nFailure to allocate for gridStr\n");
+        printf("(Server:grid.c:readGridFromFile) : Failure to allocate for gridStr\n");
         exit(0);
     }
 
@@ -117,7 +117,7 @@ int readGridFromFile(char *filename) {
 int isValideSolution(char *deplacements) {
     int ok = 0;
 
-    fprintf(stderr, "le serveur a reçu comme deplacement : %s, et la chaine de caractere fait %d\n", deplacements, strlen(deplacements));
+    fprintf(stderr, "(Server:grid.c:isValideSolution) : le serveur a reçu comme deplacement : %s, et la chaine de caractere fait %d\n", deplacements, strlen(deplacements));
 
     // deplacements de la forme: RDRHVDVHVDRB
     //int index;

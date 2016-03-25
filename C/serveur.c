@@ -39,26 +39,26 @@ void handle_request(task_t * task, int thread_id) {
         /* parse la commande */
         char * pch = (char*)calloc(strlen(task->command)+1, sizeof(char)); // TOKEN
         char* username = NULL;
-        printf ("(handle_request)Splitting string \"%s\" into tokens:\n",task->command);
+        printf ("(Server:serveur.c:handle_request) : Splitting string \"%s\" into tokens:\n",task->command);
         pch = strtok (task->command,"/");
 
         /*Dispatche*/
         if(pch==NULL)
         {
-            printf("(handle_request)ERROR : received something NULL : %s.\n", task->command);
-            perror("(handle_request)ERROR : close socket.\n"); //Maybe need to flush client datastructure ?
+            printf("(Server:serveur.c:handle_request) : ERROR : received something NULL : %s.\n", task->command);
+            perror("(Server:serveur.c:handle_request) : ERROR : close socket.\n"); //Maybe need to flush client datastructure ?
             close(task->socket);
         }
         //C -> S : CONNEXION/user/
         else if(strcmp(pch,"CONNEXION")==0)
         {
             //ADD THE CLIENT
-            printf("(handle_request) : found CONNEXION\n");
+            printf("(Server:serveur.c:handle_request) : found CONNEXION\n");
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(username, pch, strlen(pch));
-            printf("(handle_request) :pch is %s\n",username);
-            printf("(handle_request) : add new client %s\n", username);
+            printf("(Server:serveur.c:handle_request) : pch is %s\n",username);
+            printf("(Server:serveur.c:handle_request) : add new client %s\n", username);
             addClient(task->socket, username, &client_mutex);
 
             bienvenue(username, task->socket);
@@ -79,14 +79,14 @@ void handle_request(task_t * task, int thread_id) {
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch), sizeof(char));
             strncpy(username, pch, strlen(pch));
-            printf(" handle Task SORT\n");
+            printf("(Server:serveur.c:handle_request) : handle Task SORT\n");
 
             if(clients == NULL) {
-                printf("(HandleRequest) Aucun client. Should never happened\n");
+                printf("(Server:serveur.c:handle_request) : Aucun client. Should never happened\n");
             }
 
             else {
-                if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
+                if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
                 client_t *client = clients;
                 while(client != NULL){
                     if(strcmp(client->name, username) == 0) {
@@ -95,15 +95,15 @@ void handle_request(task_t * task, int thread_id) {
                     }
                     client = client->next;
                 }
-                if(pthread_mutex_unlock(&client_mutex) != 0) perror("error mutex");
+                if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
             }
-            if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex on locking variable nbClientsConnecte ");
+            if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex on locking variable nbClientsConnecte ");
             nbClientsConnecte--;
-            if(pthread_mutex_unlock(&client_mutex) != 0) perror("error mutex on unlocking variable nbClientsConnecte ");
+            if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex on unlocking variable nbClientsConnecte ");
             
 
-            printf("(handle_request) :pch is %s\n",username);
-            printf("(handle_request) : add new client %s\n", username);
+            printf("(Server:serveur.c:handle_request) : pch is %s\n",username);
+            printf("(Server:serveur.c:handle_request) : add new client %s\n", username);
             
 
             deconnexion(username, task->socket);
@@ -127,7 +127,7 @@ void handle_request(task_t * task, int thread_id) {
                 char *activePlayerStr = (char*)calloc(strlen(pch)+1, sizeof(char));
                 strncpy(activePlayerStr, username, strlen(username));
                 
-                if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
+                if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
                 client_t *client = clients;
                 while(client != NULL){
                     if(strcmp(client->name, activePlayerStr) == 0) {
@@ -138,12 +138,12 @@ void handle_request(task_t * task, int thread_id) {
                     }
                     client = client->next;
                 }
-                if(pthread_mutex_unlock(&client_mutex) != 0) perror("error mutex");
+                if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
                 pch = strtok(NULL, "/");
                 currentSolution = atoi(pch);
                 activePlayer->score = currentSolution; 
 
-                fprintf(stderr, "Solution trouvée par %s\n", activePlayer->name);
+                fprintf(stderr, "(Server:serveur.c:handle_request) : Solution trouvée par %s\n", activePlayer->name);
                 tuAsTrouve(task->socket);
                 ilATrouve(activePlayer->name, currentSolution, task->socket);
                 // Il faut appeler finReflexion() seulement si personne n'a proposé de solution
@@ -154,16 +154,16 @@ void handle_request(task_t * task, int thread_id) {
             // au lieu de SOLUTION/user/coups on envoie ENCHERE/user/coups
             else {
                 char *msg = (char*)calloc(50, sizeof(char));
-                sprintf(msg, "Trop tard: une solution a déjà été trouvée...\n");
+                sprintf(msg, "(Server:serveur.c:handle_request) : Trop tard: une solution a déjà été trouvée...\n");
                 fprintf(stderr, "%s", msg);
                 exit(1);
             }
-            if(pthread_mutex_unlock(&task_mutex) != 0) perror("error mutex");
+            if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
         }
         //C -> S : ENCHERE/user/coups/
         else if(strcmp(pch,"ENCHERE")==0)
         {
-            if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
+            if(pthread_mutex_lock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
 
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));
@@ -173,7 +173,7 @@ void handle_request(task_t * task, int thread_id) {
             if(phase == 1){
                 //phase = 2;
 
-                fprintf(stderr, "Enchère reçues de la part de %s\n", username);
+                fprintf(stderr, "(Server:serveur.c:handle_request) : Enchère reçues de la part de %s\n", username);
                 
                 // Il faut tester la validité de l'enchère envoyée par le client
                 pch = strtok(NULL, "/");
@@ -198,16 +198,16 @@ void handle_request(task_t * task, int thread_id) {
             else {
                 char *msg = (char*)calloc(50, sizeof(char));
                 sprintf(msg, "la phase d'enchère est terminée...\n");
-                fprintf(stderr, "%s", msg);
+                fprintf(stderr, "(Server:serveur.c:handle_request) : %s", msg);
                 exit(1);
             }
 
-            if(pthread_mutex_unlock(&task_mutex) != 0) perror("error mutex");
+            if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
         }
         // erreur dans le protocole, à redéfinir mais correspond à l'envoi de la solution
         // proposée par le joueur actif lors de la phase de résolution
         else if(strcmp(pch,"ENVOISOLUTION")==0) {
-            if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
+            if(pthread_mutex_lock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
 
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));
@@ -220,7 +220,7 @@ void handle_request(task_t * task, int thread_id) {
                 pch = strtok (NULL, "/");
                 char *deplacements = (char*)calloc(strlen(pch)+1, sizeof(char));
                 strncpy(deplacements, pch, strlen(pch));
-                fprintf(stderr, "Solution proposée par le joueur actif \"%s\" : %s\n", username, deplacements);
+                fprintf(stderr, "(Server:serveur.c:handle_request) : Solution proposée par le joueur actif \"%s\" : %s\n", username, deplacements);
 
                 solutionActive(username, deplacements, task->socket);
 
@@ -237,17 +237,17 @@ void handle_request(task_t * task, int thread_id) {
             else {
                 char *msg = (char*)calloc(50, sizeof(char));
                 sprintf(msg, "La phase n'a pas été mise à jour...\n");
-                fprintf(stderr, "%s", msg);
+                fprintf(stderr, "(Server:serveur.c:handle_request) : %s", msg);
                 exit(1);
             }
 
-            if(pthread_mutex_unlock(&task_mutex) != 0) perror("error mutex");
+            if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
         }
         else {
-            fprintf(stderr, "(handle_request)ERROR : received bad protocol : %s.\n", task->command);
+            fprintf(stderr, "(Server:serveur.c:handle_request) : ERROR : received bad protocol : %s.\n", task->command);
         }
     }
-    printf("FIN handle_request.\n");
+    printf("(Server:serveur.c:handle_request) : FIN handle_request.\n");
 }
 
 
@@ -261,31 +261,31 @@ void handle_request(task_t * task, int thread_id) {
 // serveur.c
 void * handle_tasks_loop(void* data) {
 
-    puts("handle_task_loop began");
+    puts("(Server:serveur.c:handle_tasks_loop) : handle_task_loop began");
     task_t * taskWeDo;
     int thread_id = *((int*)data);
 
     /* lock the mutex, to access the tasks list exclusively. */
-    if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
+    if(pthread_mutex_lock(&task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : error mutex");
 
     while (1) {
         if (nbTasks > 0) { /* a request is pending */
             taskWeDo = getTask(&task_mutex);
             //printf("(handle_tasks_loop) Thread %d got task %s.\n", thread_id, taskWeDo->command);
             if (taskWeDo) { /* got a request - handle it and free it */
-                printf("(handle_tasks_loop) Thread %d handles task %s.\n", thread_id, taskWeDo->command);
+                printf("(Server:serveur.c:handle_tasks_loop) : Thread %d handles task %s.\n", thread_id, taskWeDo->command);
                 handle_request(taskWeDo, thread_id);
                 free(taskWeDo);
             }
         }
         else {
-            printf("(handle_tasks_loop) Thread %d is waiting some task.\n", thread_id);
-            if(pthread_cond_wait(&cond_got_task, &task_mutex) != 0) perror("err condition wait ");
+            printf("(Server:serveur.c:handle_tasks_loop) : Thread %d is waiting some task.\n", thread_id);
+            if(pthread_cond_wait(&cond_got_task, &task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : err condition wait ");
         }
     }
     //Unreachable code bellow
-    if(pthread_mutex_unlock(&task_mutex) != 0) perror("error mutex");
-    puts("handle_task_loop ended");
+    if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : error mutex");
+    puts("(Server:serveur.c:handle_tasks_loop) :  ended");
 }
 
 
@@ -300,17 +300,17 @@ void * handle_tasks_loop(void* data) {
 
 int main(int argc, char* argv[]) {
     //INITIALIZE SERVER
-    printf("(Main)Initialize server...\n");
-    printf("(Main)Initialize threads...\n");
+    printf("(Server:serveur.c:main) : Initialize server...\n");
+    printf("(Server:serveur.c:main) : Initialize threads...\n");
     int        i;                               /* loop counter          */
     int        thr_id[NB_MAX_THREADS];          /* thread IDs            */
     pthread_t  p_threads[NB_MAX_THREADS];       /* thread's structures   */
     for (i=0; i<NB_MAX_THREADS; i++) {
         thr_id[i] = i;
         pthread_create(&p_threads[i], NULL, handle_tasks_loop, (void*)&thr_id[i]);
-        printf("(Main)Thread %d created and ready\n", i);
+        printf("(Server:serveur.c:main) : Thread %d created and ready\n", i);
     }
-    printf("(Main)Initialize server socket...\n");
+    printf("(Server:serveur.c:main) : Initialize server socket...\n");
     int port = 2048;
     int socket_server;
     int socket_client;
@@ -326,32 +326,32 @@ int main(int argc, char* argv[]) {
         readGridFromFile("./res/BasicGrid.txt");
     }
     
-    printf("\nsetting port : %d\n", port);
+    printf("(Server:serveur.c:main) : setting port : %d\n", port);
     socket_server = socket(AF_INET, SOCK_STREAM, 0);
    
     if (socket_server < 0) {
-        perror("(Main)ERROR opening server socket\n");
+        perror("(Server:serveur.c:main) : ERROR opening server socket\n");
         exit(1);
     } else {
-        puts("(Main)The server socket is now open\n");
+        puts("(Server:serveur.c:main) : The server socket is now open\n");
     }
 
 
     /* A enlver ultérieurement, sert à éviter le bind already in use */
     if (setsockopt(socket_server, SOL_SOCKET, SO_REUSEADDR, &(int){ 1 }, sizeof(int)) < 0)
-        perror("setsockopt(SO_REUSEADDR) failed");
+        perror("(Server:serveur.c:main) : setsockopt(SO_REUSEADDR) failed");
     /* ************************************************************** */
     bzero((char *) &server_address, sizeof(server_address));
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
     server_address.sin_port = htons(port);
     if (bind(socket_server, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
-       perror("ERROR on binding\n");
+       perror("(Server:serveur.c:main) : ERROR on binding\n");
        exit(1);
     }
 
 
-    printf("(Main)Start listenning with %d simultaneously clients max\n",NB_MAX_CLIENTS);
+    printf("(Server:serveur.c:main) : Start listenning with %d simultaneously clients max\n",NB_MAX_CLIENTS);
     
     
 
@@ -366,15 +366,14 @@ int main(int argc, char* argv[]) {
         int socket;
         int n;
         testfds = readfds;
-        printf("(Main)server waiting\n");
+        printf("(Server:serveur.c:main) : server waiting\n");
 
         while( (select_result = select(FD_SETSIZE, &testfds, (fd_set *)0, (fd_set *)0, (struct timeval *) 0)) < 1) {
-            perror("");
-            fprintf(stderr, "error select : Fenêtre fermee brutalement cote client ?\nselect val : %d (%d)\n", select_result, errno);
-            if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
-            printf("Etat de la liste des clients : \n");
+            fprintf(stderr, "(Server:serveur.c:main) : error select : Fenêtre fermee brutalement cote client ?\nselect val : %d (%d)\n", select_result, errno);
+            if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
+            printf("(Server:serveur.c:main) : Etat de la liste des clients : \n");
             if(clients==NULL) {
-                printf("Aucun client. Erreur dans le select non geree...\n");
+                printf("(Server:serveur.c:main) : Aucun client. Erreur dans le select non geree...\n");
                 exit(1);
             } else {
                 int i = 1;
@@ -382,7 +381,7 @@ int main(int argc, char* argv[]) {
                 while(client != NULL) {
                     //printf("client %d : [name:%s ; socket:%d]\n", i, client->name, client->socket);
                     if(fcntl(client->socket, F_GETFL) == -1 && errno == EBADF) {
-                        printf("error on socket %d\n", client->socket); //The client with the corrupted file descriptor socket.
+                        printf("(Server:serveur.c:main) : error on socket %d\n", client->socket); //The client with the corrupted file descriptor socket.
                         printClientsState(&client_mutex);
                         client->isConnected = 1;
                         nbClientsConnecte--;
@@ -396,7 +395,7 @@ int main(int argc, char* argv[]) {
                 }
                 continue;
             }
-            if(pthread_mutex_unlock(&client_mutex) != 0) perror("error mutex");
+            if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
         }
         
         for(socket = 0; socket < FD_SETSIZE; socket++) {
@@ -405,44 +404,32 @@ int main(int argc, char* argv[]) {
                     client_size = sizeof(client_address);
                     socket_client = accept(socket_server, (struct sockaddr *)&client_address, &client_size);
                     FD_SET(socket_client, &readfds); //Add socket file descriptor to the set
-                    printf("(Main)New socket connection on %d\n", socket_client);
+                    printf("(Server:serveur.c:main) : New socket connection on %d\n", socket_client);
                 }
                 else {
                     n = read(socket,buffer,255);
                     if(n == 0) {
-                        printf("Main received empty message from %d.\n", socket);
-                        printf("debug : 0.0\n");
+                        printf("(Server:serveur.c:main) : Main received empty message from %d.\n", socket);
                         FD_CLR(socket, &readfds);
-                        printf("debug : 0.1\n");
                         FD_CLR(socket, &testfds);
-                        //TODO : chercher le client responsable responsable, et isConnected = false;
-                        printf("debug : 1\n");
-                        if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
+                        if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
                         client_t *client = clients;
-                        printf("debug : 2\n");
                         while(client != NULL){
-                            printf("debug : 3\n");
                             if(client->socket == socket) {
-                                printf("debug : 4\n");
                                 client->isConnected = 1;
                                 break;
                             }
-                            printf("debug : 5\n");
                             client = client->next;
                         }
-                        printf("debug : 6");
-                        if(client==NULL) printf("error : client null\n");
-                        if(pthread_mutex_unlock(&client_mutex) != 0) perror("error mutex");
-                        printf("debug : 6\n");
+                        if(client==NULL) printf("(Server:serveur.c:main) : error : client null\n");
+                        if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
                         sprintf(buffer, "SORT/%s/", client->name);
-                        printf("debug : 7\n");
                         addTask(socket, buffer, &task_mutex, &cond_got_task);
 
-                        printf("debug : 8\n");
                         break;
                     }
-                    printf("(Main)Server received %d bytes from %d.\n", n, socket);
-                    printf("(Main)Server received %s from %d.\n", buffer, socket);
+                    printf("(Server:serveur.c:main) : Server received %d bytes from %d.\n", n, socket);
+                    printf("(Server:serveur.c:main) : Server received %s from %d.\n", buffer, socket);
                     addTask(socket, buffer, &task_mutex, &cond_got_task);
                 }
             } else {
@@ -518,10 +505,10 @@ int setEnigma(){
 *********************************************/
 //serveur.c
 int setBilanCurrentSession(){
-    fprintf(stderr, "Setting the bilan of the current session:\n");
+    fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : Setting the bilan of the current session:\n");
 
     if(clients == NULL) {
-        fprintf(stderr, "ERREUR: la liste des clients est nulle\n");
+        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : ERREUR: la liste des clients est nulle\n");
         exit(EXIT_FAILURE);
     }
 
@@ -538,16 +525,16 @@ int setBilanCurrentSession(){
     clients = first_client;
     bilan = (char *) malloc(sizeAll+1);
     sprintf(bilan, "%d", nbTour);    
-    fprintf(stderr, "%s", bilan);
+    fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : %s", bilan);
     fprintf(stderr, "SizeAll : %d\n", sizeAll);
     fprintf(stderr, "toto1\n");
     while(clients != NULL){
         int scoreLength = getIntLength(clients->score);
-        fprintf(stderr, "scoreLength : %d\tclientNameLength : %zu\n", scoreLength, strlen(clients->name));
-        fprintf(stderr, "name : %s\n", clients->name);
+        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : scoreLength : %d\tclientNameLength : %zu\n", scoreLength, strlen(clients->name));
+        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : name : %s\n", clients->name);
         char *user = (char *)calloc(sizeof(char), strlen(clients->name)+scoreLength+4);
         sprintf(user, "(%s,%d)", clients->name, clients->score);
-        fprintf(stderr, "userBuffer : %s\n", user);
+        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : userBuffer : %s\n", user);
         
         sprintf(bilan,"%s%s", bilan, user);
         clients = clients->next;
@@ -555,8 +542,8 @@ int setBilanCurrentSession(){
 
     clients = first_client;
 
-    fprintf(stderr, "Bilan : %s\n", bilan);
-    fprintf(stderr, "Bilan current session set!\n");
+    fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : Bilan : %s\n", bilan);
+    fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : Bilan current session set!\n");
 
     return 0;
 }

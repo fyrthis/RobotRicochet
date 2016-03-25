@@ -48,23 +48,23 @@ int nbClientsConnecte = 0;
 void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
     client_t * client = NULL;
     if(pthread_mutex_lock(p_mutex) < 0) {
-    	perror("Error : on addClient, cannot lock the first p_mutex\n");
+    	perror("(Server:client.c:addClient) : on addClient, cannot lock the first p_mutex\n");
     }
     if((client=findClient(socket, name))!=NULL) {
     /*Client déjà connecté*/
         if(client->isConnected==0) {
-            printf("(addClient)Client %s deja connecte !\n", name);
+            printf("(Server:client.c:addClient) : Client %s deja connecte !\n", name);
             if(pthread_mutex_unlock(p_mutex) < 0) {
-    			perror("Error : on addClient, cannot unlock the p_mutex when an already connected client asks for a new connection\n");
+    			perror("(Server:client.c:addClient) : on addClient, cannot unlock the p_mutex when an already connected client asks for a new connection\n");
     		}
     	}
     /*Précédemment connecté, reprise de partie*/
         else {
             client->isConnected=0;
             client->socket = socket;
-            printf("(addClient)Client %s se reconnecte !\n", name);
+            printf("(Server:client.c:addClient) : Client %s se reconnecte !\n", name);
             if(pthread_mutex_lock(p_mutex) < 0) {
-    			perror("Error : on addClient, cannot unlock the p_mutex when the client has already been connected before\n");
+    			perror("(Server:client.c:addClient) : on addClient, cannot unlock the p_mutex when the client has already been connected before\n");
     		}
             nbClientsConnecte++;
         }
@@ -73,7 +73,7 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
     /*nouveau client*/
     client = (client_t*)malloc(sizeof(client_t));
     if (!client) {
-		fprintf(stderr, "(addClient) out of memory.\n");
+		fprintf(stderr, "(Server:client.c:addClient) : out of memory.\n");
 		exit(1);
     }
     client->socket = socket;
@@ -95,12 +95,12 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
 
     nbClients++;
 
-    printf("add_request: added client with socket '%d'\n", client->socket);
+    printf("(Server:client.c:addClient) : added client with socket '%d'\n", client->socket);
     fflush(stdout);
 
     printClientsState(&client_mutex);
     if(pthread_mutex_unlock(p_mutex) < 0) {
-    	perror("Error : on addClient, cannot unlock the final p_mutex, in the end of the instanciation of the new client\n");
+    	perror("(Server:client.c:addClient) : cannot unlock the final p_mutex, in the end of the instanciation of the new client\n");
     }
     
 }
@@ -145,17 +145,17 @@ client_t *findClient(int socket, char * name) {
 
 void printClientsState(pthread_mutex_t* p_mutex) {
     if(pthread_mutex_lock(p_mutex) < 0) {
-    	perror("Error : on printClientState, cannot lock the first p_mutex\n");
+    	perror("(Server:client.c:printClientsState) : cannot lock the first p_mutex\n");
     }
     
-    printf("Etat de la liste des %d clients : \n", nbClients);
+    printf("(Server:client.c:printClientsState) : Etat de la liste des %d clients : \n", nbClients);
     if(clients==NULL) {
-        printf("Aucun client.\n");
+        printf("(Server:client.c:printClientsState) : Aucun client.\n");
     } else {
         int i = 1;
         client_t * client = clients;
         while(client != NULL) {
-            printf("client %d : [name:%s ; socket:%d ; connected:", i, client->name, client->socket);
+            printf("(Server:client.c:printClientsState) : client %d : [name:%s ; socket:%d ; connected:", i, client->name, client->socket);
             if(client->isConnected==0) {
                 puts("true].\n");
             } else {
@@ -166,7 +166,7 @@ void printClientsState(pthread_mutex_t* p_mutex) {
         }
     }
     if(pthread_mutex_unlock(p_mutex) < 0) {
-    	perror("Error : on printClientState, cannot unlock the final p_mutex\n");
+    	perror("(Server:client.c:printClientsState) : cannot unlock the final p_mutex\n");
     }
     
 }

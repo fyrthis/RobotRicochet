@@ -3,12 +3,13 @@ package controller;
 import java.util.Observable;
 
 import model.Model;
+import players.AbstractPlayer;
 import players.Players;
 import utils.Phase;
 
 class Resolution extends Observable  {
 
-	private Players.Player activeUser;
+	private AbstractPlayer activeUser;
 
 	private Model model;
 	

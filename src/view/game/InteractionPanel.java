@@ -15,6 +15,8 @@ import view.View;
 public class InteractionPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 7052828873819286307L;
 	
+
+	GroupLayout layout;
 	Phase phase;
 
 	JButton backButton;
@@ -29,9 +31,11 @@ public class InteractionPanel extends JPanel implements ActionListener {
 	JTextField betEntry;
 	JLabel betLabel;
 	
+	// Phase de resolution
+	
 	public InteractionPanel() {
 		setBackground(Color.green);
-		
+		layout = new GroupLayout(this);
 	}
 	
 	
@@ -40,7 +44,6 @@ public class InteractionPanel extends JPanel implements ActionListener {
 		// plus tard peut etre faire une sorte de chargement/initialisation de la map avant de passer
 		// a la phase de reflexion
 		if(phase == Phase.INITIALISATION){
-			GroupLayout layout = new GroupLayout(this);
 	        setLayout(layout);
 	        
 	        setSolutionLabel = new JLabel("Annoncez votre solution : ");
@@ -70,8 +73,11 @@ public class InteractionPanel extends JPanel implements ActionListener {
 			sendSolutionButton.addActionListener(this);
 		}
 		else if(phase == Phase.ENCHERE){
-			GroupLayout layout = new GroupLayout(this);
-	        setLayout(layout);
+			this.remove(setSolutionLabel);
+			this.remove(solutionEntry);
+			this.remove(sendSolutionButton);
+
+			setLayout(layout);
 	        
 	        betLabel = new JLabel("Proposez une meillere solution : ");
 			betEntry = new JTextField(5);
@@ -86,7 +92,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 							.addComponent(betButton))
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-							.addComponent(betButton)));
+							.addComponent(backButton)));
 			layout.setHorizontalGroup(
 					layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)

@@ -5,13 +5,17 @@ import model.Model;
 class Resolution extends Controller  {
 
 	private Resolution(Model model) { super(model);	}
+
+	//SOLUTION/user/deplacements/
+	//(C -> S) Envoi de la solution proposée par le joueur actif.
+	static void solution(String user, String deplacements) {
+		
+	}
 	
 	//SASOLUTION/user/deplacements/
 	//(S -> C) Signalement aux clients de la solution proposée
 	static void saSolution(String user, String deplacements) {
-		/**
-		 * Signalement de ce qu'il se passe : mise en place d'une animation pour montrer la solution proposée ?
-		 */
+		
 	}
 	
 	//BONNE/

@@ -2,6 +2,8 @@ package view.game;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -12,7 +14,7 @@ import javax.swing.JTextField;
 import utils.Phase;
 import view.View;
 
-public class InteractionPanel extends JPanel implements ActionListener {
+public class InteractionPanel extends JPanel implements ActionListener, Observer {
 	private static final long serialVersionUID = 7052828873819286307L;
 	
 
@@ -79,7 +81,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 
 			setLayout(layout);
 	        
-	        betLabel = new JLabel("Proposez une meillere solution : ");
+	        betLabel = new JLabel("Proposez une meilleure solution : ");
 			betEntry = new JTextField(5);
 			betButton = new JButton("Bet your better solution");
 			
@@ -126,7 +128,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 				try {
 					int solution = Integer.valueOf(solutionStr);
 					window.sendSolutionSignal(solution);
-					setPanelByPhase(Phase.ENCHERE);
+					//setPanelByPhase(Phase.ENCHERE);
 				}
 				catch(NumberFormatException e1){
 					System.err.println("Erreur: vous essayez d'insérer autre chose qu'un nombre !");
@@ -150,5 +152,14 @@ public class InteractionPanel extends JPanel implements ActionListener {
 			}
 		}
 		
+	}
+
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		Phase phase = (Phase) arg;
+		this.setPanelByPhase(phase);
+		System.out.println("receive notifyObserver from the GameState...");
 	}
 }

@@ -12,6 +12,7 @@ import controller.Controller;
 import model.LocalPlayer;
 import model.Model;
 import utils.AskNameDialog;
+import utils.Phase;
 import view.game.GamePanel;
 import view.welcome.HomePagePanel;
 
@@ -40,6 +41,12 @@ public class View extends JFrame {
 		if(name == null) return; //user a annulé.
 		
 		gamePane = new GamePanel(model);
+		
+		// On initialise le contexte courant du jeu
+		model.getGameState().setPhase(Phase.REFLEXION);
+		model.getGameState().setTour(1);
+		model.getGameState().setCurrentSolution(-1);
+		
 		add(gamePane);
 		gamePane.setVisible(false);
 		try {

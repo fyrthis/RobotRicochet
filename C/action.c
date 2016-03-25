@@ -80,9 +80,7 @@ int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { /
 int bienvenue(char *username, int socket) {
 	//S -> C : BIENVENUE/user/
     char *msg = (char*)calloc(sizeof(char), 13+strlen(username));
-    strcpy(msg, "BIENVENUE/");
-    strcat(msg, username);
-    strcat(msg,"/\n");
+    sprintf(msg, "BIENVENUE/%s/\n", username);
     printf("%s", msg);
     if(write(socket,msg,strlen(msg)*sizeof(char)) < 0){
         perror("Erreur in bienvenue(), cannot write on socket\n");
@@ -96,12 +94,10 @@ int bienvenue(char *username, int socket) {
 
 int connexion(char *username, int socket) {
     //S -> C : CONNECTE/user/
-    char *msg2 = (char*)calloc(sizeof(char), (12+strlen(username)));
-    strcpy(msg2, "CONNECTE/");
-    strcat(msg2, username);
-    strcat(msg2,"/\n");
-    printf("%s", msg2);
-    sendMessageAllExceptOne(msg2, username, &client_mutex);
+    char *msg = (char*)calloc(sizeof(char), (12+strlen(username)));
+    sprintf(msg, "CONNECTE/%s/\n", username);
+    printf("%s", msg);
+    sendMessageAllExceptOne(msg, username, &client_mutex);
 
     return 0;
 }
@@ -109,10 +105,7 @@ int connexion(char *username, int socket) {
 int deconnexion(char *username, int socket) {
 	//S -> C : DECONNEXION/user/
     char *msg = (char*)calloc(sizeof(char), 15+strlen(username));
-    strcpy(msg, "DECONNEXION/");
-    strcat(msg, username);
-    strcat(msg,"/\n");
-    printf("%s", msg);
+    sprintf(msg, "DECONNEXION/%s/\n", username);
     sendMessageAllExceptOne(msg, username, &client_mutex);
     close(socket);
     fprintf(stderr, " handle Task SORT\n");
@@ -132,9 +125,8 @@ int sendGrid(char *gridStr, int socket) {
     fprintf(stderr, "Sending the Grid:\n");
    /*Here is the mistake : do not put a char** into a strcat !!*/
     char *msg = (char*)calloc(sizeof(char), 4096);
-    strcpy(msg, "SESSION/");
-    strcat(msg, gridStr);
-    strcat(msg,"/\n");
+    
+    sprintf(msg, "SESSION/%s/\n", gridStr);
     printf("%s", msg);
     if(write(socket,msg,strlen(msg)*sizeof(char)) < 0){
     	perror("Erreur in sendGrid, cannot write on socket\n");
@@ -153,14 +145,11 @@ int sendGrid(char *gridStr, int socket) {
 int sendEnigmaBilan(char *enigma, char *bilan, int socket) {
     fprintf(stderr, "Sending the Enigma:\n");
     char *msg = (char*)calloc(sizeof(char), strlen(enigma)+strlen(bilan)+9);
-    strcpy(msg, "TOUR/");
-    strcat(msg, enigma);
-    strcat(msg,"/");
-    strcat(msg, bilan);
-    strcat(msg,"/\n");
+    
+    sprintf(msg, "TOUR/%s/%s/\n", enigma, bilan);
 
     printf("%s", msg);
-    if(write(socket,msg,(strlen(msg)+1)*sizeof(char)) < 0) {
+    if(write(socket,msg,(strlen(msg)*sizeof(char))) < 0) {
     	perror("Erreur in sendEnigmaBilan, cannot write on socket\n");
     }
     else {
@@ -172,9 +161,9 @@ int sendEnigmaBilan(char *enigma, char *bilan, int socket) {
 
 int tuAsTrouve(int socket) {
 	char *msgActivePlayer = (char*)calloc(sizeof(char), 13);
-    strcpy(msgActivePlayer, "TUASTROUVE/\n");
+    sprintf(msgActivePlayer, "TUASTROUVE/\n");
     fprintf(stderr, "%s\n", msgActivePlayer);
-    if(write(socket,msgActivePlayer,(strlen(msgActivePlayer)+1)*sizeof(char)) < 0){
+    if(write(socket,msgActivePlayer,(strlen(msgActivePlayer))*sizeof(char)) < 0){
     	perror("Erreur in tuAsTrouve, cannot write on socket\n");
     }
     else {
@@ -199,7 +188,7 @@ int ilATrouve(char *activePlayer, int solution, int socket) {
 }
 
 int finReflexion() {
-    char *msg = (char*) calloc (sizeof(char), 15);
+    char *msg = (char*) calloc (15, sizeof(char));
     sprintf(msg, "FINREFLEXION/\n");
     sendMessageAll(msg, &client_mutex);
     return 0;

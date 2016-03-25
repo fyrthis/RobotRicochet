@@ -4,7 +4,6 @@ import java.util.Observable;
 
 import model.Model;
 import players.AbstractPlayer;
-import players.Players;
 import utils.Phase;
 
 class Resolution extends Observable  {
@@ -36,6 +35,7 @@ class Resolution extends Observable  {
 	//(S -> C) Solution refusée (à tous les clients), nouvelle phase de résolution, 'user' joueur actif.
 	void mauvaise(String user) {
 		//LocalPlayer actif, comme on est dans la phase de résolution, on sait que c'est à lui de jouer
+		activeUser = model.getPlayers().get(user);
 	}
 	
 	//FINRESO/

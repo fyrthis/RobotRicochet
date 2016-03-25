@@ -71,6 +71,10 @@ public class Controller implements Observer {
 			System.out.print("["+i+"]"+tokens[i]+"\t");
 		}
 		System.out.println();
+		System.out.println("long recue : "+tokens[0].length()+" ==? "+"ILATROUVE : "+"ILATROUVE".length());
+		for(int i = 0; i < tokens[0].length() ; i++) {
+			System.out.println("debug:"+tokens[0].charAt(i)+"!");
+		}
 
 		//S->C : BIENVENUE/user/
 		if (tokens.length>1 && tokens[0].compareTo("BIENVENUE")==0) {

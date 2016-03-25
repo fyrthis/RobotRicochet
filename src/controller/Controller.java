@@ -12,12 +12,24 @@ import communication.ProtocolException;
 import model.LocalPlayer;
 import model.Model;
 
-public class Controller extends Observable implements Observer {
+public class Controller implements Observer {
 	//FIELDS
 	protected static Model model;
+	
+	//Sous-traitants
+	DebutSession ds;
+	DeconnexionConnexion dc;
+	Enchere enc;
+	Reflexion ref;
+	Resolution res;
 
 	public Controller(Model model) {
 		Controller.model=model;
+		ds = new DebutSession(model);
+		dc = new DeconnexionConnexion(model);
+		enc = new Enchere(model);
+		ref = new Reflexion(model);
+		res = new Resolution(model);
 	}
 
 	public void connect(String name) throws ConnectException, UnknownHostException, IOException {
@@ -79,80 +91,80 @@ public class Controller extends Observable implements Observer {
 
 		//S->C : BIENVENUE/user/
 		if (tokens.length>1 && tokens[0].compareTo("BIENVENUE")==0) {
-			DeconnexionConnexion.bienvenue(tokens[1]);
+			dc.bienvenue(tokens[1]);
 
 			//S->C : CONNECTE/user/
 		} else if (tokens.length>1 && tokens[0].compareTo("CONNECTE")==0) {
-			DeconnexionConnexion.connecte(tokens[1]);
+			dc.connecte(tokens[1]);
 			
 			//S->C :DECONNEXION/user/
 		} else if (tokens.length>1 && tokens[0].compareTo("DECONNEXION")==0) {
-			DeconnexionConnexion.deconnexion(tokens[1]);
+			dc.deconnexion(tokens[1]);
 			
 			//S->C : SESSION/plateau/size_x/size_y
 		} else if (tokens.length>1 && tokens[0].compareTo("SESSION")==0) {
 			if(tokens.length==2)
-				DebutSession.session(tokens[1]);
+				ds.session(tokens[1]);
 			else if(tokens.length > 3)
 				try {
-					DebutSession.session(tokens[1], Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]));
+					ds.session(tokens[1], Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]));
 				}catch(NumberFormatException e){ System.err.println("(Client:"+LocalPlayer.getInstance().getName()+")received wrong Session/plateau protocol"); }
 		
 		//S->C : VAINQUEUR/bilan/
 		} else if (tokens.length>1 && tokens[0].compareTo("VAINQUEUR")==0){
-			DebutSession.vainqueur(tokens[1]);
+			ds.vainqueur(tokens[1]);
 			
 		//S->C : TOUR/enigme/bilan/
 		} else if (tokens.length>1 && tokens[0].compareTo("TOUR")==0){
-			Reflexion.tour(tokens[1], tokens[2]);
+			ref.tour(tokens[1], tokens[2]);
 			
 		//S->C : TUASTROUVE/
 		} else if (tokens.length>0 && tokens[0].compareTo("TUASTROUVE")==0) {
-			Reflexion.tuAsTrouve();
+			ref.tuAsTrouve();
 			
 		//S->C : ILATROUVE/user/coups/
 		} else if (tokens.length>2 && tokens[0].compareTo("ILATROUVE")==0) {
-			Reflexion.ilATrouve(tokens[1], tokens[2]);
+			ref.ilATrouve(tokens[1], tokens[2]);
 			
 		//S->C : FINREFLEXION/
 		} else if (tokens.length>0 && tokens[0].compareTo("FINREFLEXION")==0) {
-			Reflexion.finReflexion();
+			ref.finReflexion();
 	
 		//S->C : VALIDATION/
 		} else if (tokens.length>0 && tokens[0].compareTo("VALIDATION")==0) {
-			Enchere.validation();
+			enc.validation();
 			
 		//S->C : ECHEC/user/
 		} else if (tokens.length>1 && tokens[0].compareTo("ECHEC")==0) {
-			Enchere.echec(tokens[1]);
+			enc.echec(tokens[1]);
 			
 		//S->C : NOUVELLEENCHERE/user/coups/
 		} else if (tokens.length>2 && tokens[0].compareTo("NOUVELLEENCHERE")==0) {
-			Enchere.nouvelleEnchere(tokens[1], tokens[2]);
+			enc.nouvelleEnchere(tokens[1], tokens[2]);
 			
 		//S->C : FINENCHERE/user/coups/
 		} else if (tokens.length>2 && tokens[0].compareTo("FINENCHERE")==0) {
-			Enchere.finEnchere(tokens[1], tokens[2]);
+			enc.finEnchere(tokens[1], tokens[2]);
 			
 		//S->C : SASOLUTION/user/deplacements/
 		} else if (tokens.length>2 && tokens[0].compareTo("SASOLUTION")==0) {
-			Resolution.saSolution(tokens[1], tokens[2]);
+			res.saSolution(tokens[1], tokens[2]);
 			
 		//S->C : BONNE/
 		} else if (tokens.length>0 && tokens[0].compareTo("BONNE")==0) {
-			Resolution.bonne();
+			res.bonne();
 			
 		//S->C : MAUVAISE/
 		} else if (tokens.length>0 && tokens[0].compareTo("MAUVAISE")==0) {
-			Resolution.mauvaise(tokens[1]);
+			res.mauvaise(tokens[1]);
 			
 		//S->C : FINRESO/
 		} else if (tokens.length>0 && tokens[0].compareTo("FINRESO")==0) {
-			Resolution.finReso();
+			res.finReso();
 			
 		//S->C : TROPLONG/user/
 		} else if (tokens.length>1 && tokens[0].compareTo("TROPLONG")==0) {
-			Resolution.tropLong(tokens[1]);
+			res.tropLong(tokens[1]);
 			
 		} else {
 			//DO NOTHING

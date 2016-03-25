@@ -1,26 +1,32 @@
 package controller;
 
+import java.util.Observable;
+
 import model.Model;
 
-class DeconnexionConnexion extends Controller {
+class DeconnexionConnexion extends Observable {
 
-	private DeconnexionConnexion(Model model) {	super(model); }
+	private Model model;
 	
+	public DeconnexionConnexion(Model model) {
+		this.model = model;
+	}
+
 	//BIENVENUE/user/
 	//(S -> C) Validation de la connexion 'user'
-	static void bienvenue(String user) {
+	void bienvenue(String user) {
 		
 	}
 	
 	//CONNECTE/user/
 	//(S -> C) Signalement de la connexion de 'user' aux autres clients.
-	static void connecte(String user) {
+	void connecte(String user) {
 		model.playerConnected(user);
 	}
 	
 	//DECONNEXION/user/
 	//(S -> C) Signalement de la déconnexion de 'user' aux autres clients.
-	static void deconnexion(String user) {
+	void deconnexion(String user) {
 		model.playerLeaved(user);
 	}
 	

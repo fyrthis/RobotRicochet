@@ -9,11 +9,14 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Observable;
 
+import launcher.Debug;
+
 public class Client extends Observable implements Runnable {
 
 	//PATTERN SINGLETON
 	private Client() {
 		connected = false;
+		this.addObserver(Debug.get());
 	}
 
 	private static class ClientHolder
@@ -34,7 +37,7 @@ public class Client extends Observable implements Runnable {
 
 	private boolean connected = false;
 
-	private int port = 2044;
+	private int port = 2048;
 	private String hostname = "127.0.0.1";
 
 	public void connect() throws ConnectException, UnknownHostException, IOException {
@@ -44,9 +47,10 @@ public class Client extends Observable implements Runnable {
 	public void connect(int port, String hostname) throws UnknownHostException, java.net.ConnectException, IOException {
 		if(connected) { return; } //Already connected
 
-		System.out.println("connecting to host...");
+		Debug.get();
+		System.out.println("(Client:"+Debug.curName+")(Client:connect) : connecting to host...");
 		socket = new Socket(hostname, port);
-		System.out.println("Connected to host");
+		System.out.println("(Client:"+Debug.curName+")(Client:connect) : Connected to host");
 
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(socket.getOutputStream(), true);
@@ -65,11 +69,11 @@ public class Client extends Observable implements Runnable {
 	public void sendMessage(String msg) throws IOException
 	{
 		if(connected) {
-			System.out.println("(Thread) sent : "+msg);
+			System.out.println("(Client:"+Debug.curName+")(Client:sendMessage) sent : "+msg);
 			out.println(msg);
 			out.flush();
 		} else {
-			throw new IOException("Not connected to server");
+			throw new IOException("(Client:"+Debug.curName+")(Client:sendMessage)Not connected to server");
 		}
 	}
 
@@ -83,7 +87,7 @@ public class Client extends Observable implements Runnable {
 		try {
 			while(connected && (msg = in.readLine())!= null)
 			{
-				System.out.println("(Thread) received : "+msg);
+				System.out.println("(Client:"+Debug.curName+")(Client:listenMessages) received : "+msg);
 				this.setChanged();
 				this.notifyObservers(msg);
 			}

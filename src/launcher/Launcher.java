@@ -10,6 +10,7 @@ public class Launcher {
 		Model model = new Model();
 		
 		Controller controller = new Controller(model);
+		Debug.get().setModel(model);
 		new View(model, controller);
 		
 		

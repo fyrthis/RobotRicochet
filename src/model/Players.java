@@ -14,12 +14,15 @@ public class Players extends Observable {
 		
 		Player(String name) {
 			this.name=name;
+			nbPoints = -1;
+			nbCoups = -1;
 			isConnected = true;
 		}
 
 		public String getName() { return name; }
 		public int getScore() { return nbPoints; }
 		public int getCoups() { return nbCoups; }
+		public boolean isConnected() { return isConnected; }
 		
 		public void setScore(int score) { this.nbPoints = score; }
 		public void setNbCoups(int nbCoups) { this.nbCoups = nbCoups; }
@@ -57,12 +60,16 @@ public class Players extends Observable {
 	public void remove(String name) {
 		Player p = get(name);
 		p.isConnected = false;
+		setChanged();
+		notifyObservers(players);
 	}
 	
 	//Nouveau round
 	public void resetRound() {
 		for(Player p : players)
 			p.nbCoups=Integer.MAX_VALUE;
+		setChanged();
+		notifyObservers(players);
 	}
 	
 	//Nouveau jeu/session
@@ -73,6 +80,8 @@ public class Players extends Observable {
 				players.remove(p); //Cette fois, pas besoin de le garder pour son score, tout le monde est à zéro.
 			}
 		}
+		setChanged();
+		notifyObservers(players);
 	}
 	
 //	public void sortScores() {

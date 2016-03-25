@@ -2,6 +2,7 @@ package view.game;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -9,10 +10,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
+
+import model.LocalPlayer;
+import model.Players.Player;
 
 public class ScoreBoardPanel extends JPanel implements Observer {
 	private static final long serialVersionUID = -8480066475856062513L;
 	JTextField title;
+	String[] columnNames = {"Pos.", "Player", "Score"};
+	JTable table;
+	JScrollPane scrollPane;
 
 	public ScoreBoardPanel() {
 		setBackground(Color.yellow);
@@ -35,41 +43,69 @@ public class ScoreBoardPanel extends JPanel implements Observer {
 		c.gridy = 1;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
-        String[] columnNames = {"Pos.",
-                "Player",
-                "Score"};
+        
 
 		Object[][] data = {
-		{"1.", "Smith", new Integer(28)},
-		{"2.", "John", new Integer(21)},
-		{"3.", "Sue", new Integer(19)},
-		{"4.", "Jane", new Integer(6)},
-		{"5.", "Smith", new Integer(3)},
-		{"6.", "John", new Integer(3)},
-		{"7.", "Sue", new Integer(4)},
-		{"8.", "Jane", new Integer(6)},
-		{"9.", "Smith", new Integer(3)},
-		{"10.", "John", new Integer(3)},
-		{"11.", "Sue", new Integer(4)},
-		{"12.", "Jane", new Integer(6)},
-		{"13.", "Smith", new Integer(3)},
-		{"14.", "John", new Integer(3)},
-		{"15.", "Sue", new Integer(4)},
-		{"16.", "Jane", new Integer(6)},
-		{"17.", "Joe", new Integer(7)}
+				{"1.", "Smith", new Integer(28)}
 		};
 		
-		final JTable table = new JTable(data, columnNames);
+		table = new JTable(data, columnNames);
 		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		table.setFillsViewportHeight(true);
-		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane = new JScrollPane(table);
 		add(scrollPane, c);
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-		//receives players as arg ; sort and display
+		ArrayList<Player> players = (ArrayList<Player>) arg;
+		ArrayList<Player> sortConnectedPlayers = new ArrayList<>();
 		
+		//On retranche les joueurs qui ne sont plus connectés.
+		for(Player p : players) {
+			if(p.isConnected()) {
+				sortConnectedPlayers.add(p);
+			}
+		}
+		//On trie les joueurs.
+		sortByScore(sortConnectedPlayers);
+		
+		//On remplit le JTable
+		Object[][] data = new Object[sortConnectedPlayers.size()][3];
+		int i=1;
+		for(Player p : players) {
+			if(LocalPlayer.getInstance().getScore() < p.getScore()) {
+				data[i][0] = i+".";
+				data[i][1] = LocalPlayer.getInstance().getName();
+				data[i][2] = LocalPlayer.getInstance().getScore();
+				i++;
+			}
+			data[i][0] = i+".";
+			data[i][1] = p.getName();
+			data[i][2] = p.getScore();
+			i++;
+		}
+		
+		//On enlèvve l'ancien
+		JViewport viewport = scrollPane.getViewport(); 
+		viewport.remove(table);
+		
+		//On ajoute le nouveau
+		table = new JTable(data, columnNames);
+		table.setFillsViewportHeight(true);
+		viewport.add(table);
+	}
+	
+	private void sortByScore(ArrayList<Player> list) {
+	int n = list.size();
+	for(int i = 2; i<n; i++)
+		for (int k = i; k > 1 && list.get(k).getScore() < list.get(k-1).getScore(); k--) 
+			swap(list, k, k-1);
+}
+
+	private void swap(ArrayList<Player> list, int i, int j) {
+		Player p = list.get(i);
+		list.set(i, list.get(j));
+		list.set(j, p);
 	}
 }

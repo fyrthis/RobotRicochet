@@ -109,11 +109,11 @@ public class View extends JFrame {
 	
 	// TO CONTINUE...
 	public void sendSolutionSignal(int solution) {
-		controller.sendSolution("toto", solution);
+		controller.sendSolution(LocalPlayer.getInstance().getName(), solution);
 	}
 	
 	public void betSignal(int stroke) {
-		controller.sendBet("toto", stroke);
+		controller.sendBet(LocalPlayer.getInstance().getName(), stroke);
 	}
 
 }

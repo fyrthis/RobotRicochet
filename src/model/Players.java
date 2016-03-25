@@ -49,7 +49,7 @@ public class Players extends Observable {
 		this.notifyObservers(players);
 	}
 	
-	private Player get(String name) {
+	public Player get(String name) {
 		for(Player p : players) {
 			if(p.name == name)
 				return p;

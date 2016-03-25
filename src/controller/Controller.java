@@ -12,7 +12,7 @@ import communication.ProtocolException;
 import model.LocalPlayer;
 import model.Model;
 
-public class Controller implements Observer {
+public class Controller extends Observable implements Observer {
 	//FIELDS
 	protected static Model model;
 

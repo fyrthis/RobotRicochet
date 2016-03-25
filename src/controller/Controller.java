@@ -71,21 +71,21 @@ public class Controller implements Observer {
 			System.out.print("["+i+"]"+tokens[i]+"\t");
 		}
 		System.out.println();
-		
+
 		//S->C : BIENVENUE/user/
-		if (tokens.length>1 && tokens[0].equals("BIENVENUE")) {
+		if (tokens.length>1 && tokens[0].compareTo("BIENVENUE")==0) {
 			DeconnexionConnexion.bienvenue(tokens[1]);
 
 			//S->C : CONNECTE/user/
-		} else if (tokens.length>1 && tokens[0].equals("CONNECTE")) {
+		} else if (tokens.length>1 && tokens[0].compareTo("CONNECTE")==0) {
 			DeconnexionConnexion.connecte(tokens[1]);
 			
 			//S->C :DECONNEXION/user/
-		} else if (tokens.length>1 && tokens[0].equals("DECONNEXION")) {
+		} else if (tokens.length>1 && tokens[0].compareTo("DECONNEXION")==0) {
 			DeconnexionConnexion.deconnexion(tokens[1]);
 			
 			//S->C : SESSION/plateau/size_x/size_y
-		} else if (tokens.length>1 && tokens[0].equals("SESSION")) {
+		} else if (tokens.length>1 && tokens[0].compareTo("SESSION")==0) {
 			if(tokens.length==2)
 				DebutSession.session(tokens[1]);
 			else if(tokens.length > 3)
@@ -94,59 +94,59 @@ public class Controller implements Observer {
 				}catch(NumberFormatException e){ System.err.println("(Client:"+LocalPlayer.getInstance().getName()+")received wrong Session/plateau protocol"); }
 		
 		//S->C : VAINQUEUR/bilan/
-		} else if (tokens.length>1 && tokens[0].equals("VAINQUEUR")){
+		} else if (tokens.length>1 && tokens[0].compareTo("VAINQUEUR")==0){
 			DebutSession.vainqueur(tokens[1]);
 			
 		//S->C : TOUR/enigme/bilan/
-		} else if (tokens.length>1 && tokens[0].equals("TOUR")){
+		} else if (tokens.length>1 && tokens[0].compareTo("TOUR")==0){
 			Reflexion.tour(tokens[1], tokens[2]);
 			
 		//S->C : TUASTROUVE/
-		} else if (tokens.length>0 && tokens[0].equals("TUASTROUVE")) {
+		} else if (tokens.length>0 && tokens[0].compareTo("TUASTROUVE")==0) {
 			Reflexion.tuAsTrouve();
 			
 		//S->C : ILATROUVE/user/coups/
-		} else if (tokens.length>2 && tokens[0].equals("ILATROUVE")) {
+		} else if (tokens.length>2 && tokens[0].compareTo("ILATROUVE")==0) {
 			Reflexion.ilATrouve(tokens[1], tokens[2]);
 			
 		//S->C : FINREFLEXION/
-		} else if (tokens.length>0 && tokens[0].equals("FINREFLEXION")) {
+		} else if (tokens.length>0 && tokens[0].compareTo("FINREFLEXION")==0) {
 			Reflexion.finReflexion();
 	
 		//S->C : VALIDATION/
-		} else if (tokens.length>0 && tokens[0].equals("VALIDATION")) {
+		} else if (tokens.length>0 && tokens[0].compareTo("VALIDATION")==0) {
 			Enchere.validation();
 			
 		//S->C : ECHEC/user/
-		} else if (tokens.length>1 && tokens[0].equals("ECHEC")) {
+		} else if (tokens.length>1 && tokens[0].compareTo("ECHEC")==0) {
 			Enchere.echec(tokens[1]);
 			
 		//S->C : NOUVELLEENCHERE/user/coups/
-		} else if (tokens.length>2 && tokens[0].equals("NOUVELLEENCHERE")) {
+		} else if (tokens.length>2 && tokens[0].compareTo("NOUVELLEENCHERE")==0) {
 			Enchere.nouvelleEnchere(tokens[1], tokens[2]);
 			
 		//S->C : FINENCHERE/user/coups/
-		} else if (tokens.length>2 && tokens[0].equals("FINENCHERE")) {
+		} else if (tokens.length>2 && tokens[0].compareTo("FINENCHERE")==0) {
 			Enchere.finEnchere(tokens[1], tokens[2]);
 			
 		//S->C : SASOLUTION/user/deplacements/
-		} else if (tokens.length>2 && tokens[0].equals("SASOLUTION")) {
+		} else if (tokens.length>2 && tokens[0].compareTo("SASOLUTION")==0) {
 			Resolution.saSolution(tokens[1], tokens[2]);
 			
 		//S->C : BONNE/
-		} else if (tokens.length>0 && tokens[0].equals("BONNE")) {
+		} else if (tokens.length>0 && tokens[0].compareTo("BONNE")==0) {
 			Resolution.bonne();
 			
 		//S->C : MAUVAISE/
-		} else if (tokens.length>0 && tokens[0].equals("MAUVAISE")) {
+		} else if (tokens.length>0 && tokens[0].compareTo("MAUVAISE")==0) {
 			Resolution.mauvaise(tokens[1]);
 			
 		//S->C : FINRESO/
-		} else if (tokens.length>0 && tokens[0].equals("FINRESO")) {
+		} else if (tokens.length>0 && tokens[0].compareTo("FINRESO")==0) {
 			Resolution.finReso();
 			
 		//S->C : TROPLONG/user/
-		} else if (tokens.length>1 && tokens[0].equals("TROPLONG")) {
+		} else if (tokens.length>1 && tokens[0].compareTo("TROPLONG")==0) {
 			Resolution.tropLong(tokens[1]);
 			
 		} else {

@@ -2,7 +2,7 @@ package controller;
 
 import model.Model;
 
-public class Resolution extends Controller  {
+class Resolution extends Controller  {
 
 	private Resolution(Model model) { super(model);	}
 

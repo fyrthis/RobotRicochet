@@ -2,7 +2,7 @@ package controller;
 
 import model.Model;
 
-public class Enchere extends Controller {
+class Enchere extends Controller {
 
 	private Enchere(Model model) { super(model); }
 

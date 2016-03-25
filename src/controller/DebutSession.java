@@ -2,7 +2,7 @@ package controller;
 
 import model.Model;
 
-public class DebutSession extends Controller {
+class DebutSession extends Controller {
 
 	private DebutSession(Model model) { super(model); }
 	

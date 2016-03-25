@@ -2,7 +2,7 @@ package controller;
 
 import model.Model;
 
-public class DeconnexionConnexion extends Controller {
+class DeconnexionConnexion extends Controller {
 
 	private DeconnexionConnexion(Model model) {	super(model); }
 	

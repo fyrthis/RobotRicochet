@@ -487,15 +487,10 @@ int setBilanCurrentSession(){
 
     client_t* first_client = clients;
 
-    int nbTourLength = 1;
-    if(nbTour >= 10)
-        nbTourLength = floor(log10(abs(nbTour))) + 1;
-        
+    int nbTourLength = getIntLength(nbTour);
     int sizeAll = nbTourLength;
     while(clients != NULL){
-        int scoreLength = 1;
-        if(clients->score >= 10)
-            scoreLength = floor(log10(abs(clients->score))) + 1;
+        int scoreLength = getIntLength(clients->score);
         sizeAll += (strlen(clients->name) + scoreLength + 3);
         clients = clients->next;
     }
@@ -507,9 +502,7 @@ int setBilanCurrentSession(){
     fprintf(stderr, "SizeAll : %d\n", sizeAll);
     fprintf(stderr, "toto1\n");
     while(clients != NULL){
-        int scoreLength = 1;
-        if(clients->score >= 10)
-            scoreLength = floor(log10(abs(clients->score))) + 1;
+        int scoreLength = getIntLength(clients->score);
         fprintf(stderr, "scoreLength : %d\tclientNameLength : %zu\n", scoreLength, strlen(clients->name));
         fprintf(stderr, "name : %s\n", clients->name);
         char *user = (char *)calloc(sizeof(char), strlen(clients->name)+scoreLength+4);

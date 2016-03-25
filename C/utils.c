@@ -32,6 +32,13 @@ char * append_strings(const char * old, const char * new) {
     return out;
 }
 
+int getIntLength(int i) {
+    int length = 1;
+    if(i >= 10)
+        length = floor(log10(abs(i))) + 1;
+    return length;
+}
+
 char* getCharFromCase(int grid, int i, int j) {
     char* chaine = calloc(sizeof(char), (2*8 + 20 + 1));
     switch(grid){

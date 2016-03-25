@@ -36,6 +36,7 @@
 #include "grid.h"
 #include "client.h"
 #include "game_state.h"
+#include "utils.h"
 
 extern pthread_cond_t  cond_got_task;//   = PTHREAD_COND_INITIALIZER;
 

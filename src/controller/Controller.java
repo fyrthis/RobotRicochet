@@ -49,6 +49,17 @@ public class Controller implements Observer {
 			e.printStackTrace();
 		}
 	}
+	
+	public void sendBet(String name, int solutionInt){
+		String solution = String.valueOf(solutionInt);
+		System.out.println("(Client:"+LocalPlayer.getInstance().getName()+")(Controller) sent : ENCHERE/"+name+"/"+solution+"/");
+		try {
+			Client.getInstance().sendMessage("ENCHERE/"+name+"/"+solution+"/");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {

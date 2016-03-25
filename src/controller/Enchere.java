@@ -2,6 +2,7 @@ package controller;
 
 import java.util.Observable;
 
+import utils.Phase;
 import model.Model;
 
 class Enchere extends Observable {
@@ -22,7 +23,9 @@ class Enchere extends Observable {
 	//VALIDATION/
 	//(S -> C) Validation de l'enchère
 	void validation() {
-		
+		// Permet de changer de la phase d'enchere a la phase de résolution
+		// MAIS NE RESPECTE ABSOLUMENT PAS LE PROTOCOLE DONC A CHANGER DES QUE POSSIBLE
+		model.getGameState().setPhase(Phase.RESOLUTION);
 	}
 	
 	//ECHEC/user/

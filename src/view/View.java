@@ -116,7 +116,7 @@ public class View extends JFrame {
 	}
 	
 	public void resolveMovesSignal(String moves) {
-		controller.sendMoves(moves);
+		controller.sendMoves(model.getPlayers().getlocalPlayer().getName(), moves);
 	}
 
 }

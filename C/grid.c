@@ -120,8 +120,12 @@ int isValideSolution(char *deplacements) {
     fprintf(stderr, "(Server:grid.c:isValideSolution) : le serveur a reçu comme deplacement : %s, et la chaine de caractere fait %d\n", deplacements, strlen(deplacements));
 
     // deplacements de la forme: RDRHVDVHVDRB
-    //int index;
-    //for(index = 0; index < strlen(deplacements))
+    int index;
+    for(index = 0; index < strlen(deplacements); index+=2) {
+        deplacements[index];
+        deplacements[index+1];
+    }
 
+    
     return ok;
 }

@@ -77,6 +77,17 @@ public class Controller implements Observer {
 			e.printStackTrace();
 		}
 	}
+	
+	// On considère que le client qui envoie le deplacement est forcément le joueur actif
+	public void sendMoves(String name, String moves){
+		System.out.println("(Client:"+Debug.curName+")(Controller:sendMoves) sent : ENVOISOLUTION/"+name+"/"+moves+"/");
+		try {
+			Client.getInstance().sendMessage("ENVOISOLUTION/"+name+"/"+moves+"/");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {

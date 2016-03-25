@@ -171,7 +171,7 @@ void handle_request(task_t * task, int thread_id) {
             
             // si la phase est a 1, c'est que le serveur a recu une echere
             if(phase == 1){
-                //phase = 2;
+                phase = 2;
 
                 fprintf(stderr, "(Server:serveur.c:handle_request) : Enchère reçues de la part de %s\n", username);
                 

@@ -15,12 +15,19 @@ import view.View;
 public class InteractionPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 7052828873819286307L;
 	
+	Phase phase;
+
 	JButton backButton;
+	
+	// Phase de reflexion
 	JButton sendSolutionButton;
 	JTextField solutionEntry;
 	JLabel setSolutionLabel;
 	
-	Phase phase;
+	// Phase d'enchere
+	JButton betButton;
+	JTextField betEntry;
+	JLabel betLabel;
 	
 	public InteractionPanel(Phase p) {
 		this.phase = p;
@@ -41,7 +48,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 	        setSolutionLabel = new JLabel("Annoncez votre solution : ");
 			solutionEntry = new JTextField(5);
 			sendSolutionButton = new JButton("Send Solution");
-			backButton = new JButton("Back to home page");
+			backButton = new JButton("Quit game");
 			
 			layout.setVerticalGroup(
 					layout.createSequentialGroup()
@@ -65,7 +72,32 @@ public class InteractionPanel extends JPanel implements ActionListener {
 			sendSolutionButton.addActionListener(this);
 		}
 		else if(this.phase == Phase.ENCHERE){
+			GroupLayout layout = new GroupLayout(this);
+	        setLayout(layout);
+	        
+	        betLabel = new JLabel("Proposez une meillere solution : ");
+			betEntry = new JTextField(5);
+			betButton = new JButton("Bet your better solution");
 			
+			layout.setVerticalGroup(
+					layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(betLabel))
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(betEntry))
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(betButton))
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(betButton)));
+			layout.setHorizontalGroup(
+					layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+							.addComponent(betLabel)
+							.addComponent(betEntry)
+							.addComponent(betButton)
+							.addComponent(backButton)));
+		
+			betButton.addActionListener(this);
 		}
 		else if(this.phase == Phase.RESOLUTION){
 			
@@ -90,6 +122,22 @@ public class InteractionPanel extends JPanel implements ActionListener {
 				try {
 					int solution = Integer.valueOf(solutionStr);
 					window.sendSolutionSignal(solution);
+				}
+				catch(NumberFormatException e1){
+					System.err.println("Erreur: vous essayez d'insérer autre chose qu'un nombre !");
+				}
+			}
+		}
+		else if(e.getSource() == betButton) {
+			View window = (View) this.getParent().getParent().getParent().getParent().getParent();
+			String betStr = betEntry.getText();
+			if(betStr == null){
+				System.err.println("Erreur: vous n'avez rien encheri !");
+			}
+			else {
+				try {
+					int stroke = Integer.valueOf(betStr);
+					window.bet(stroke);
 				}
 				catch(NumberFormatException e1){
 					System.err.println("Erreur: vous essayez d'insérer autre chose qu'un nombre !");

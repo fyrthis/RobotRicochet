@@ -121,14 +121,30 @@ void handle_request(task_t * task, int thread_id) {
             // si la phase est toujours a 0, c'est que le serveur a recu la premiere (et unique) solution
             if(phase == 0){
                 phase = 1;
-                activePlayer = (char*)calloc(strlen(pch)+1, sizeof(char));
-                strncpy(activePlayer, username, strlen(username));
+
+                // On va chercher dans la liste des clients le joueur qui correspond a celui qui a proposé
+                // une solution pour le garder en mémoire en tant que joueur actif (activePlayer)
+                char *activePlayerStr = (char*)calloc(strlen(pch)+1, sizeof(char));
+                strncpy(activePlayerStr, username, strlen(username));
+                
+                if(pthread_mutex_lock(&client_mutex) != 0) perror("error mutex");
+                client_t *client = clients;
+                while(client != NULL){
+                    if(strcmp(client->name, activePlayerStr) == 0) {
+                        // normalement activePlayer étant défini comme un pointeur vers un client déjà existant
+                        // on a ni besoin de l'initialiser avec des malloc, ni besoin de remplir ses champs
+                        activePlayer = client;
+                        break;
+                    }
+                    client = client->next;
+                }
+                if(pthread_mutex_unlock(&client_mutex) != 0) perror("error mutex");
                 pch = strtok(NULL, "/");
                 currentSolution = atoi(pch);
 
-                fprintf(stderr, "Solution trouvée par %s\n", activePlayer);
+                fprintf(stderr, "Solution trouvée par %s\n", activePlayer->name);
                 tuAsTrouve(task->socket);
-                ilATrouve(activePlayer, currentSolution, task->socket);
+                ilATrouve(activePlayer->name, currentSolution, task->socket);
                 finReflexion();
             }
             // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé :
@@ -144,9 +160,46 @@ void handle_request(task_t * task, int thread_id) {
         //C -> S : ENCHERE/user/coups/
         else if(strcmp(pch,"ENCHERE")==0)
         {
+            if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
+
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(username, pch, strlen(pch));
+            
+            // si la phase est a 1, c'est que le serveur a recu une echere
+            if(phase == 1){
+                phase = 2;
+
+                fprintf(stderr, "Enchère envoyée par %s\n", username);
+                
+                // Il faut tester la validité de l'enchère envoyée par le client
+                pch = strtok(NULL, "/");
+                int betSolution = atoi(pch);
+
+                if(activePlayer != NULL){
+                    // si l'enchère propose une solution moins bonne que celle de l'activePlayer
+                    // alors le serveur renvoie ECHEC/activePlayer
+                    if(betSolution >= activePlayer->score) {
+                        echec(activePlayer->name, task->socket);
+                    }
+                    // sinon, l'enchère est meilleure que la solution courante:
+                    // il faut donc mettre a jour la solution courante, et enre
+                    else {
+                        validation(task->socket);
+                    }
+                }
+
+            }
+            // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé :
+            // au lieu de SOLUTION/user/coups on envoie ENCHERE/user/coups
+            else {
+                char *msg = (char*)calloc(50, sizeof(char));
+                sprintf(msg, "Trop tard: une solution a déjà été trouvée...\n");
+                fprintf(stderr, "%s", msg);
+                exit(1);
+            }
+
+            if(pthread_mutex_unlock(&task_mutex) != 0) perror("error mutex");
         }
         else {
             fprintf(stderr, "(handle_request)ERROR : received bad protocol : %s.\n", task->command);

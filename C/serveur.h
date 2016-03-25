@@ -35,6 +35,7 @@
 #include "action.h"
 #include "grid.h"
 #include "client.h"
+#include "game_state.h"
 
 extern pthread_cond_t  cond_got_task;//   = PTHREAD_COND_INITIALIZER;
 
@@ -43,7 +44,6 @@ char *bilan;
 
 int phase = 0;
 int nbTour = 1;
-char *activePlayer;
 
 // Variable qui permet de savoir si le client qui se connecte
 // est le premier ou pas

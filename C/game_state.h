@@ -22,4 +22,7 @@ extern char lettreCible;
 
 extern int currentSolution;// = -1;
 
+client_t *activePlayer;
+//char *activePlayer;
+
 #endif

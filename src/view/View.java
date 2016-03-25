@@ -102,12 +102,11 @@ public class View extends JFrame {
 	
 	// TO CONTINUE...
 	public void sendSolutionSignal(int solution) {
-		for(Component c : getContentPane().getComponents()) {
-			if(c!=connectionWindow)
-				remove(c);
-		}
 		controller.sendSolution("toto", solution);
-		connectionWindow.setVisible(false);
+	}
+	
+	public void bet(int stroke) {
+		controller.sendBetSignal("toto", stroke);
 	}
 
 }

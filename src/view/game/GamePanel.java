@@ -39,6 +39,7 @@ public class GamePanel extends JPanel {
 		model.getPlayers().addObserver(round);
 		model.getPlayers().addObserver(score);
 		model.getGrid().addObserver(grid);
+		model.getGameState().addObserver(interaction);
 		System.out.println("initializeObservers Done");
 		
 	}

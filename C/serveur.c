@@ -172,7 +172,7 @@ void handle_request(task_t * task, int thread_id) {
             if(phase == 1){
                 //phase = 2;
 
-                fprintf(stderr, "Enchère envoyée par %s\n", username);
+                fprintf(stderr, "Enchère reçues de la part de %s\n", username);
                 
                 // Il faut tester la validité de l'enchère envoyée par le client
                 pch = strtok(NULL, "/");
@@ -196,7 +196,46 @@ void handle_request(task_t * task, int thread_id) {
             // au lieu de SOLUTION/user/coups on envoie ENCHERE/user/coups
             else {
                 char *msg = (char*)calloc(50, sizeof(char));
-                sprintf(msg, "Trop tard: une solution a déjà été trouvée...\n");
+                sprintf(msg, "la phase d'enchère est terminée...\n");
+                fprintf(stderr, "%s", msg);
+                exit(1);
+            }
+
+            if(pthread_mutex_unlock(&task_mutex) != 0) perror("error mutex");
+        }
+        // erreur dans le protocole, à redéfinir mais correspond à l'envoi de la solution
+        // proposée par le joueur actif lors de la phase de résolution
+        else if(strcmp(pch,"ENVOISOLUTION")==0) {
+            if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
+
+            pch = strtok (NULL, "/");
+            username = (char*)calloc(strlen(pch)+1, sizeof(char));
+            strncpy(username, pch, strlen(pch));
+
+            
+            // si la phase est a 2 alors on est dans la phase de résolution
+            if(phase == 2) {
+                
+                pch = strtok (NULL, "/");
+                char *deplacements = (char*)calloc(strlen(pch)+1, sizeof(char));
+                strncpy(deplacements, pch, strlen(pch));
+                fprintf(stderr, "Solution proposée par le joueur actif \"%s\" : %s\n", username, deplacements);
+
+                solutionActive(username, deplacements, task->socket);
+
+                if(isValideSolution(deplacements) == 0) {
+                    // Solution acceptée
+                    bonneSolution();
+                }
+                else {
+                    // Il faut mettre àjour l'activePlayer courant en le remplaçant avec
+                    // le joueur ayant le meilleur score après lui
+                    mauvaiseSolution();
+                }
+            }
+            else {
+                char *msg = (char*)calloc(50, sizeof(char));
+                sprintf(msg, "La phase n'a pas été mise à jour...\n");
                 fprintf(stderr, "%s", msg);
                 exit(1);
             }

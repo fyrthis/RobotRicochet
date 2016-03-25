@@ -27,6 +27,7 @@ public class Controller implements Observer {
 		System.out.println("(Client:"+LocalPlayer.getInstance().getName()+")(Controller) sent : CONNEXION/"+name+"/");
 		Client.getInstance().sendMessage("CONNEXION/"+name+"/");
 		LocalPlayer.getInstance().setName(name);
+		model.getPlayers().add(name);
 	}
 	public void disconnect(String name) {
 		System.out.println("(Client:"+LocalPlayer.getInstance().getName()+")(Controller) sent : SORT/"+name+"/");

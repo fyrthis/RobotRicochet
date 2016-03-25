@@ -75,6 +75,5 @@ public class RoundBoardPanel extends JPanel implements Observer {
 		add(scrollPane, c);
 		this.revalidate();
 		this.repaint();
-
 	}
 }

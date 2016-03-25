@@ -66,6 +66,11 @@ public class Controller implements Observer {
 		String message = (String) arg;
 		String[] tokens = message.split("/");
 		System.out.println("(Client:"+LocalPlayer.getInstance().getName()+")(Controller) received : "+message);
+		System.out.print("(Client:"+LocalPlayer.getInstance().getName()+")(Controller) tokens : ");
+		for(int i =0; i<tokens.length;i++) {
+			System.out.print("["+i+"]"+tokens[i]+"\t");
+		}
+		System.out.println();
 		
 		//S->C : BIENVENUE/user/
 		if (tokens.length>1 && tokens[0].equals("BIENVENUE")) {
@@ -87,10 +92,9 @@ public class Controller implements Observer {
 				try {
 					DebutSession.session(tokens[1], Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]));
 				}catch(NumberFormatException e){ System.err.println("(Client:"+LocalPlayer.getInstance().getName()+")received wrong Session/plateau protocol"); }
-		}
 		
 		//S->C : VAINQUEUR/bilan/
-		else if (tokens.length>1 && tokens[0].equals("VAINQUEUR")){
+		} else if (tokens.length>1 && tokens[0].equals("VAINQUEUR")){
 			DebutSession.vainqueur(tokens[1]);
 			
 		//S->C : TOUR/enigme/bilan/

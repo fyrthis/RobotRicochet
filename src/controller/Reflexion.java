@@ -1,5 +1,6 @@
 package controller;
 
+import utils.Phase;
 import model.Model;
 
 class Reflexion extends Controller {
@@ -23,7 +24,6 @@ class Reflexion extends Controller {
 
 	}
 	
-	
 	//TUASTROUVE/
 	//(S -> C) Validation de l'annonce par le serveur, fin de la phase de réflexion
 	static void tuAsTrouve() {
@@ -33,6 +33,12 @@ class Reflexion extends Controller {
 		 * Maj du pnael intéraction
 		 * Maj compteur
 		 */
+		// si on passe dans cette fonction, alors c'est que c'est que le client concerné est le joueur actif :
+		// le serveur a validé sa solution donc on peut simplement changer l'affichage de l'interactionPanel
+		// en passant à la phase d'enchère
+		// ( par opposition a la fonction ilATrouve qui sera recu par tous les autres clients )
+		System.out.println("sending notifyObserver in tuAsTrouve function...");
+		model.getGameState().setPhase(Phase.ENCHERE);
 	}
 	
 	//ILATROUVE/user/coups/
@@ -44,7 +50,14 @@ class Reflexion extends Controller {
 		 * Maj du panel intéraction
 		 * Maj compteur
 		 */
-		
+		// si on passe dans cette fonction, alors c'est que le client concerné n'est pas le joueur qui a proposé
+		// une solution : le serveur lui envoie donc les infos sur le contexte courant du jeu qu'il faut mettre à
+		// jour
+		// => normalement la solution courante à cet instant précis est toujours à -1
+		int activePlayerSolution = Integer.valueOf(coups);
+		model.getGameState().setCurrentSolution(activePlayerSolution);
+		System.out.println("sending notifyObserver in ilATrouve function...");
+		model.getGameState().setPhase(Phase.ENCHERE);
 	}
 	
 	//FINREFLEXION/

@@ -112,3 +112,8 @@ int readGridFromFile(char *filename) {
     return 0;
 
 }
+
+
+int isValideSolution(char *deplacements) {
+    
+}

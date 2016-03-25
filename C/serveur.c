@@ -225,12 +225,12 @@ void handle_request(task_t * task, int thread_id) {
 
                 if(isValideSolution(deplacements) == 0) {
                     // Solution acceptée
-                    bonneSolution();
+                    bonneSolution(task->socket);
                 }
                 else {
                     // Il faut mettre àjour l'activePlayer courant en le remplaçant avec
                     // le joueur ayant le meilleur score après lui
-                    mauvaiseSolution();
+                    mauvaiseSolution(username, task->socket);
                 }
             }
             else {
@@ -310,7 +310,7 @@ int main(int argc, char* argv[]) {
         printf("(Main)Thread %d created and ready\n", i);
     }
     printf("(Main)Initialize server socket...\n");
-    int port = 2043;
+    int port = 2044;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;

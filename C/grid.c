@@ -117,8 +117,11 @@ int readGridFromFile(char *filename) {
 int isValideSolution(char *deplacements) {
     int ok = 0;
 
-    // deplacements de la forme: RDRHVDVHVDRB
+    fprintf(stderr, "le serveur a reçu comme deplacement : %s, et la chaine de caractere fait %d\n", deplacements, strlen(deplacements));
 
+    // deplacements de la forme: RDRHVDVHVDRB
+    //int index;
+    //for(index = 0; index < strlen(deplacements))
 
     return ok;
 }

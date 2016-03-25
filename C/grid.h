@@ -27,5 +27,6 @@ extern int y_cible;// = -1;
 extern char lettreCible;
 
 int readGridFromFile(char *filename);
+int isValideSolution(char *deplacements);
 
 #endif

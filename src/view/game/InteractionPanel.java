@@ -35,6 +35,10 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 	JLabel betLabel;
 	
 	// Phase de resolution
+	JButton resolveButton;
+	JTextField movesEntry;
+	JLabel movesLabel;
+	
 	Model model;
 	
 	public InteractionPanel(Model model) {
@@ -110,7 +114,35 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			betButton.addActionListener(this);
 		}
 		else if(phase == Phase.RESOLUTION){
+			this.remove(betLabel);
+			this.remove(betEntry);
+			this.remove(betButton);
+
+			setLayout(layout);
+	        
+	        movesLabel = new JLabel("Veuillez envoyer votre solution décrivant les déplacements des robots : ");
+			movesEntry = new JTextField(50);
+			resolveButton = new JButton("Send your moves");
 			
+			layout.setVerticalGroup(
+					layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(movesLabel))
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(movesEntry))
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(resolveButton))
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(backButton)));
+			layout.setHorizontalGroup(
+					layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+							.addComponent(movesLabel)
+							.addComponent(movesEntry)
+							.addComponent(resolveButton)
+							.addComponent(backButton)));
+		
+			resolveButton.addActionListener(this);
 		}
 	}
 	
@@ -149,6 +181,21 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 				try {
 					int stroke = Integer.valueOf(betStr);
 					window.betSignal(stroke);
+				}
+				catch(NumberFormatException e1){
+					System.err.println("Erreur: vous essayez d'insérer autre chose qu'un nombre !");
+				}
+			}
+		}
+		else if(e.getSource() == resolveButton) {
+			View window = (View) this.getParent().getParent().getParent().getParent().getParent();
+			String movesStr = movesEntry.getText();
+			if(movesStr == null){
+				System.err.println("Erreur: vous n'avez rien déplacé !");
+			}
+			else {
+				try {
+					window.resolveMovesSignal(movesStr);
 				}
 				catch(NumberFormatException e1){
 					System.err.println("Erreur: vous essayez d'insérer autre chose qu'un nombre !");

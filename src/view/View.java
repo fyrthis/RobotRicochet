@@ -114,5 +114,9 @@ public class View extends JFrame {
 	public void betSignal(int stroke) {
 		controller.sendBet(model.getPlayers().getlocalPlayer().getName(), stroke);
 	}
+	
+	public void resolveMovesSignal(String moves) {
+		controller.sendMoves(moves);
+	}
 
 }

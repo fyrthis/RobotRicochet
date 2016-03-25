@@ -15,7 +15,7 @@ public class Model {
 		grid = new Grid();
 		gameState = new GameState();
 	}
-
+//
 	public Players getPlayers() { return players; }
 	public Grid getGrid() { return grid; }
 	public GameState getGameState() { return gameState; }

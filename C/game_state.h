@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include <string.h>
+#include "client.h"
 
 // Coordonnées des robots    
 extern int x_r;// = -1;

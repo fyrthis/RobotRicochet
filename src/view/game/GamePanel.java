@@ -58,7 +58,8 @@ public class GamePanel extends JPanel {
 		grid.setPreferredSize(new Dimension(0, 0));
 		score = new ScoreBoardPanel();
 		score.setPreferredSize(new Dimension(0, 0));
-		interaction = new InteractionPanel(Phase.INITIALISATION);
+		interaction = new InteractionPanel();
+		interaction.setPanelByPhase(Phase.INITIALISATION);
 		interaction.setPreferredSize(new Dimension(0, 0));
 		
 		//LAYOUT

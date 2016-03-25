@@ -269,7 +269,7 @@ int main(int argc, char* argv[]) {
         printf("(Main)Thread %d created and ready\n", i);
     }
     printf("(Main)Initialize server socket...\n");
-    int port = 2020;
+    int port = 2021;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;

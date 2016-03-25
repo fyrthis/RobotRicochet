@@ -29,19 +29,17 @@ public class InteractionPanel extends JPanel implements ActionListener {
 	JTextField betEntry;
 	JLabel betLabel;
 	
-	public InteractionPanel(Phase p) {
-		this.phase = p;
-		setPanelByPhase();
+	public InteractionPanel() {
 		setBackground(Color.green);
 		
 	}
 	
 	
-	public void setPanelByPhase(){
+	public void setPanelByPhase(Phase phase){
 		// pour le moment aucune distinction entre la phase d'initialisation et la phase de reflexion
 		// plus tard peut etre faire une sorte de chargement/initialisation de la map avant de passer
 		// a la phase de reflexion
-		if(this.phase == Phase.INITIALISATION){
+		if(phase == Phase.INITIALISATION){
 			GroupLayout layout = new GroupLayout(this);
 	        setLayout(layout);
 	        
@@ -71,7 +69,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 			backButton.addActionListener(this);
 			sendSolutionButton.addActionListener(this);
 		}
-		else if(this.phase == Phase.ENCHERE){
+		else if(phase == Phase.ENCHERE){
 			GroupLayout layout = new GroupLayout(this);
 	        setLayout(layout);
 	        
@@ -99,7 +97,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 		
 			betButton.addActionListener(this);
 		}
-		else if(this.phase == Phase.RESOLUTION){
+		else if(phase == Phase.RESOLUTION){
 			
 		}
 	}
@@ -122,6 +120,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 				try {
 					int solution = Integer.valueOf(solutionStr);
 					window.sendSolutionSignal(solution);
+					setPanelByPhase(Phase.ENCHERE);
 				}
 				catch(NumberFormatException e1){
 					System.err.println("Erreur: vous essayez d'insérer autre chose qu'un nombre !");

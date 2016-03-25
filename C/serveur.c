@@ -145,7 +145,9 @@ void handle_request(task_t * task, int thread_id) {
                 fprintf(stderr, "Solution trouvée par %s\n", activePlayer->name);
                 tuAsTrouve(task->socket);
                 ilATrouve(activePlayer->name, currentSolution, task->socket);
-                finReflexion();
+                // Il faut appeler finReflexion() seulement si personne n'a proposé de solution
+                // pendant le laps de temps restant, qu'il faudra implementer dans timer
+                // finReflexion();
             }
             // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé :
             // au lieu de SOLUTION/user/coups on envoie ENCHERE/user/coups

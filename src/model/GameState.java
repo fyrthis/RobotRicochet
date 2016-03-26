@@ -14,6 +14,10 @@ public class GameState extends Observable {
 	public GameState(){
 	}
 	
+	public int getCurrentSolution(){ return currentSolution; }
+	public int getTout(){ return tour; }
+	public Phase getPhase(){ return phase; }
+	
 	public void setTour(int t){ GameState.tour = t; }
 	public void setCurrentSolution(int s){ GameState.currentSolution = s; }
 	public void setPhase(Phase p){

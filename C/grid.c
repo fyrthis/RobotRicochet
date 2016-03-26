@@ -127,9 +127,31 @@ int isValideSolution(char *deplacements) {
     while(index < strlen(deplacements)){
         color = deplacements[index];
         direction = deplacements[index+1];
-        moveRobot(color, direction);
+        if(moveRobot(color, direction) != 0) {
+            perror("error in isValideSolution ");
+        }
 
         index+=2;
+    }
+
+    switch(color){
+        case 'R':
+            if(x_r != x_c || y_r != y_c)
+                ok = -1;
+            break;
+        case 'B':
+            if(x_b != x_c || y_b != y_c)
+                ok = -1;
+            break;
+        case 'J':
+            if(x_j != x_c || y_j != y_c)
+                ok = -1;
+            break;
+        case 'V':
+            if(x_v != x_c || y_v != y_c)
+                ok = -1;
+            break;
+        default:;
     }
 
     return ok;
@@ -306,4 +328,5 @@ int moveRobot(char color, char direction) {
             break;
         default:;
     }
+    return 0;
 }

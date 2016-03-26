@@ -71,11 +71,17 @@ public class Controller implements Observer {
 		String solution = String.valueOf(solutionInt);
 		System.out.println("(Client:"+Debug.curName+")(Controller:sendBet) sent : ENCHERE/"+name+"/"+solution+"/");
 		try {
-			Client.getInstance().sendMessage("ENCHERE/"+name+"/"+solution+"/");
+			if(solutionInt >= model.getGameState().getCurrentSolution()){
+				System.err.println("(Client:"+Debug.curName+")(Controller:sendBet) cannot send : ENCHERE/"+name+"/"+solution+"/ because the new solution is not better than the current one !");
+			}
+			else
+				Client.getInstance().sendMessage("ENCHERE/"+name+"/"+solution+"/");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// Pour l'instant on change de phase dès la premiere enchere mais il faudrait switcher avec le timer
+		model.getGameState().setPhase(Phase.RESOLUTION);
 	}
 	
 	// On considère que le client qui envoie le deplacement est forcément le joueur actif

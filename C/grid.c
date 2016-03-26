@@ -115,7 +115,7 @@ int readGridFromFile(char *filename) {
 
 
 int isValideSolution(char *deplacements) {
-    int ok = 0;
+    int nbCoups = 0;
 
     fprintf(stderr, "(Server:grid.c:isValideSolution) : le serveur a reçu comme deplacement : %s, et la chaine de caractere fait %d\n", deplacements, strlen(deplacements));
 
@@ -129,34 +129,34 @@ int isValideSolution(char *deplacements) {
         direction = deplacements[index+1];
         fprintf(stderr, "color : %c, direction : %c", color, direction);
         if(moveRobot(color, direction) != 0) {
-            perror("error in isValideSolution ");
+            perror("error in calling moveRobot function - wrong move");
             return -2;
         }
-
+        nbCoups++;
         index+=2;
     }
 
     switch(lettreCible){
         case 'R':
             if(x_r != x_cible || y_r != y_cible)
-                ok = -1;
+                return -1;
             break;
         case 'B':
             if(x_b != x_cible || y_b != y_cible)
-                ok = -1;
+                return -1;
             break;
         case 'J':
             if(x_j != x_cible || y_j != y_cible)
-                ok = -1;
+                return -1;
             break;
         case 'V':
             if(x_v != x_cible || y_v != y_cible)
-                ok = -1;
+                return -1;
             break;
         default:;
     }
 
-    return ok;
+    return nbCoups;
 }
 
 

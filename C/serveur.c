@@ -224,7 +224,8 @@ void handle_request(task_t * task, int thread_id) {
 
                 solutionActive(username, deplacements, task->socket);
 
-                if(isValideSolution(deplacements) == 0) {
+                // isValideSolution() renvoie le nombre de deplacements necessaire pour la solution
+                if(isValideSolution(deplacements) == currentSolution) {
                     // Solution acceptée
                     bonneSolution(task->socket);
                 }

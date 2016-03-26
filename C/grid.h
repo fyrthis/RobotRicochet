@@ -28,5 +28,6 @@ extern char lettreCible;
 
 int readGridFromFile(char *filename);
 int isValideSolution(char *deplacements);
+int moveRobot(char color, char direction);
 
 #endif

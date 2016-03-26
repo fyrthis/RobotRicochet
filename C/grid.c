@@ -120,12 +120,76 @@ int isValideSolution(char *deplacements) {
     fprintf(stderr, "(Server:grid.c:isValideSolution) : le serveur a reçu comme deplacement : %s, et la chaine de caractere fait %d\n", deplacements, strlen(deplacements));
 
     // deplacements de la forme: RDRHVDVHVDRB
-    int index;
-    for(index = 0; index < strlen(deplacements); index+=2) {
-        deplacements[index];
-        deplacements[index+1];
+    int index = 0;
+    char color = " ";
+    char direction = " ";
+
+    while(index < strlen(deplacements)){
+        color = deplacements[index];
+        direction = deplacements[index+1];
+        moveRobot(color, direction);
+
+        index+=2;
     }
 
-    
     return ok;
+}
+
+
+int moveRobot(char color, char direction) {
+    switch(color){
+        case 'R':
+            switch(direction) {
+                case 'H':
+                    break;
+                case 'B':
+                    break;
+                case 'G':
+                    break;
+                case 'D':
+                    break;
+                default:;
+            }
+            break;
+        case 'B':
+            switch(direction) {
+                case 'H':
+                    break;
+                case 'B':
+                    break;
+                case 'G':
+                    break;
+                case 'D':
+                    break;
+                default:;
+            }
+            break;
+        case 'J':
+            switch(direction) {
+                case 'H':
+                    break;
+                case 'B':
+                    break;
+                case 'G':
+                    break;
+                case 'D':
+                    break;
+                default:;
+            }
+            break;
+        case 'V':
+            switch(direction) {
+                case 'H':
+                    break;
+                case 'B':
+                    break;
+                case 'G':
+                    break;
+                case 'D':
+                    break;
+                default:;
+            }
+            break;
+        default:;
+    }
 }

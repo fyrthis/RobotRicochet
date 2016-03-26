@@ -29,6 +29,20 @@ class Resolution extends Observable  {
 	//(S -> C) Solution acceptée (à tous les clients), fin du tour.
 	void bonne() {
 		//Update le score : Comme on est dans la phase finale, on sait que quelqu'un a trouvé la solution
+		String moves = model.getGameState().getSolutionMoves();
+		for(int i = 0; i < moves.length(); i+=2){
+			char color = moves.charAt(i);
+			char direction = moves.charAt(i+1);
+			
+			model.getGrid().moveRobot(color, direction);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			model.getGrid().update();
+		}
 	}
 	
 	//MAUVAISE/user/

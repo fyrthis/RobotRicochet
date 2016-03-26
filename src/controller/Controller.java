@@ -92,6 +92,7 @@ public class Controller implements Observer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		model.getGameState().setSolutionMoves(moves);
 	}
 
 	@Override

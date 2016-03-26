@@ -127,6 +127,7 @@ int isValideSolution(char *deplacements) {
     while(index < strlen(deplacements)){
         color = deplacements[index];
         direction = deplacements[index+1];
+        fprintf(stderr, "color : %c, direction : %c", color, direction);
         if(moveRobot(color, direction) != 0) {
             perror("error in isValideSolution ");
         }
@@ -134,7 +135,7 @@ int isValideSolution(char *deplacements) {
         index+=2;
     }
 
-    switch(color){
+    switch(lettreCible){
         case 'R':
             if(x_r != x_cible || y_r != y_cible)
                 ok = -1;

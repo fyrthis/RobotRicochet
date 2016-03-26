@@ -81,8 +81,6 @@ public class Controller implements Observer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// Pour l'instant on change de phase dès la premiere enchere mais il faudrait switcher avec le timer
-		model.getGameState().setPhase(Phase.RESOLUTION);
 	}
 	
 	// On considère que le client qui envoie le deplacement est forcément le joueur actif

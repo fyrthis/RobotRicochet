@@ -47,7 +47,8 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 		this.model=model;
 		setBackground(Color.green);
 		layout = new GroupLayout(this);
-	}
+		setLayout(layout);
+   	}
 	
 	
 	public void setPanelByPhase(Phase phase){
@@ -55,7 +56,6 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 		// plus tard peut etre faire une sorte de chargement/initialisation de la map avant de passer
 		// a la phase de reflexion
 		if(phase == Phase.INITIALISATION){
-	        setLayout(layout);
 	        
 	        setSolutionLabel = new JLabel("Annoncez votre solution : ");
 			solutionEntry = new JTextField(5);
@@ -88,8 +88,6 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			this.remove(solutionEntry);
 			this.remove(sendSolutionButton);
 
-			setLayout(layout);
-	        
 	        betLabel = new JLabel("Proposez une meilleure solution : ");
 			betEntry = new JTextField(5);
 			betButton = new JButton("Bet your better solution");
@@ -119,8 +117,6 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			this.remove(betEntry);
 			this.remove(betButton);
 
-			setLayout(layout);
-	        
 	        movesLabel = new JLabel("Veuillez envoyer votre solution décrivant les déplacements des robots : ");
 			movesEntry = new JTextField(50);
 			resolveButton = new JButton("Send your moves");
@@ -143,6 +139,7 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 							.addComponent(resolveButton)
 							.addComponent(backButton)));
 		
+			System.out.println("======== PHASE DE RESOLUTION ========");
 			resolveButton.addActionListener(this);
 		}
 	}
@@ -189,6 +186,7 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			}
 		}
 		else if(e.getSource() == resolveButton) {
+			System.out.println("\tresolveButton pushed");
 			View window = (View) this.getParent().getParent().getParent().getParent().getParent();
 			String movesStr = movesEntry.getText();
 			System.out.println("\tMOVE : " + movesStr);

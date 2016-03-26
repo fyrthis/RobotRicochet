@@ -90,7 +90,7 @@ public class Players extends Observable {
 			players.add(p);
 		}
 		this.setChanged();
-		this.notifyObservers(players);
+		this.notifyObservers();
 	}
 	
 	public AbstractPlayer get(String name) {
@@ -113,7 +113,7 @@ public class Players extends Observable {
 		for(AbstractPlayer p : players)
 			p.nbCoups=Integer.MAX_VALUE;
 		setChanged();
-		notifyObservers(players);
+		notifyObservers();
 	}
 	
 	//Nouveau jeu/session
@@ -125,7 +125,7 @@ public class Players extends Observable {
 			}
 		}
 		setChanged();
-		notifyObservers(players);
+		notifyObservers();
 	}
 	
 

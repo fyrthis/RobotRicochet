@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
 
+import launcher.Debug;
 import model.Model;
 import utils.Phase;
 
@@ -39,7 +40,7 @@ public class GamePanel extends JPanel {
 		model.getPlayers().addObserver(score);
 		model.getGrid().addObserver(grid);
 		model.getGameState().addObserver(interaction);
-		System.out.println("initializeObservers Done");
+		System.out.println("(Client:"+Debug.curName+")(GamePanel:initializeObservers) initializeObservers Done");
 		
 	}
 

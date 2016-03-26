@@ -13,6 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.JViewport;
 
 import model.Model;
+import players.AbstractPlayer;
 import players.Players.Player;
 
 public class ScoreBoardPanel extends JPanel implements Observer {
@@ -61,12 +62,13 @@ public class ScoreBoardPanel extends JPanel implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
+		
 		@SuppressWarnings("unchecked")
-		ArrayList<Player> players = (ArrayList<Player>) arg;
-		ArrayList<Player> sortConnectedPlayers = new ArrayList<>();
+		ArrayList<AbstractPlayer> players = model.getPlayers().getPlayersAndLocal();
+		ArrayList<AbstractPlayer> sortConnectedPlayers = new ArrayList<>();
 		
 		//On retranche les joueurs qui ne sont plus connectés.
-		for(Player p : players) {
+		for(AbstractPlayer p : players) {
 			if(p.isConnected()) {
 				sortConnectedPlayers.add(p);
 			}
@@ -75,15 +77,9 @@ public class ScoreBoardPanel extends JPanel implements Observer {
 		sortByScore(sortConnectedPlayers);
 		
 		//On remplit le JTable
-		Object[][] data = new Object[sortConnectedPlayers.size()+1][3];
+		Object[][] data = new Object[sortConnectedPlayers.size()][3];
 		int i=0;
-		for(Player p : players) {
-			if(model.getPlayers().getlocalPlayer().getScore() < p.getScore()) {
-				data[i][0] = (i+1)+".";
-				data[i][1] = model.getPlayers().getlocalPlayer().getName();
-				data[i][2] = model.getPlayers().getlocalPlayer().getScore();
-				i++;
-			}
+		for(AbstractPlayer p : players) {
 			data[i][0] = (i+1)+".";
 			data[i][1] = p.getName();
 			data[i][2] = p.getScore();
@@ -100,15 +96,15 @@ public class ScoreBoardPanel extends JPanel implements Observer {
 		viewport.add(table);
 	}
 	
-	private void sortByScore(ArrayList<Player> list) {
+	private void sortByScore(ArrayList<AbstractPlayer> list) {
 	int n = list.size();
 	for(int i = 2; i<n; i++)
 		for (int k = i; k > 1 && list.get(k).getScore() < list.get(k-1).getScore(); k--) 
 			swap(list, k, k-1);
 }
 
-	private void swap(ArrayList<Player> list, int i, int j) {
-		Player p = list.get(i);
+	private void swap(ArrayList<AbstractPlayer> list, int i, int j) {
+		AbstractPlayer p = list.get(i);
 		list.set(i, list.get(j));
 		list.set(j, p);
 	}

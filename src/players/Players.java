@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import launcher.Debug;
+
 /**
  * 
  * Holds every player in the game, including the local player.
@@ -53,7 +55,7 @@ public class Players extends Observable {
 		}
 		
 		@Override public boolean isConnected() { return true;	}
-		@Override public void setConnected(boolean b) { System.err.println("Cannot change local player connection state"); }
+		@Override public void setConnected(boolean b) { System.err.println("(Client:"+Debug.curName+")(Players.LocalPlayer:setConnected)Cannot change local player connection state"); }
 	}
 
 	ArrayList<AbstractPlayer> players;

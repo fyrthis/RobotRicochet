@@ -13,6 +13,7 @@ import java.util.Observer;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import launcher.Debug;
 import model.Model;
 import view.game.map.Tile;
 
@@ -123,7 +124,7 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	
 	public void paint(Graphics g)
 	{
-		System.out.println("---> call paint");
+		System.out.println("(Client:"+Debug.curName+")(GridPanel:paint) ---> call paint");
 		Graphics2D g2 = (Graphics2D)g;
 		super.paint(g2);
 		
@@ -201,7 +202,7 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 				for ( int x = 0; x < symbolsGrid.length; x++ ){
 					int targetMargin = (spriteLength-targetSpriteLength)/2;
 					if(this.symbolsGrid[x][y] != null && this.symbolsGrid[x][y].getValue() != 0){
-						System.out.print("["+x+","+y+"] = "+this.symbolsGrid[x][y] + " | ");
+						System.out.print("(Client:"+Debug.curName+")(GridPanel:paint) ["+x+","+y+"] = "+this.symbolsGrid[x][y] + " | ");
 						switch(this.symbolsGrid[x][y].getValue()){
 						// TARGET
 						case 99:
@@ -278,7 +279,7 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 			}
 		}
 
-		System.out.println("---> end call paint");
+		System.out.println("(Client:"+Debug.curName+")(GridPanel:paint)---> end call paint");
 	}
 	
 	public String toString(){
@@ -309,7 +310,7 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		//Should receives a map as arg, then computes it and displays it
-		System.out.println("updating...");
+		System.out.println("(Client:"+Debug.curName+")(GridPanel:update)updating...");
 		Integer[][][] newGrid = (Integer[][][]) arg;
 		this.size_x = newGrid[0].length;
 		this.size_y = newGrid[0][0].length;
@@ -328,7 +329,7 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 				}
 			}
 		}
-		System.out.println("END updating");
+		System.out.println("(Client:"+Debug.curName+")(GridPanel:update) END updating");
 		//placeColorRoles();
 		readSprites();
 		this.repaint();

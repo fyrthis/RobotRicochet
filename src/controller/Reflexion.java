@@ -4,6 +4,7 @@ import utils.Phase;
 
 import java.util.Observable;
 
+import launcher.Debug;
 import model.Model;
 
 class Reflexion extends Observable {
@@ -37,7 +38,7 @@ class Reflexion extends Observable {
 		// le serveur a validé sa solution donc on peut simplement changer l'affichage de l'interactionPanel
 		// en passant à la phase d'enchère
 		// ( par opposition a la fonction ilATrouve qui sera recu par tous les autres clients )
-		System.out.println("sending notifyObserver in tuAsTrouve function...");
+		System.out.println("(Client:"+Debug.curName+")(Reflexion:tuAsTrouve) sending notifyObserver in tuAsTrouve function...");
 		model.getGameState().setPhase(Phase.ENCHERE);
 	}
 	
@@ -50,7 +51,7 @@ class Reflexion extends Observable {
 		// => normalement la solution courante à cet instant précis est toujours à -1
 		int activePlayerSolution = Integer.valueOf(coups);
 		model.getGameState().setCurrentSolution(activePlayerSolution);
-		System.out.println("sending notifyObserver in ilATrouve function...");
+		System.out.println("(Client:"+Debug.curName+")(Reflexion:ilATrouve)sending notifyObserver in ilATrouve function...");
 		model.getGameState().setPhase(Phase.ENCHERE);
 	}
 	

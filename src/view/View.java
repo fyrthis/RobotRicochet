@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import controller.Controller;
+import launcher.Debug;
 import model.Model;
 import utils.AskNameDialog;
 import utils.Phase;
@@ -77,7 +78,7 @@ public class View extends JFrame {
 	}
 
 	public void homeSignal() {
-		System.out.println("home signal");
+		System.out.println("(Client:"+Debug.curName+")(View:homeSignal)home signal");
 		for(Component c : getContentPane().getComponents()) {
 			if(c!=connectionWindow)
 				remove(c);

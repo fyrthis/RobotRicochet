@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import controller.Controller;
+import launcher.Debug;
 import view.View;
 
 public class HomePagePanel extends JPanel implements ActionListener {
@@ -35,16 +36,13 @@ public class HomePagePanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		View window = (View)this.getParent().getParent().getParent().getParent();
 		if(e.getSource() == signIn) {
-			System.out.println("Catch Sign In Event");
 			window.signInSignal();
 		}else if(e.getSource() == signUp) {
-			System.out.println("Catch Sign Up Event");
 			window.signUpSignal();
 		}else if(e.getSource() == playAsGuest) {
-			System.out.println("Catch Play As Guest Event");
 			window.playAsGuestSignal();
 		}else
-			System.out.println("Unknow event occured");
+			System.out.println("(Client:"+Debug.curName+")(HomePagePanel:actionPerformed)Unknow event occured");
 		
 	}
 }

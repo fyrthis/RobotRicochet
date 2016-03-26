@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import launcher.Debug;
 import model.Model;
 import utils.Phase;
 import view.View;
@@ -158,7 +159,7 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			View window = (View) this.getParent().getParent().getParent().getParent().getParent();
 			String solutionStr = solutionEntry.getText();
 			if(solutionStr == null){
-				System.err.println("Erreur: vous tentez d'envoyer une solution vide !");
+				System.err.println("(Client:"+Debug.curName+")(InteractionPanel:actionPerformed) Erreur: vous tentez d'envoyer une solution vide !");
 			}
 			else {
 				try {
@@ -167,7 +168,7 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 					//setPanelByPhase(Phase.ENCHERE);
 				}
 				catch(NumberFormatException e1){
-					System.err.println("Erreur: vous essayez d'insérer autre chose qu'un nombre !");
+					System.err.println("(Client:"+Debug.curName+")(InteractionPanel:actionPerformed)Erreur: vous essayez d'insérer autre chose qu'un nombre !");
 				}
 			}
 		}
@@ -175,7 +176,7 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			View window = (View) this.getParent().getParent().getParent().getParent().getParent();
 			String betStr = betEntry.getText();
 			if(betStr == null){
-				System.err.println("Erreur: vous n'avez rien encheri !");
+				System.err.println("(Client:"+Debug.curName+")(InteractionPanel:actionPerformed)Erreur: vous n'avez rien encheri !");
 			}
 			else {
 				try {
@@ -183,7 +184,7 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 					window.betSignal(stroke);
 				}
 				catch(NumberFormatException e1){
-					System.err.println("Erreur: vous essayez d'insérer autre chose qu'un nombre !");
+					System.err.println("(Client:"+Debug.curName+")(InteractionPanel:actionPerformed)Erreur: vous essayez d'insérer autre chose qu'un nombre !");
 				}
 			}
 		}
@@ -191,14 +192,14 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			View window = (View) this.getParent().getParent().getParent().getParent().getParent();
 			String movesStr = movesEntry.getText();
 			if(movesStr == null){
-				System.err.println("Erreur: vous n'avez rien déplacé !");
+				System.err.println("(Client:"+Debug.curName+")(InteractionPanel:actionPerformed)Erreur: vous n'avez rien déplacé !");
 			}
 			else {
 				try {
 					window.resolveMovesSignal(movesStr);
 				}
 				catch(NumberFormatException e1){
-					System.err.println("Erreur: vous essayez d'insérer autre chose qu'un nombre !");
+					System.err.println("(Client:"+Debug.curName+")(InteractionPanel:actionPerformed)Erreur: vous essayez d'insérer autre chose qu'un nombre !");
 				}
 			}
 		}
@@ -211,6 +212,6 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 		// TODO Auto-generated method stub
 		Phase phase = (Phase) arg;
 		this.setPanelByPhase(phase);
-		System.out.println("receive notifyObserver from the GameState...");
+		System.out.println("(Client:"+Debug.curName+")(InteractionPanel:update)receive notifyObserver from the GameState...");
 	}
 }

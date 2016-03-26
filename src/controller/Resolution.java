@@ -20,6 +20,7 @@ class Resolution extends Observable  {
 	//(S -> C) Signalement aux clients de la solution proposée
 	void saSolution(String user, String deplacements) {
 		activeUser = model.getPlayers().get(user);
+		model.getGameState().setSolutionMoves(deplacements);
 		//TODO : Lancer l'animation des robots des cas déplacements.
 		setChanged();
 		notifyObservers(deplacements);

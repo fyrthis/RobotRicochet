@@ -121,8 +121,8 @@ int isValideSolution(char *deplacements) {
 
     // deplacements de la forme: RDRHVDVHVDRB
     int index = 0;
-    char color = " ";
-    char direction = " ";
+    char color = ' ';
+    char direction = ' ';
 
     while(index < strlen(deplacements)){
         color = deplacements[index];
@@ -136,19 +136,19 @@ int isValideSolution(char *deplacements) {
 
     switch(color){
         case 'R':
-            if(x_r != x_c || y_r != y_c)
+            if(x_r != x_cible || y_r != y_cible)
                 ok = -1;
             break;
         case 'B':
-            if(x_b != x_c || y_b != y_c)
+            if(x_b != x_cible || y_b != y_cible)
                 ok = -1;
             break;
         case 'J':
-            if(x_j != x_c || y_j != y_c)
+            if(x_j != x_cible || y_j != y_cible)
                 ok = -1;
             break;
         case 'V':
-            if(x_v != x_c || y_v != y_c)
+            if(x_v != x_cible || y_v != y_cible)
                 ok = -1;
             break;
         default:;

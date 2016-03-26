@@ -311,7 +311,7 @@ int main(int argc, char* argv[]) {
         printf("(Server:serveur.c:main) : Thread %d created and ready\n", i);
     }
     printf("(Server:serveur.c:main) : Initialize server socket...\n");
-    int port = 2048;
+    int port = 2053;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;
@@ -471,8 +471,17 @@ int setEnigma(){
         y_v = rand() % size_y;
 
         // Cible
+
         x_cible = rand() % size_x;
         y_cible = rand() % size_y;
+        while(grid[x_cible][y_cible] == 0
+            || grid[x_cible][y_cible] == 1
+            || grid[x_cible][y_cible] == 2
+            || grid[x_cible][y_cible] == 4
+            || grid[x_cible][y_cible] == 8){
+            x_cible = rand() % size_x;
+            y_cible = rand() % size_y;
+        }
 
         // LettreCible
         int cible = rand() % 4;

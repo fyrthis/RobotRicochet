@@ -191,6 +191,7 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 		else if(e.getSource() == resolveButton) {
 			View window = (View) this.getParent().getParent().getParent().getParent().getParent();
 			String movesStr = movesEntry.getText();
+			System.out.println("\tMOVE : " + movesStr);
 			if(movesStr == null){
 				System.err.println("(Client:"+Debug.curName+")(InteractionPanel:actionPerformed)Erreur: vous n'avez rien déplacé !");
 			}

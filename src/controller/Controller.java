@@ -41,6 +41,7 @@ public class Controller implements Observer {
 		model.getPlayers().getlocalPlayer().setName(name);
 		model.getPlayers().add(name);
 	}
+	
 	public void disconnect(String name) {
 		System.out.println("(Client:"+Debug.curName+")(Controller:disconnect) sent : SORT/"+name+"/");
 		try {

@@ -100,7 +100,6 @@ public class Model {
 		}
 		for(int index = 0; index < listCoordinates.length; index+=2){
 			char robotColor = listCoordinates[index].charAt(listCoordinates[index].length()-1);
-			System.out.println(robotColor+"["+listCoordinates[index].substring(0, listCoordinates[index].length()-1)+","+listCoordinates[index+1].substring(0, listCoordinates[index+1].length()-1)+"]");
 			String x_str = listCoordinates[index].substring(0, listCoordinates[index].length()-1);
 			String y_str = listCoordinates[index+1].substring(0, listCoordinates[index+1].length()-1);
 

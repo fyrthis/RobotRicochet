@@ -311,7 +311,7 @@ int main(int argc, char* argv[]) {
         printf("(Server:serveur.c:main) : Thread %d created and ready\n", i);
     }
     printf("(Server:serveur.c:main) : Initialize server socket...\n");
-    int port = 2053;
+    int port = 2016;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;
@@ -457,18 +457,21 @@ int setEnigma(){
         // Generation aleatoire des positions des robots
         srand(time(NULL));
         
-        // Rouge
-        x_r = rand() % size_x;
-        y_r = rand() % size_y;
-        // Bleu
-        x_b = rand() % size_x;
-        y_b = rand() % size_y;
-        // Jaune
-        x_j = rand() % size_x;
-        y_j = rand() % size_y;
-        // Vert
-        x_v = rand() % size_x;
-        y_v = rand() % size_y;
+        do { 
+            // Rouge
+            x_r = rand() % size_x;
+            y_r = rand() % size_y;
+            // Bleu
+            x_b = rand() % size_x;
+            y_b = rand() % size_y;
+            // Jaune
+            x_j = rand() % size_x;
+            y_j = rand() % size_y;
+            // Vert
+            x_v = rand() % size_x;
+            y_v = rand() % size_y;
+        } while((x_r == x_b && y_r == y_b) || (x_r == x_j && y_r == y_j) || (x_r == x_v && y_r == y_v)
+            || (x_b == x_j && y_b == y_j) || (x_b == x_v && y_b == y_v) || (x_j == x_v && y_j == y_v));
 
         // Cible
 

@@ -311,7 +311,7 @@ int main(int argc, char* argv[]) {
         printf("(Server:serveur.c:main) : Thread %d created and ready\n", i);
     }
     printf("(Server:serveur.c:main) : Initialize server socket...\n");
-    int port = 2067;
+    int port = 2068;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;

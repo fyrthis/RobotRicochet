@@ -130,6 +130,7 @@ int isValideSolution(char *deplacements) {
         fprintf(stderr, "color : %c, direction : %c", color, direction);
         if(moveRobot(color, direction) != 0) {
             perror("error in isValideSolution ");
+            return -2;
         }
 
         index+=2;
@@ -167,6 +168,9 @@ int moveRobot(char color, char direction) {
             switch(direction) {
                 case 'H':
                     tmp_x = x_r;
+                    if(grid[x_r][y_r] == 1 || grid[x_r][y_r] ==  3 || grid[x_r][y_r] == 5 || grid[x_r][y_r] == 7
+                        || grid[x_r][y_r] == 9 || grid[x_r][y_r] == 11 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 15)
+                        return -1;
                     for(tmp_y = y_r; tmp_y >= 0; tmp_y--) {
                         if(grid[tmp_x][tmp_y] != 0) {
                             y_r = tmp_y;
@@ -175,6 +179,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'B':
+                    if(grid[x_r][y_r] == 4 || grid[x_r][y_r] ==  5 || grid[x_r][y_r] == 6 || grid[x_r][y_r] == 7
+                        || grid[x_r][y_r] == 12 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
+                        return -1;
                     tmp_x = x_r;
                     for(tmp_y = y_r; tmp_y < size_y; tmp_y++) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -184,6 +191,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'G':
+                    if(grid[x_r][y_r] == 8 || grid[x_r][y_r] ==  9 || grid[x_r][y_r] == 10 || grid[x_r][y_r] == 11
+                        || grid[x_r][y_r] == 12 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
+                        return -1;
                     tmp_y = y_r;
                     for(tmp_x = x_r; tmp_x >= 0; tmp_x--) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -193,6 +203,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'D':
+                    if(grid[x_r][y_r] == 2 || grid[x_r][y_r] ==  3 || grid[x_r][y_r] == 6 || grid[x_r][y_r] == 7
+                        || grid[x_r][y_r] == 10 || grid[x_r][y_r] == 11 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
+                        return -1;
                     tmp_y = y_r;
                     for(tmp_x = x_r; tmp_x < size_x; tmp_x++) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -207,6 +220,9 @@ int moveRobot(char color, char direction) {
         case 'B':
             switch(direction) {
                 case 'H':
+                    if(grid[x_b][y_b] == 1 || grid[x_b][y_b] ==  3 || grid[x_b][y_b] == 5 || grid[x_b][y_b] == 7
+                        || grid[x_b][y_b] == 9 || grid[x_b][y_b] == 11 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 15)
+                        return -1;
                     tmp_x = x_b;
                     for(tmp_y = y_b; tmp_y >= 0; tmp_y--) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -216,6 +232,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'B':
+                    if(grid[x_b][y_b] == 4 || grid[x_b][y_b] ==  5 || grid[x_b][y_b] == 6 || grid[x_b][y_b] == 7
+                        || grid[x_b][y_b] == 12 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
+                        return -1;
                     tmp_x = x_b;
                     for(tmp_y = y_b; tmp_y < size_y; tmp_y++) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -225,6 +244,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'G':
+                    if(grid[x_b][y_b] == 8 || grid[x_b][y_b] ==  9 || grid[x_b][y_b] == 10 || grid[x_b][y_b] == 11
+                        || grid[x_b][y_b] == 12 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
+                        return -1;
                     tmp_y = y_b;
                     for(tmp_x = x_b; tmp_x >= 0; tmp_x--) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -234,6 +256,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'D':
+                    if(grid[x_b][y_b] == 2 || grid[x_b][y_b] ==  3 || grid[x_b][y_b] == 6 || grid[x_b][y_b] == 7
+                        || grid[x_b][y_b] == 10 || grid[x_b][y_b] == 11 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
+                        return -1;
                     tmp_y = y_b;
                     for(tmp_x = x_b; tmp_x < size_x; tmp_x++) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -248,6 +273,9 @@ int moveRobot(char color, char direction) {
         case 'J':
             switch(direction) {
                 case 'H':
+                    if(grid[x_j][y_j] == 1 || grid[x_j][y_j] ==  3 || grid[x_j][y_j] == 5 || grid[x_j][y_j] == 7
+                        || grid[x_j][y_j] == 9 || grid[x_j][y_j] == 11 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 15)
+                        return -1;
                     tmp_x = x_j;
                     for(tmp_y = y_j; tmp_y >= 0; tmp_y--) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -257,6 +285,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'B':
+                    if(grid[x_j][y_j] == 4 || grid[x_j][y_j] ==  5 || grid[x_j][y_j] == 6 || grid[x_j][y_j] == 7
+                        || grid[x_j][y_j] == 12 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
+                        return -1;
                     tmp_x = x_j;
                     for(tmp_y = y_j; tmp_y < size_y; tmp_y++) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -266,6 +297,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'G':
+                    if(grid[x_j][y_j] == 8 || grid[x_j][y_j] ==  9 || grid[x_j][y_j] == 10 || grid[x_j][y_j] == 11
+                        || grid[x_j][y_j] == 12 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
+                        return -1;
                     tmp_y = y_j;
                     for(tmp_x = x_j; tmp_x >= 0; tmp_x--) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -275,6 +309,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'D':
+                    if(grid[x_j][y_j] == 2 || grid[x_j][y_j] ==  3 || grid[x_j][y_j] == 6 || grid[x_j][y_j] == 7
+                        || grid[x_j][y_j] == 10 || grid[x_j][y_j] == 11 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
+                        return -1;
                     tmp_y = y_j;
                     for(tmp_x = x_j; tmp_x < size_x; tmp_x++) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -289,6 +326,9 @@ int moveRobot(char color, char direction) {
         case 'V':
             switch(direction) {
                 case 'H':
+                    if(grid[x_v][y_v] == 1 || grid[x_v][y_v] ==  3 || grid[x_v][y_v] == 5 || grid[x_v][y_v] == 7
+                        || grid[x_v][y_v] == 9 || grid[x_v][y_v] == 11 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 15)
+                        return -1;
                     tmp_x = x_v;
                     for(tmp_y = y_v; tmp_y >= 0; tmp_y--) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -298,6 +338,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'B':
+                    if(grid[x_v][y_v] == 4 || grid[x_v][y_v] ==  5 || grid[x_v][y_v] == 6 || grid[x_v][y_v] == 7
+                        || grid[x_v][y_v] == 12 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
+                        return -1;
                     tmp_x = x_v;
                     for(tmp_y = y_v; tmp_y < size_y; tmp_y++) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -307,6 +350,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'G':
+                    if(grid[x_v][y_v] == 8 || grid[x_v][y_v] ==  9 || grid[x_v][y_v] == 10 || grid[x_v][y_v] == 11
+                        || grid[x_v][y_v] == 12 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
+                        return -1;
                     tmp_y = y_v;
                     for(tmp_x = x_v; tmp_x >= 0; tmp_x--) {
                         if(grid[tmp_x][tmp_y] != 0) {
@@ -316,6 +362,9 @@ int moveRobot(char color, char direction) {
                     }
                     break;
                 case 'D':
+                    if(grid[x_v][y_v] == 2 || grid[x_v][y_v] ==  3 || grid[x_v][y_v] == 6 || grid[x_v][y_v] == 7
+                        || grid[x_v][y_v] == 10 || grid[x_v][y_v] == 11 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
+                        return -1;
                     tmp_y = y_v;
                     for(tmp_x = x_v; tmp_x < size_x; tmp_x++) {
                         if(grid[tmp_x][tmp_y] != 0) {

@@ -137,16 +137,46 @@ int isValideSolution(char *deplacements) {
 
 
 int moveRobot(char color, char direction) {
+    int tmp_x = -1;
+    int tmp_y = -1;
     switch(color){
         case 'R':
             switch(direction) {
                 case 'H':
+                    tmp_x = x_r;
+                    for(tmp_y = y_r; tmp_y >= 0; tmp_y--) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            y_r = tmp_y;
+                            break;
+                        }
+                    }
                     break;
                 case 'B':
+                    tmp_x = x_r;
+                    for(tmp_y = y_r; tmp_y < size_y; tmp_y++) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            y_r = tmp_y;
+                            break;
+                        }
+                    }
                     break;
                 case 'G':
+                    tmp_y = y_r;
+                    for(tmp_x = x_r; tmp_x >= 0; tmp_x--) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            x_r = tmp_x;
+                            break;
+                        }
+                    }
                     break;
                 case 'D':
+                    tmp_y = y_r;
+                    for(tmp_x = x_r; tmp_x < size_x; tmp_x++) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            x_r = tmp_x;
+                            break;
+                        }
+                    }
                     break;
                 default:;
             }
@@ -154,12 +184,40 @@ int moveRobot(char color, char direction) {
         case 'B':
             switch(direction) {
                 case 'H':
+                    tmp_x = x_b;
+                    for(tmp_y = y_b; tmp_y >= 0; tmp_y--) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            y_b = tmp_y;
+                            break;
+                        }
+                    }
                     break;
                 case 'B':
+                    tmp_x = x_b;
+                    for(tmp_y = y_b; tmp_y < size_y; tmp_y++) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            y_b = tmp_y;
+                            break;
+                        }
+                    }
                     break;
                 case 'G':
+                    tmp_y = y_b;
+                    for(tmp_x = x_b; tmp_x >= 0; tmp_x--) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            x_b = tmp_x;
+                            break;
+                        }
+                    }
                     break;
                 case 'D':
+                    tmp_y = y_b;
+                    for(tmp_x = x_b; tmp_x < size_x; tmp_x++) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            x_b = tmp_x;
+                            break;
+                        }
+                    }
                     break;
                 default:;
             }
@@ -167,12 +225,40 @@ int moveRobot(char color, char direction) {
         case 'J':
             switch(direction) {
                 case 'H':
+                    tmp_x = x_j;
+                    for(tmp_y = y_j; tmp_y >= 0; tmp_y--) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            y_j = tmp_y;
+                            break;
+                        }
+                    }
                     break;
                 case 'B':
+                    tmp_x = x_j;
+                    for(tmp_y = y_j; tmp_y < size_y; tmp_y++) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            y_j = tmp_y;
+                            break;
+                        }
+                    }
                     break;
                 case 'G':
+                    tmp_y = y_j;
+                    for(tmp_x = x_j; tmp_x >= 0; tmp_x--) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            x_j = tmp_x;
+                            break;
+                        }
+                    }
                     break;
                 case 'D':
+                    tmp_y = y_j;
+                    for(tmp_x = x_j; tmp_x < size_x; tmp_x++) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            x_j = tmp_x;
+                            break;
+                        }
+                    }
                     break;
                 default:;
             }
@@ -180,12 +266,40 @@ int moveRobot(char color, char direction) {
         case 'V':
             switch(direction) {
                 case 'H':
+                    tmp_x = x_v;
+                    for(tmp_y = y_v; tmp_y >= 0; tmp_y--) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            y_v = tmp_y;
+                            break;
+                        }
+                    }
                     break;
                 case 'B':
+                    tmp_x = x_v;
+                    for(tmp_y = y_v; tmp_y < size_y; tmp_y++) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            y_v = tmp_y;
+                            break;
+                        }
+                    }
                     break;
                 case 'G':
+                    tmp_y = y_v;
+                    for(tmp_x = x_v; tmp_x >= 0; tmp_x--) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            x_v = tmp_x;
+                            break;
+                        }
+                    }
                     break;
                 case 'D':
+                    tmp_y = y_v;
+                    for(tmp_x = x_v; tmp_x < size_x; tmp_x++) {
+                        if(grid[tmp_x][tmp_y] != 0) {
+                            x_v = tmp_x;
+                            break;
+                        }
+                    }
                     break;
                 default:;
             }

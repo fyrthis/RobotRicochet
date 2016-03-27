@@ -44,17 +44,17 @@ int readGridFromFile(char *filename) {
         pch = strtok(NULL, " \n");
     }
 
-    grid = malloc(size_x * sizeof(int *));
+    grid = calloc(size_x, sizeof(int *));
 
     int x_tmp;
     for(x_tmp = 0; x_tmp < size_x; x_tmp++){
-        grid[x_tmp] = malloc(size_y * sizeof(int));
+        grid[x_tmp] = calloc(size_y, sizeof(int));
         if(grid[x_tmp] == NULL){
             printf("(Server:grid.c:readGridFromFile) : Failure to allocate for grid[%d]\n", x_tmp);
             exit(0);
         }
     }
-    gridStr = malloc(4096*sizeof(char));
+    gridStr = calloc(4096, sizeof(char));
     if(gridStr == NULL){
         printf("(Server:grid.c:readGridFromFile) : Failure to allocate for gridStr\n");
         exit(0);
@@ -89,7 +89,9 @@ int readGridFromFile(char *filename) {
     }
 
     // Concat the size of the grid at the end of the grid: SESSION/plateau/size_x/size_y/
-    char * sizeInfo = malloc(7);
+    int size_xLength = getIntLength(size_x);
+    int size_yLength = getIntLength(size_y);
+    char * sizeInfo = calloc(3 + size_xLength + size_yLength, sizeof(char));
     sprintf(sizeInfo,"/%d/%d", size_x, size_y); 
     strcat(gridStr, sizeInfo);
             
@@ -127,7 +129,7 @@ int isValideSolution(char *deplacements) {
     while(index < strlen(deplacements)){
         color = deplacements[index];
         direction = deplacements[index+1];
-        fprintf(stderr, "color : %c, direction : %c/t -\t r[%d,%d] - b[%d,%d] - j[%d,%d] - v[%d,%d]\n", color, direction, x_r,y_r,x_b,y_b,x_j,y_j,x_v,y_v);
+        fprintf(stderr, "r[%d,%d] - b[%d,%d] - j[%d,%d] - v[%d,%d] \t - \tcolor : %c, direction : %c\n",x_r,y_r,x_b,y_b,x_j,y_j,x_v,y_v, color, direction);
         if(moveRobot(color, direction) != 0) {
             perror("error in calling moveRobot function - wrong move");
             return -2;
@@ -159,6 +161,24 @@ int isValideSolution(char *deplacements) {
     return nbCoups;
 }
 
+/***************************************************************
+*  Pour chaque robot et chaque direction:                      *
+*   - on regarde la valeur de la case où se trouve le robot    *
+*   avant le déplacement:                                      *
+*       s'il y a un mur qui bloque tout déplacement dans la    *
+*           direction donné, alors on retourne -1              *
+*   - on parcourt toutes les cases de la direction donné par   *
+*   rapport à l'axe qui ne change pas, et on s'arrête dès      *
+*   qu'il y a un robot ou un mur sur le côté correspondant à   *
+*   la direction sur cette case                                *
+*   - on enregistre les nouvelles coordonnées pour le robot    *
+*   correspondant.                                             *
+*                                                              *
+*   Il faut bien faire attention à ce que le robot ne          *
+*   s'arrête pas sur les cases où il y a 2 murs parallèles,    *
+*   pour lesquelles il n'y a rien qui bloque le passage du     *
+*   robot.                                                     *
+****************************************************************/
 
 int moveRobot(char color, char direction) {
     int tmp_x = -1;
@@ -169,12 +189,18 @@ int moveRobot(char color, char direction) {
                 case 'H':
                     // 1, 3, 5, 7, 9, 11, 13, 15 sont les valeurs des cases où il y a déjà un mur en haut
                     if(grid[x_r][y_r] == 1 || grid[x_r][y_r] ==  3 || grid[x_r][y_r] == 5 || grid[x_r][y_r] == 7
-                        || grid[x_r][y_r] == 9 || grid[x_r][y_r] == 11 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 15)
-                        return -1;
+                        || grid[x_r][y_r] == 9 || grid[x_r][y_r] == 11 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 15){
+                        fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
+                        return -1;   
+                    }
                     tmp_x = x_r;
                     // on teste toutes les cases à partir de la case au dessus du robot
-                    for(tmp_y = y_r-1; tmp_y >= 0; tmp_y--) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 10) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                    for(tmp_y = y_r-1; (tmp_y = 0); tmp_y--) {
+                        if((grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_b && tmp_y == y_b) 
+                            || (tmp_x == x_j && tmp_y == y_j) 
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             y_r = tmp_y;
                             break;
                         }
@@ -184,11 +210,18 @@ int moveRobot(char color, char direction) {
                     // 4, 5, 6, 7, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur en bas
                     if(grid[x_r][y_r] == 4 || grid[x_r][y_r] ==  5 || grid[x_r][y_r] == 6 || grid[x_r][y_r] == 7
                         || grid[x_r][y_r] == 12 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
+                        return -1;   
+                    }                    
                     tmp_x = x_r;
                     // on teste toutes les cases à partir de la case en dessous du robot
                     for(tmp_y = y_r+1; tmp_y < size_y; tmp_y++) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 10) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                        if((grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_b && tmp_y == y_b)
+                            || (tmp_x == x_j && tmp_y == y_j)
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             y_r = tmp_y;
                             break;
                         }
@@ -198,11 +231,18 @@ int moveRobot(char color, char direction) {
                     // 8, 9, 10, 11, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur à gauche
                     if(grid[x_r][y_r] == 8 || grid[x_r][y_r] ==  9 || grid[x_r][y_r] == 10 || grid[x_r][y_r] == 11
                         || grid[x_r][y_r] == 12 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
+                        return -1;   
+                    }
                     tmp_y = y_r;
                     // on teste toutes les cases à partir de la case à gauche du robot
-                    for(tmp_x = x_r-1; tmp_x >= 0; tmp_x--) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 5) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                    for(tmp_x = x_r-1; (tmp_x = 0); tmp_x--) {
+                        if((grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_b && tmp_y == y_b) 
+                            || (tmp_x == x_j && tmp_y == y_j) 
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             x_r = tmp_x;
                             break;
                         }
@@ -212,11 +252,18 @@ int moveRobot(char color, char direction) {
                     // 2, 3, 6, 7, 10, 11, 14, 15 son les valeurs des cases où il y a déjà un mur à droite
                     if(grid[x_r][y_r] == 2 || grid[x_r][y_r] ==  3 || grid[x_r][y_r] == 6 || grid[x_r][y_r] == 7
                         || grid[x_r][y_r] == 10 || grid[x_r][y_r] == 11 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
+                        return -1;   
+                    }
                     tmp_y = y_r;
                     // on teste toutes les cases à partir de la case à droite du robot
                     for(tmp_x = x_r+1; tmp_x < size_x; tmp_x++) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 5) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                        if((grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_b && tmp_y == y_b) 
+                            || (tmp_x == x_j && tmp_y == y_j) 
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             x_r = tmp_x;
                             break;
                         }
@@ -231,11 +278,18 @@ int moveRobot(char color, char direction) {
                     // 1, 3, 5, 7, 9, 11, 13, 15 sont les valeurs des cases où il y a déjà un mur en haut
                     if(grid[x_b][y_b] == 1 || grid[x_b][y_b] ==  3 || grid[x_b][y_b] == 5 || grid[x_b][y_b] == 7
                         || grid[x_b][y_b] == 9 || grid[x_b][y_b] == 11 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
+                        return -1;   
+                    }
                     tmp_x = x_b;
                     // on teste toutes les cases à partir de la case au dessus du robot
-                    for(tmp_y = y_b-1; tmp_y >= 0; tmp_y--) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 10) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                    for(tmp_y = y_b-1; (tmp_y = 0); tmp_y--) {
+                        if((grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r)
+                            || (tmp_x == x_j && tmp_y == y_j)
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             y_b = tmp_y;
                             break;
                         }
@@ -245,11 +299,18 @@ int moveRobot(char color, char direction) {
                     // 4, 5, 6, 7, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur en bas
                     if(grid[x_b][y_b] == 4 || grid[x_b][y_b] ==  5 || grid[x_b][y_b] == 6 || grid[x_b][y_b] == 7
                         || grid[x_b][y_b] == 12 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
+                        return -1;   
+                    }
                     tmp_x = x_b;
                     // on teste toutes les cases à partir de la case en dessous du robot
                     for(tmp_y = y_b+1; tmp_y < size_y; tmp_y++) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 10) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                        if((grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r)
+                            || (tmp_x == x_j && tmp_y == y_j)
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             y_b = tmp_y;
                             break;
                         }
@@ -259,11 +320,18 @@ int moveRobot(char color, char direction) {
                     // 8, 9, 10, 11, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur à gauche
                     if(grid[x_b][y_b] == 8 || grid[x_b][y_b] ==  9 || grid[x_b][y_b] == 10 || grid[x_b][y_b] == 11
                         || grid[x_b][y_b] == 12 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
+                        return -1;   
+                    }
                     tmp_y = y_b;
                     // on teste toutes les cases à partir de la case à gauche du robot
-                    for(tmp_x = x_b-1; tmp_x >= 0; tmp_x--) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 5) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                    for(tmp_x = x_b-1; (tmp_x = 0); tmp_x--) {
+                        if((grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r) 
+                            || (tmp_x == x_j && tmp_y == y_j) 
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             x_b = tmp_x;
                             break;
                         }
@@ -273,11 +341,18 @@ int moveRobot(char color, char direction) {
                     // 2, 3, 6, 7, 10, 11, 14, 15 son les valeurs des cases où il y a déjà un mur à droite
                     if(grid[x_b][y_b] == 2 || grid[x_b][y_b] ==  3 || grid[x_b][y_b] == 6 || grid[x_b][y_b] == 7
                         || grid[x_b][y_b] == 10 || grid[x_b][y_b] == 11 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
+                        return -1;   
+                    }
                     tmp_y = y_b;
                     // on teste toutes les cases à partir de la case à droite du robot
                     for(tmp_x = x_b+1; tmp_x < size_x; tmp_x++) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 5) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                        if((grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r) 
+                            || (tmp_x == x_j && tmp_y == y_j) 
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             x_b = tmp_x;
                             break;
                         }
@@ -292,11 +367,18 @@ int moveRobot(char color, char direction) {
                     // 1, 3, 5, 7, 9, 11, 13, 15 sont les valeurs des cases où il y a déjà un mur en haut
                     if(grid[x_j][y_j] == 1 || grid[x_j][y_j] ==  3 || grid[x_j][y_j] == 5 || grid[x_j][y_j] == 7
                         || grid[x_j][y_j] == 9 || grid[x_j][y_j] == 11 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
+                        return -1;   
+                    }
                     tmp_x = x_j;
                     // on teste toutes les cases à partir de la case au dessus du robot
-                    for(tmp_y = y_j-1; tmp_y >= 0; tmp_y--) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 10) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)) {
+                    for(tmp_y = y_j-1; (tmp_y = 0); tmp_y--) {
+                        if((grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r)
+                            || (tmp_x == x_b && tmp_y == y_b)
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             y_j = tmp_y;
                             break;
                         }
@@ -306,11 +388,18 @@ int moveRobot(char color, char direction) {
                     // 4, 5, 6, 7, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur en bas
                     if(grid[x_j][y_j] == 4 || grid[x_j][y_j] ==  5 || grid[x_j][y_j] == 6 || grid[x_j][y_j] == 7
                         || grid[x_j][y_j] == 12 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
+                        return -1;   
+                    }
                     tmp_x = x_j;
                     // on teste toutes les cases à partir de la case en dessous du robot
                     for(tmp_y = y_j+1; tmp_y < size_y; tmp_y++) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 10) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)) {
+                        if((grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r)
+                            || (tmp_x == x_b && tmp_y == y_b)
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             y_j = tmp_y;
                             break;
                         }
@@ -320,11 +409,18 @@ int moveRobot(char color, char direction) {
                     // 8, 9, 10, 11, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur à gauche
                     if(grid[x_j][y_j] == 8 || grid[x_j][y_j] ==  9 || grid[x_j][y_j] == 10 || grid[x_j][y_j] == 11
                         || grid[x_j][y_j] == 12 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
+                        return -1;   
+                    }
                     tmp_y = y_j;
                     // on teste toutes les cases à partir de la case à gauche du robot
-                    for(tmp_x = x_j-1; tmp_x >= 0; tmp_x--) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 5) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)) {
+                    for(tmp_x = x_j-1; (tmp_x = 0); tmp_x--) {
+                        if((grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r) 
+                            || (tmp_x == x_b && tmp_y == y_b) 
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             x_j = tmp_x;
                             break;
                         }
@@ -334,11 +430,18 @@ int moveRobot(char color, char direction) {
                     // 2, 3, 6, 7, 10, 11, 14, 15 son les valeurs des cases où il y a déjà un mur à droite
                     if(grid[x_j][y_j] == 2 || grid[x_j][y_j] ==  3 || grid[x_j][y_j] == 6 || grid[x_j][y_j] == 7
                         || grid[x_j][y_j] == 10 || grid[x_j][y_j] == 11 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
+                        return -1;   
+                    }
                     tmp_y = y_j;
                     // on teste toutes les cases à partir de la case à droite du robot
                     for(tmp_x = x_j+1; tmp_x < size_x; tmp_x++) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 5) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)) {
+                        if((grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r) 
+                            || (tmp_x == x_b && tmp_y == y_b) 
+                            || (tmp_x == x_v && tmp_y == y_v)) {
                             x_j = tmp_x;
                             break;
                         }
@@ -353,11 +456,18 @@ int moveRobot(char color, char direction) {
                     // 1, 3, 5, 7, 9, 11, 13, 15 sont les valeurs des cases où il y a déjà un mur en haut
                     if(grid[x_v][y_v] == 1 || grid[x_v][y_v] ==  3 || grid[x_v][y_v] == 5 || grid[x_v][y_v] == 7
                         || grid[x_v][y_v] == 9 || grid[x_v][y_v] == 11 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
+                        return -1;   
+                    }
                     tmp_x = x_v;
                     // on teste toutes les cases à partir de la case au dessus du robot
-                    for(tmp_y = y_v-1; tmp_y >= 0; tmp_y--) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 10) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j)) {
+                    for(tmp_y = y_v-1; (tmp_y = 0); tmp_y--) {
+                        if((grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r)
+                            || (tmp_x == x_b && tmp_y == y_b)
+                            || (tmp_x == x_j && tmp_y == y_j)) {
                             y_v = tmp_y;
                             break;
                         }
@@ -367,11 +477,18 @@ int moveRobot(char color, char direction) {
                     // 4, 5, 6, 7, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur en bas
                     if(grid[x_v][y_v] == 4 || grid[x_v][y_v] ==  5 || grid[x_v][y_v] == 6 || grid[x_v][y_v] == 7
                         || grid[x_v][y_v] == 12 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
+                        return -1;   
+                    }
                     tmp_x = x_v;
                     // on teste toutes les cases à partir de la case en dessous du robot
                     for(tmp_y = y_v+1; tmp_y < size_y; tmp_y++) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 10) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j)) {
+                        if((grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r)
+                            || (tmp_x == x_b && tmp_y == y_b)
+                            || (tmp_x == x_j && tmp_y == y_j)) {
                             y_v = tmp_y;
                             break;
                         }
@@ -381,25 +498,39 @@ int moveRobot(char color, char direction) {
                     // 8, 9, 10, 11, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur à gauche
                     if(grid[x_v][y_v] == 8 || grid[x_v][y_v] ==  9 || grid[x_v][y_v] == 10 || grid[x_v][y_v] == 11
                         || grid[x_v][y_v] == 12 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
+                        return -1;   
+                    }
                     tmp_y = y_v;
                     // on teste toutes les cases à partir de la case à gauche du robot
-                    for(tmp_x = x_v-1; tmp_x >= 0; tmp_x--) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 5) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j)) {
+                    for(tmp_x = x_v-1; (tmp_x = 0); tmp_x--) {
+                        if((grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r) 
+                            || (tmp_x == x_b && tmp_y == y_b) 
+                            || (tmp_x == x_j && tmp_y == y_j)) {
                             x_v = tmp_x;
                             break;
                         }
                     }
                     break;
                 case 'D':
-                    // 2, 3, 6, 7, 10, 11, 14, 15 son les valeurs des cases où il y a déjà un mur à droite
+                    // 2, 3, 6, 7, 10, 11, 14, 15 sont les valeurs des cases où il y a déjà un mur à droite
                     if(grid[x_v][y_v] == 2 || grid[x_v][y_v] ==  3 || grid[x_v][y_v] == 6 || grid[x_v][y_v] == 7
                         || grid[x_v][y_v] == 10 || grid[x_v][y_v] == 11 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
-                        return -1;
+                    {
+                        fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
+                        return -1;   
+                    }
                     tmp_y = y_v;
                     // on teste toutes les cases à partir de la case à droite du robot
                     for(tmp_x = x_v+1; tmp_x < size_x; tmp_x++) {
-                        if((grid[tmp_x][tmp_y] != 0 && grid[tmp_x][tmp_y] != 5) || (tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j)) {
+                        if((grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) 
+                            || (tmp_x == x_r && tmp_y == y_r) 
+                            || (tmp_x == x_b && tmp_y == y_b) 
+                            || (tmp_x == x_j && tmp_y == y_j)) {
                             x_v = tmp_x;
                             break;
                         }
@@ -410,5 +541,6 @@ int moveRobot(char color, char direction) {
             break;
         default:;
     }
+    fprintf(stderr, "\tfounded : grid[%d][%d] = %d\n", tmp_x, tmp_y, grid[tmp_x][tmp_y]);
     return 0;
 }

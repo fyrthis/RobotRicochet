@@ -290,7 +290,7 @@ int bonneSolution(int socket) {
 int mauvaiseSolution(char *username, int socket) {
 	char *msg = (char*)calloc(12 + strlen(username), sizeof(char));
     sprintf(msg, "MAUVAISE/%s/\n", username);
-    fprintf(stderr, "(Server:action.c:bonneSolution) : %s\n", msg);
+    fprintf(stderr, "(Server:action.c:mauvaiseSolution) : %s\n", msg);
     sendMessageAll(msg, &client_mutex);
     return 0;
 }

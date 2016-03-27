@@ -90,7 +90,7 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 
 	        betLabel = new JLabel("Proposez une meilleure solution : ");
 			betEntry = new JTextField(5);
-			betButton = new JButton("Bet your better solution");
+			betButton = new JButton("Bet a better solution");
 			
 			layout.setVerticalGroup(
 					layout.createSequentialGroup()

@@ -40,6 +40,7 @@ public class GamePanel extends JPanel {
 		model.getPlayers().addObserver(score);
 		model.getGrid().addObserver(grid);
 		model.getGameState().addObserver(interaction);
+		model.getGameState().addObserver(state);
 		System.out.println("(Client:"+Debug.curName+")(GamePanel:initializeObservers) initializeObservers Done");
 		
 	}

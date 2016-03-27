@@ -2,15 +2,18 @@ package view.game;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import utils.Phase;
 import model.Model;
 
-public class StatePanel extends JPanel {
+public class StatePanel extends JPanel implements Observer {
 	private static final long serialVersionUID = -5838924958575253423L;
-	private String reflexion = "Phase de réflexion";
+	private String txt = "Phase de réflexion";
 	//private String enchere = "Phase d'enchères";
 	//private String resolution = "Phase de résolution";
 	private JTextField stateTitle;
@@ -29,9 +32,24 @@ public class StatePanel extends JPanel {
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		
-		stateTitle = new JTextField(reflexion);
+		stateTitle = new JTextField(txt);
 		stateTitle.setEditable(false);
 		stateTitle.setHorizontalAlignment(JTextField.CENTER);
 		add(stateTitle, c);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		Phase phase = (Phase) arg;
+		if(phase == Phase.INITIALISATION)
+			txt = "Phase d'initialisation";
+		else if(phase == Phase.REFLEXION)
+			txt = "Phase de reflexion";
+		else if(phase == Phase.ENCHERE)
+			txt = "Phase d'enchère";
+		else if(phase == Phase.RESOLUTION)
+			txt = "Phase de résolution";
+		stateTitle.setText(txt);
 	}
 }

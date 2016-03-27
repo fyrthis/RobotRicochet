@@ -2,6 +2,7 @@ package controller;
 
 import java.util.Observable;
 
+import launcher.Debug;
 import model.Model;
 import players.AbstractPlayer;
 import utils.Phase;
@@ -37,6 +38,7 @@ class Resolution extends Observable  {
 			
 			model.getGrid().moveRobot(color, direction);
 			try {
+				System.out.println("(Client:"+Debug.curName+")(Resolution:bonne) waiting 1 seconde...");
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -49,6 +51,22 @@ class Resolution extends Observable  {
 	//MAUVAISE/user/
 	//(S -> C) Solution refusée (à tous les clients), nouvelle phase de résolution, 'user' joueur actif.
 	void mauvaise(String user) {
+		//Update le score : Comme on est dans la phase finale, on sait que quelqu'un a trouvé la solution
+		String moves = model.getGameState().getSolutionMoves();
+		for(int i = 0; i < moves.length(); i+=2){
+			char color = moves.charAt(i);
+			char direction = moves.charAt(i+1);
+
+			model.getGrid().moveRobot(color, direction);
+			try {
+				System.out.println("(Client:"+Debug.curName+")(Resolution:mauvaise) waiting 1 seconde...");
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			model.getGrid().update();
+		}
 		//LocalPlayer actif, comme on est dans la phase de résolution, on sait que c'est à lui de jouer
 		activeUser = model.getPlayers().get(user);
 	}

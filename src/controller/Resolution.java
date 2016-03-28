@@ -32,9 +32,11 @@ class Resolution extends Observable  {
 	void bonne() {
 		//Update le score : Comme on est dans la phase finale, on sait que quelqu'un a trouvé la solution
 		String moves = model.getGameState().getSolutionMoves();
+		System.out.println("(Client:"+Debug.curName+")(Reolution:bonne) moves = " + moves);
 		for(int i = 0; i < moves.length(); i+=2){
 			char color = moves.charAt(i);
 			char direction = moves.charAt(i+1);
+			System.out.println("color : " + color + " | direction : " + direction);
 			
 			model.getGrid().moveRobot(color, direction);
 			try {

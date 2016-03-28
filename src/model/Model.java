@@ -115,8 +115,12 @@ public class Model {
 
 			int x = Integer.parseInt(x_str);
 			int y = Integer.parseInt(y_str);
-
-			this.grid.setSymbol(x, y, getSymbolValue(robotColor));
+			
+			if(robotColor == 'c')
+				this.grid.setSymbol(x, y, getSymbolValue(robotColor));
+			
+			else
+				this.grid.setRobot(robotColor, x, y);
 			System.out.println(robotColor+"["+x+","+y+"]" );
 		}
 		System.out.println("Target: "+tokens[tokens.length-1].charAt(0));

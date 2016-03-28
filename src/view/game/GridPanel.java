@@ -206,7 +206,7 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 						switch(this.symbolsGrid[x][y].getValue()){
 						// TARGET
 						case 99:
-							g2.drawImage(mainTargetSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
+							g2.drawImage(mainTargetSprite, spriteLength*x, spriteLength*y, spriteLength-6, spriteLength-6, this);
 							break;
 						// ROUGE
 						case 21:
@@ -331,13 +331,7 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 			}
 		}
 		
-		System.out.println("AFTER THE UPDATE");
-		for(int ligne = 0; ligne < newGrid[0][0].length; ligne++){
-			for(int colonne = 0; colonne < newGrid[0].length; colonne++){
-				System.out.print(this.grid[colonne][ligne].getValue()+" ");
-			}
-			System.out.println();
-		}
+		System.out.println("AFTER function update... ");
 		if(newGrid[1] != null){
 			for(int ligne = 0; ligne < newGrid[1][0].length; ligne++){
 				for(int colonne = 0; colonne < newGrid[1].length; colonne++){

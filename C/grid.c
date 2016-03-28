@@ -201,9 +201,12 @@ int moveRobot(char color, char direction) {
                     tmp_x = x_r;
                     // on teste toutes les cases à partir de la case au dessus du robot
                     for(tmp_y = y_r-1; tmp_y >= 0; tmp_y--) {
-                        if((tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)
-                            || (grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                            y_r = tmp_y+1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15) {
                             y_r = tmp_y;
                             break;
                         }
@@ -220,9 +223,11 @@ int moveRobot(char color, char direction) {
                     tmp_x = x_r;
                     // on teste toutes les cases à partir de la case en dessous du robot
                     for(tmp_y = y_r+1; tmp_y < size_y; tmp_y++) {
-                        if((tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v) 
-                            || (grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                            y_r = tmp_y-1;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             y_r = tmp_y;
                             break;
                         }
@@ -239,9 +244,12 @@ int moveRobot(char color, char direction) {
                     tmp_y = y_r;
                     // on teste toutes les cases à partir de la case à gauche du robot
                     for(tmp_x = x_r-1; tmp_x >= 0; tmp_x--) {
-                        if((tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)
-                            || (grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
-                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                            x_r = tmp_x+1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             x_r = tmp_x;
                             break;
                         }
@@ -258,9 +266,12 @@ int moveRobot(char color, char direction) {
                     tmp_y = y_r;
                     // on teste toutes les cases à partir de la case à droite du robot
                     for(tmp_x = x_r+1; tmp_x < size_x; tmp_x++) {
-                        if((tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)
-                            || (grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                            x_r = tmp_x-1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             x_r = tmp_x;
                             break;
                         }
@@ -282,9 +293,12 @@ int moveRobot(char color, char direction) {
                     tmp_x = x_b;
                     // on teste toutes les cases à partir de la case au dessus du robot
                     for(tmp_y = y_b-1; tmp_y >= 0; tmp_y--) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)
-                            || (grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                            y_b = tmp_y+1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15) {
                             y_b = tmp_y;
                             break;
                         }
@@ -301,9 +315,12 @@ int moveRobot(char color, char direction) {
                     tmp_x = x_b;
                     // on teste toutes les cases à partir de la case en dessous du robot
                     for(tmp_y = y_b+1; tmp_y < size_y; tmp_y++) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)
-                            || (grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                            y_b = tmp_y-1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             y_b = tmp_y;
                             break;
                         }
@@ -320,9 +337,11 @@ int moveRobot(char color, char direction) {
                     tmp_y = y_b;
                     // on teste toutes les cases à partir de la case à gauche du robot
                     for(tmp_x = x_b-1; tmp_x >= 0; tmp_x--) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)
-                            || (grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
-                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                            x_b = tmp_x+1;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             x_b = tmp_x;
                             break;
                         }
@@ -339,9 +358,12 @@ int moveRobot(char color, char direction) {
                     tmp_y = y_b;
                     // on teste toutes les cases à partir de la case à droite du robot
                     for(tmp_x = x_b+1; tmp_x < size_x; tmp_x++) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)
-                            || (grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
+                            x_b = tmp_x-1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             x_b = tmp_x;
                             break;
                         }
@@ -363,9 +385,12 @@ int moveRobot(char color, char direction) {
                     tmp_x = x_j;
                     // on teste toutes les cases à partir de la case au dessus du robot
                     for(tmp_y = y_j-1; tmp_y >= 0; tmp_y--) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)
-                            || (grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)) {
+                            y_j = tmp_y+1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15) {
                             y_j = tmp_y;
                             break;
                         }
@@ -382,9 +407,12 @@ int moveRobot(char color, char direction) {
                     tmp_x = x_j;
                     // on teste toutes les cases à partir de la case en dessous du robot
                     for(tmp_y = y_j+1; tmp_y < size_y; tmp_y++) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)
-                            || (grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)) {
+                            y_j = tmp_y-1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             y_j = tmp_y;
                             break;
                         }
@@ -401,9 +429,12 @@ int moveRobot(char color, char direction) {
                     tmp_y = y_j;
                     // on teste toutes les cases à partir de la case à gauche du robot
                     for(tmp_x = x_j-1; tmp_x >= 0; tmp_x--) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)
-                            || (grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
-                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)) {
+                            x_j = tmp_x+1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             x_j = tmp_x;
                             break;
                         }
@@ -420,9 +451,12 @@ int moveRobot(char color, char direction) {
                     tmp_y = y_j;
                     // on teste toutes les cases à partir de la case à droite du robot
                     for(tmp_x = x_j+1; tmp_x < size_x; tmp_x++) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)
-                            || (grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_v && tmp_y == y_v)) {
+                            x_j = tmp_x-1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             x_j = tmp_x;
                             break;
                         }
@@ -444,9 +478,12 @@ int moveRobot(char color, char direction) {
                     tmp_x = x_v;
                     // on teste toutes les cases à partir de la case au dessus du robot
                     for(tmp_y = y_v-1; tmp_y >= 0; tmp_y--) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) 
-                            || (grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j)) {
+                            y_v = tmp_y+1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 1 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 15) {
                             y_v = tmp_y;
                             break;
                         }
@@ -463,9 +500,12 @@ int moveRobot(char color, char direction) {
                     tmp_x = x_v;
                     // on teste toutes les cases à partir de la case en dessous du robot
                     for(tmp_y = y_v+1; tmp_y < size_y; tmp_y++) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j)
-                            || (grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j)) {
+                            y_v = tmp_y-1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             y_v = tmp_y;
                             break;
                         }
@@ -482,9 +522,12 @@ int moveRobot(char color, char direction) {
                     tmp_y = y_v;
                     // on teste toutes les cases à partir de la case à gauche du robot
                     for(tmp_x = x_v-1; tmp_x >= 0; tmp_x--) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j)
-                            || (grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
-                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j)) {
+                            x_v = tmp_x+1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
+                            || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             x_v = tmp_x;
                             break;
                         }
@@ -501,9 +544,12 @@ int moveRobot(char color, char direction) {
                     tmp_y = y_v;
                     // on teste toutes les cases à partir de la case à droite du robot
                     for(tmp_x = x_v+1; tmp_x < size_x; tmp_x++) {
-                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j)
-                            || (grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
-                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15)) {
+                        if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j)) {
+                            x_v = tmp_x-1;
+                            break;
+                        }
+                        else if(grid[tmp_x][tmp_y] == 2 || grid[tmp_x][tmp_y] == 3 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
+                            || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
                             x_v = tmp_x;
                             break;
                         }

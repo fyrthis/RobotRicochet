@@ -64,7 +64,7 @@ int readGridFromFile(char *filename) {
     int y = 0;
 
     *gridStr = '\0';
-    
+    fprintf(stderr, "=====================================\n");
     // Get the grid informations
     while (fgets(line, sizeof(line), file)) {
        if(strncmp(line, "END", 3) == 0)
@@ -77,13 +77,17 @@ int readGridFromFile(char *filename) {
 
             char * caseToChar = calloc(sizeof(char), 27);
             caseToChar = getCharFromCase(grid[x][y], x, y);
-
             strcat(gridStr, caseToChar);
+            
             pch = strtok(NULL, " ");
-            y++;
-            if(y == size_x){
-                y = 0;
-                x++;
+            x++;
+            fprintf(stderr, "%d ", atoi(pch));
+            if(x == size_x){
+                fprintf(stderr, "\n");
+                x = 0;
+                y++;
+                if(y == size_y)
+                    break;
             }
         }
     }

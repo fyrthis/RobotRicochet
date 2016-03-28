@@ -64,7 +64,7 @@ int readGridFromFile(char *filename) {
     int y = 0;
 
     *gridStr = '\0';
-    fprintf(stderr, "=====================================\n");
+    
     // Get the grid informations
     while (fgets(line, sizeof(line), file)) {
        if(strncmp(line, "END", 3) == 0)
@@ -81,9 +81,7 @@ int readGridFromFile(char *filename) {
             
             pch = strtok(NULL, " ");
             x++;
-            fprintf(stderr, "%d ", atoi(pch));
             if(x == size_x){
-                fprintf(stderr, "\n");
                 x = 0;
                 y++;
                 if(y == size_y)
@@ -101,8 +99,8 @@ int readGridFromFile(char *filename) {
             
     fprintf(stderr, "BEFORE SENDING GRID TO CLIENT\n");
     int ligne = 0, colonne = 0;
-    for(colonne = 0; colonne < size_y; colonne++){
-        for(ligne = 0; ligne < size_x; ligne++){
+    for(ligne = 0; ligne < size_y; ligne++){
+        for(colonne = 0; colonne < size_x; colonne++){
             printf("%d ", grid[colonne][ligne]);
         }
         printf("\n");

@@ -63,8 +63,6 @@ public class Model {
 			System.out.println();
 		}
 		
-		
-		
 		return mat;
 	}
 	

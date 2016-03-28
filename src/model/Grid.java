@@ -69,6 +69,7 @@ public class Grid extends Observable {
 	public Integer[][][] getGrid(){ return this.grid; }
 	public int getSizeX(){ return this.grid[0].length; }
 	public int getSizeY(){ return this.grid[0][0].length; }
+	public char getTarget(){ return this.target; }
 
 	public void update() {
 		this.setChanged();

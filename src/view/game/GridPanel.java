@@ -35,28 +35,16 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	private Image emptySprite;
 
 	private Image redPawnSprite;
-	private Image redTarget1Sprite;
-	private Image redTarget2Sprite;
-	private Image redTarget3Sprite;
-	private Image redTarget4Sprite;
+	private Image redTargetSprite;
 	
 	private Image bluePawnSprite;
-	private Image blueTarget1Sprite;
-	private Image blueTarget2Sprite;
-	private Image blueTarget3Sprite;
-	private Image blueTarget4Sprite;
+	private Image blueTargetSprite;
 	
 	private Image greenPawnSprite;
-	private Image greenTarget1Sprite;
-	private Image greenTarget2Sprite;
-	private Image greenTarget3Sprite;
-	private Image greenTarget4Sprite;
+	private Image greenTargetSprite;
 	
 	private Image yellowPawnSprite;
-	private Image yellowTarget1Sprite;
-	private Image yellowTarget2Sprite;
-	private Image yellowTarget3Sprite;
-	private Image yellowTarget4Sprite;
+	private Image yellowTargetSprite;
 	
 	private Image mainTargetSprite;
 	
@@ -90,32 +78,21 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 			wallH = ImageIO.read(new File("res/horizontalWallSprite.png"));
 			wallV = ImageIO.read(new File("res/verticalWallSprite.png"));
 			
-			mainTargetSprite = ImageIO.read(new File("res/mainTargetSprite.png"));
+			if(model.getGrid().getTarget() == 'r')
+				mainTargetSprite = ImageIO.read(new File("res/redTargetSprite.png"));
+			else if(model.getGrid().getTarget() == 'b')
+				mainTargetSprite = ImageIO.read(new File("res/blueTargetSprite.png"));
+			else if(model.getGrid().getTarget() == 'j')
+				mainTargetSprite = ImageIO.read(new File("res/yellowTargetSprite.png"));
+			else if(model.getGrid().getTarget() == 'v')
+				mainTargetSprite = ImageIO.read(new File("res/greenTargetSprite.png"));
+			else
+				mainTargetSprite = ImageIO.read(new File("res/mainTargetSprite.png"));
 			
 			redPawnSprite = ImageIO.read(new File("res/redPawnSprite.png"));
-			redTarget1Sprite = ImageIO.read(new File("res/redTarget1Sprite.png"));
-			redTarget2Sprite = ImageIO.read(new File("res/redTarget2Sprite.png"));
-			redTarget3Sprite = ImageIO.read(new File("res/redTarget3Sprite.png"));
-			redTarget4Sprite = ImageIO.read(new File("res/redTarget4Sprite.png"));
-			
 			bluePawnSprite = ImageIO.read(new File("res/bluePawnSprite.png"));
-			blueTarget1Sprite = ImageIO.read(new File("res/blueTarget1Sprite.png"));
-			blueTarget2Sprite = ImageIO.read(new File("res/blueTarget2Sprite.png"));
-			blueTarget3Sprite = ImageIO.read(new File("res/blueTarget3Sprite.png"));
-			blueTarget4Sprite = ImageIO.read(new File("res/blueTarget4Sprite.png"));
-			
 			greenPawnSprite = ImageIO.read(new File("res/greenPawnSprite.png"));
-			greenTarget1Sprite = ImageIO.read(new File("res/greenTarget1Sprite.png"));
-			greenTarget2Sprite = ImageIO.read(new File("res/greenTarget2Sprite.png"));
-			greenTarget3Sprite = ImageIO.read(new File("res/greenTarget3Sprite.png"));
-			greenTarget4Sprite = ImageIO.read(new File("res/greenTarget4Sprite.png"));
-			
 			yellowPawnSprite = ImageIO.read(new File("res/yellowPawnSprite.png"));
-			yellowTarget1Sprite = ImageIO.read(new File("res/yellowTarget1Sprite.png"));
-			yellowTarget2Sprite = ImageIO.read(new File("res/yellowTarget2Sprite.png"));
-			yellowTarget3Sprite = ImageIO.read(new File("res/yellowTarget3Sprite.png"));
-			yellowTarget4Sprite = ImageIO.read(new File("res/yellowTarget4Sprite.png"));
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -206,71 +183,35 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 						switch(this.symbolsGrid[x][y].getValue()){
 						// TARGET
 						case 99:
-							g2.drawImage(mainTargetSprite, spriteLength*x, spriteLength*y, spriteLength-6, spriteLength-6, this);
+							g2.drawImage(mainTargetSprite, spriteLength*x+targetMargin, spriteLength*y+targetMargin, targetSpriteLength, targetSpriteLength, this);
 							break;
 						// ROUGE
 						case 21:
 							g2.drawImage(redPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
 							break;
 						case 22:
-							g2.drawImage(redTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 23:
-							g2.drawImage(redTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 24:
-							g2.drawImage(redTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 25:
-							g2.drawImage(redTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(redTargetSprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
 							break;
 						// BLEU
 						case 31:
 							g2.drawImage(bluePawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
 							break;
 						case 32:
-							g2.drawImage(blueTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 33:
-							g2.drawImage(blueTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 34:
-							g2.drawImage(blueTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 35:
-							g2.drawImage(blueTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(blueTargetSprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
 							break;
 						// VERT
 						case 41:
 							g2.drawImage(greenPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
 							break;
 						case 42:
-							g2.drawImage(greenTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 43:
-							g2.drawImage(greenTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 44:
-							g2.drawImage(greenTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 45:
-							g2.drawImage(greenTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(greenTargetSprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
 							break;
 						// JAUNE
 						case 51:
 							g2.drawImage(yellowPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
 							break;
 						case 52:
-							g2.drawImage(yellowTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 53:
-							g2.drawImage(yellowTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 54:
-							g2.drawImage(yellowTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
-							break;
-						case 55:
-							g2.drawImage(yellowTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(yellowTargetSprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
 							break;
 						default:;
 						}
@@ -299,6 +240,7 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	@Override public void componentResized(ComponentEvent e) {
 		spriteLength = (int) Math.min((int)(this.getSize().height/16.0), (int)(this.getSize().width/16.0));
 		wallSpriteLength = (int) (spriteLength*7/32.0);
+		targetSpriteLength = (int) (spriteLength*0.75);
 		this.repaint();
 	}
 

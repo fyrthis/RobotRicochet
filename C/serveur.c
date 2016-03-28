@@ -316,7 +316,7 @@ int main(int argc, char* argv[]) {
         printf("(Server:serveur.c:main) : Thread %d created and ready\n", i);
     }
     printf("(Server:serveur.c:main) : Initialize server socket...\n");
-    int port = 2185;
+    int port = 2188;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;
@@ -462,6 +462,16 @@ int setEnigma(){
         // Generation aleatoire des positions des robots
         srand(time(NULL));
         
+        // Cible
+        int center1_x = (size_x-1) / 2;
+        int center1_y = (size_y-1) / 2;
+        int center2_x = (size_x-1) / 2 + 1;
+        int center2_y = (size_x-1) / 2;
+        int center3_x = (size_x-1) / 2;
+        int center3_y = (size_y-1) / 2 + 1;
+        int center4_x = (size_x-1) / 2 + 1;
+        int center4_y = (size_y-1) / 2 + 1;
+        
         do { 
             // Rouge
             x_r = rand() % size_x;
@@ -476,17 +486,16 @@ int setEnigma(){
             x_v = rand() % size_x;
             y_v = rand() % size_y;
         } while((x_r == x_b && y_r == y_b) || (x_r == x_j && y_r == y_j) || (x_r == x_v && y_r == y_v)
-            || (x_b == x_j && y_b == y_j) || (x_b == x_v && y_b == y_v) || (x_j == x_v && y_j == y_v));
+             || (x_b == x_j && y_b == y_j) || (x_b == x_v && y_b == y_v) || (x_j == x_v && y_j == y_v)
+             || (x_r == center1_x && y_r == center1_y) || (x_r == center2_x && y_r == center2_y)
+             || (x_r == center3_x && y_r == center3_y) || (x_r == center4_x && y_r == center4_y)
+             || (x_b == center1_x && y_b == center1_y) || (x_b == center2_x && y_b == center2_y)
+             || (x_b == center3_x && y_b == center3_y) || (x_b == center4_x && y_b == center4_y)
+             || (x_j == center1_x && y_j == center1_y) || (x_j == center2_x && y_j == center2_y)
+             || (x_j == center3_x && y_j == center3_y) || (x_j == center4_x && y_j == center4_y)
+             || (x_v == center1_x && y_v == center1_y) || (x_v == center2_x && y_v == center2_y)
+             || (x_v == center3_x && y_v == center3_y) || (x_v == center4_x && y_v == center4_y));
 
-        // Cible
-        int center1_x = (size_x-1) / 2;
-        int center1_y = (size_y-1) / 2;
-        int center2_x = (size_x-1) / 2 + 1;
-        int center2_y = (size_x-1) / 2;
-        int center3_x = (size_x-1) / 2;
-        int center3_y = (size_y-1) / 2 + 1;
-        int center4_x = (size_x-1) / 2 + 1;
-        int center4_y = (size_y-1) / 2 + 1;
         
         x_cible = rand() % size_x;
         y_cible = rand() % size_y;

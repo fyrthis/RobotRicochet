@@ -37,7 +37,7 @@ public class Client extends Observable implements Runnable {
 
 	private boolean connected = false;
 
-	private int port = 2162;
+	private int port = 2165;
 	private String hostname = "127.0.0.1";
 
 	public void connect() throws ConnectException, UnknownHostException, IOException {

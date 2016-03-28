@@ -189,6 +189,8 @@ void handle_request(task_t * task, int thread_id) {
                     // il faut donc mettre a jour la solution courante, et enre
                     else {
                         validation(task->socket);
+                        activePlayer = findClient(username);
+                        currentSolution = activePlayer->score;
                     }
                 }
 
@@ -313,7 +315,7 @@ int main(int argc, char* argv[]) {
         printf("(Server:serveur.c:main) : Thread %d created and ready\n", i);
     }
     printf("(Server:serveur.c:main) : Initialize server socket...\n");
-    int port = 2162;
+    int port = 2166;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;

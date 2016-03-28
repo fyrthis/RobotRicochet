@@ -313,7 +313,7 @@ int main(int argc, char* argv[]) {
         printf("(Server:serveur.c:main) : Thread %d created and ready\n", i);
     }
     printf("(Server:serveur.c:main) : Initialize server socket...\n");
-    int port = 2097;
+    int port = 2151;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;
@@ -476,14 +476,28 @@ int setEnigma(){
             || (x_b == x_j && y_b == y_j) || (x_b == x_v && y_b == y_v) || (x_j == x_v && y_j == y_v));
 
         // Cible
-
+        int center1_x = (size_x-1) / 2;
+        int center1_y = (size_y-1) / 2;
+        int center2_x = (size_x-1) / 2 + 1;
+        int center2_y = (size_x-1) / 2;
+        int center3_x = (size_x-1) / 2;
+        int center3_y = (size_y-1) / 2 + 1;
+        int center4_x = (size_x-1) / 2 + 1;
+        int center4_y = (size_y-1) / 2 + 1;
+        
         x_cible = rand() % size_x;
         y_cible = rand() % size_y;
         while(grid[x_cible][y_cible] == 0
             || grid[x_cible][y_cible] == 1
             || grid[x_cible][y_cible] == 2
             || grid[x_cible][y_cible] == 4
-            || grid[x_cible][y_cible] == 8){
+            || grid[x_cible][y_cible] == 8
+            || grid[x_cible][y_cible] == 5
+            || grid[x_cible][y_cible] == 10
+            || (x_cible == center1_x && y_cible == center1_y)
+            || (x_cible == center2_x && y_cible == center2_y)
+            || (x_cible == center3_x && y_cible == center3_y)
+            || (x_cible == center4_x && y_cible == center4_y)){
             x_cible = rand() % size_x;
             y_cible = rand() % size_y;
         }

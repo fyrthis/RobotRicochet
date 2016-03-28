@@ -55,6 +55,16 @@ public class Model {
 			i++;
 		}
 		
+		System.out.println("GRID AFTER RECEIVING FROM SERVEUR");
+		for(int ligne = 0; ligne < size_y; ligne++){
+			for(int colonne = 0; colonne < size_x; colonne++){
+				System.out.print(mat[colonne][ligne]+" ");
+			}
+			System.out.println();
+		}
+		
+		
+		
 		return mat;
 	}
 	
@@ -62,16 +72,16 @@ public class Model {
 		Integer v = 0;
 		switch(w){
 		case "H":
-			v = 8;
+			v = 1;
 			break;
 		case "D":
-			v = 4;
-			break;
-		case "B":
 			v = 2;
 			break;
+		case "B":
+			v = 4;
+			break;
 		case "G":
-			v = 1;
+			v = 8;
 			break;
 		default:;
 		}
@@ -107,12 +117,12 @@ public class Model {
 			int y = Integer.parseInt(y_str);
 
 			this.grid.setSymbol(x, y, getSymbolValue(robotColor));
+			System.out.println(robotColor+"["+x+","+y+"]" );
 		}
 		System.out.println("Target: "+tokens[tokens.length-1].charAt(0));
 	}
 	
 	private int getSymbolValue(char r){
-		System.out.println("get symbol "+r);
 		switch(r){
 		case 'r':
 			return 21;

@@ -95,14 +95,14 @@ int readGridFromFile(char *filename) {
     sprintf(sizeInfo,"/%d/%d", size_x, size_y); 
     strcat(gridStr, sizeInfo);
             
-    /*
-    int i = 0, j = 0;
-    for(i = 0; i < size_x; i++){
-        for(j = 0; j < size_y; j++){
-            printf("%d ", grid[i][j]);
+    fprintf(stderr, "BEFORE SENDING GRID TO CLIENT\n");
+    int ligne = 0, colonne = 0;
+    for(colonne = 0; colonne < size_y; colonne++){
+        for(ligne = 0; ligne < size_x; ligne++){
+            printf("%d ", grid[colonne][ligne]);
         }
         printf("\n");
-    }*/
+    }
 
     // fprintf(stderr, "%s", gridStr);
 

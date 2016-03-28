@@ -145,24 +145,24 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 		}
 
 		// On va remplir les murs en fonction de la valeur de grid[][]
-		for ( int yloop = 0 ; yloop < size_y ; yloop++ ){
-			for ( int xloop = 0 ; xloop < size_x ; xloop++ ){
-				int y = spriteLength*yloop;
-				int x = spriteLength*xloop;
+		for ( int ligne = 0 ; ligne < size_x ; ligne++ ){
+			for ( int colonne = 0 ; colonne < size_y ; colonne++ ){
+				int y = spriteLength*colonne;
+				int x = spriteLength*ligne;
 				int side1 = spriteLength;
 				int side2 = wallSpriteLength;
-				switch( this.grid[xloop][yloop].getValue() ){
+				switch( this.grid[colonne][ligne].getValue() ){
 				case 3: //angle en haut à droite
-					g2.drawImage(wallH,side1*xloop,y,side1,side2, this);
+					g2.drawImage(wallH,side1*ligne,y,side1,side2, this);
 					g2.drawImage(wallV,x+side1-side2,y,side2,side1, this);
 					break;
 				case 6: //angle en bas à droite
 					g2.drawImage(wallV,x+side1-side2,y,side2,side1, this);
-					g2.drawImage(wallH,x,side1*(yloop+1)-side2,side1,side2, this);
+					g2.drawImage(wallH,x,side1*(colonne+1)-side2,side1,side2, this);
 					break;
 				case 7: //murs haut/droite/bas
 					g2.drawImage(wallH,x,y,side1,side2, this);
-					g2.drawImage(wallH,x,side1*(yloop+1)-side2,side1,side2, this);
+					g2.drawImage(wallH,x,side1*(colonne+1)-side2,side1,side2, this);
 					g2.drawImage(wallV,x+side1-side2,y,side2,side1, this);
 					break;
 				case 9: //angle en haut à gauche
@@ -175,102 +175,102 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 					g2.drawImage(wallH,x,y,side1,side2, this);
 					break;
 				case 12: //angle en bas à gauche
-					g2.drawImage(wallH,x,side1*(yloop+1)-side2,side1,side2, this);
+					g2.drawImage(wallH,x,side1*(colonne+1)-side2,side1,side2, this);
 					g2.drawImage(wallV,x,y,side2,side1, this);
 					break;
 				case 13: //murs haut/gauche/bas
 					g2.drawImage(wallH,x,y,side1,side2, this);
-					g2.drawImage(wallH,x,side1*(yloop+1)-side2,side1,side2, this);
+					g2.drawImage(wallH,x,side1*(colonne+1)-side2,side1,side2, this);
 					g2.drawImage(wallV,x,y,side2,side1, this);
 					break;
 				case 14: //murs gauche/bas/droit
 					g2.drawImage(wallV,x,y,side2,side1, this);
 					g2.drawImage(wallV,x+side1-side2,y,side2,side1, this);
-					g2.drawImage(wallH,x,side1*(yloop+1)-side2,side1,side2, this);
+					g2.drawImage(wallH,x,side1*(colonne+1)-side2,side1,side2, this);
 					break;
 				case 15: //murs partout
 					g2.drawImage(wallH,x,y,side1,side2, this);
 					g2.drawImage(wallV,x+side1-side2,y,side2,side1, this);
-					g2.drawImage(wallH,x,side1*(yloop+1)-side2,side1,side2, this);
+					g2.drawImage(wallH,x,side1*(colonne+1)-side2,side1,side2, this);
 					g2.drawImage(wallV,x,y,side2,side1, this);
 					break;
 				}
 			}
 		}
 		if(symbolsGrid != null){
-			for ( int y = 0; y < symbolsGrid.length; y++){
-				for ( int x = 0; x < symbolsGrid.length; x++ ){
+			for ( int y = 0; y < symbolsGrid[0].length; y++ ){
+				for ( int x = 0; x < symbolsGrid.length; x++){
 					int targetMargin = (spriteLength-targetSpriteLength)/2;
 					if(this.symbolsGrid[x][y] != null && this.symbolsGrid[x][y].getValue() != 0){
-						System.out.print("(Client:"+Debug.curName+")(GridPanel:paint) ["+x+","+y+"] = "+this.symbolsGrid[x][y] + " | ");
+						System.out.print("(Client:"+Debug.curName+")(GridPanel:paint) ["+x+","+y+"] = "+this.symbolsGrid[y][x] + " | ");
 						switch(this.symbolsGrid[x][y].getValue()){
 						// TARGET
 						case 99:
-							g2.drawImage(mainTargetSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
+							g2.drawImage(mainTargetSprite, spriteLength*y, spriteLength*x, spriteLength, spriteLength, this);
 							break;
 						// ROUGE
 						case 21:
-							g2.drawImage(redPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							g2.drawImage(redPawnSprite,spriteLength*y,spriteLength*x,spriteLength,spriteLength, this);
 							break;
 						case 22:
-							g2.drawImage(redTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(redTarget1Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 23:
-							g2.drawImage(redTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(redTarget2Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 24:
-							g2.drawImage(redTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(redTarget3Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 25:
-							g2.drawImage(redTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(redTarget4Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						// BLEU
 						case 31:
-							g2.drawImage(bluePawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							g2.drawImage(bluePawnSprite,spriteLength*y,spriteLength*x,spriteLength,spriteLength, this);
 							break;
 						case 32:
-							g2.drawImage(blueTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(blueTarget1Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 33:
-							g2.drawImage(blueTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(blueTarget2Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 34:
-							g2.drawImage(blueTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(blueTarget3Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 35:
-							g2.drawImage(blueTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(blueTarget4Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						// VERT
 						case 41:
-							g2.drawImage(greenPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							g2.drawImage(greenPawnSprite,spriteLength*y,spriteLength*x,spriteLength,spriteLength, this);
 							break;
 						case 42:
-							g2.drawImage(greenTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(greenTarget1Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 43:
-							g2.drawImage(greenTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(greenTarget2Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 44:
-							g2.drawImage(greenTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(greenTarget3Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 45:
-							g2.drawImage(greenTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(greenTarget4Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						// JAUNE
 						case 51:
-							g2.drawImage(yellowPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							g2.drawImage(yellowPawnSprite,spriteLength*y,spriteLength*x,spriteLength,spriteLength, this);
 							break;
 						case 52:
-							g2.drawImage(yellowTarget1Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(yellowTarget1Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 53:
-							g2.drawImage(yellowTarget2Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(yellowTarget2Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 54:
-							g2.drawImage(yellowTarget3Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(yellowTarget3Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						case 55:
-							g2.drawImage(yellowTarget4Sprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(yellowTarget4Sprite,spriteLength*y+targetMargin,spriteLength*x+targetMargin,spriteLength,spriteLength, this);
 							break;
 						default:;
 						}
@@ -285,8 +285,8 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	public String toString(){
 		String rslt = "";
 
-		for(int y = 0; y < size_y; y++){
-			for(int x = 0; x < size_x; x++){
+		for(int x = 0; x < size_x; x++){
+			for(int y = 0; y < size_y; y++){
 				rslt += this.grid[x][y];
 				rslt += " ";
 			}
@@ -315,20 +315,38 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 		this.size_x = newGrid[0].length;
 		this.size_y = newGrid[0][0].length;
 		this.grid = new Tile[size_x][size_y];
-		for(int i = 0; i < newGrid[0].length; i++){
-			for(int j = 0; j < newGrid[0][0].length; j++){
-				this.grid[i][j] = new Tile(i, j, newGrid[0][i][j]);
+		
+		for(int colonne = 0; colonne < newGrid[0].length; colonne++){
+			for(int ligne = 0; ligne < newGrid[0][0].length; ligne++){
+				this.grid[colonne][ligne] = new Tile(colonne, ligne, newGrid[0][colonne][ligne]);
 			}
 		}
 
 		if(newGrid[1] != null){
 			this.symbolsGrid = new Tile[size_x][size_y];
-			for(int i = 0; i < newGrid[1].length; i++){
-				for(int j = 0; j < newGrid[1][1].length; j++){
-					this.symbolsGrid[i][j] = new Tile(i, j, newGrid[1][i][j]);
+			for(int colonne = 0; colonne < newGrid[1].length; colonne++){
+				for(int ligne = 0; ligne < newGrid[1][0].length; ligne++){
+					this.symbolsGrid[colonne][ligne] = new Tile(colonne, ligne, newGrid[1][colonne][ligne]);
 				}
 			}
 		}
+		
+		System.out.println("AFTER THE UPDATE");
+		for(int ligne = 0; ligne < newGrid[0][0].length; ligne++){
+			for(int colonne = 0; colonne < newGrid[0].length; colonne++){
+				System.out.print(this.grid[colonne][ligne].getValue()+" ");
+			}
+			System.out.println();
+		}
+		if(newGrid[1] != null){
+			for(int ligne = 0; ligne < newGrid[1][0].length; ligne++){
+				for(int colonne = 0; colonne < newGrid[1].length; colonne++){
+					System.out.print(this.symbolsGrid[colonne][ligne].getValue()+" ");
+				}
+				System.out.println();
+			}
+		}
+
 		System.out.println("(Client:"+Debug.curName+")(GridPanel:update) END updating");
 		//placeColorRoles();
 		readSprites();

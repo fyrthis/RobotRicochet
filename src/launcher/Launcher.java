@@ -1,14 +1,13 @@
 package launcher;
 
-import controller.Controller;
 import model.Model;
 import view.View;
+import controller.Controller;
 
 public class Launcher {
 
 	public static void main(String[] args) {
 		Model model = new Model();
-		
 		Controller controller = new Controller(model);
 		Debug.get().setModel(model);
 		new View(model, controller);

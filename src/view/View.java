@@ -8,13 +8,14 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import controller.Controller;
 import launcher.Debug;
+import model.ChatModel;
 import model.Model;
 import utils.AskNameDialog;
 import utils.Phase;
 import view.game.GamePanel;
 import view.welcome.HomePagePanel;
+import controller.Controller;
 
 public class View extends JFrame {
 	private static final long serialVersionUID = -3880026026104218593L;
@@ -118,6 +119,10 @@ public class View extends JFrame {
 	
 	public void resolveMovesSignal(String moves) {
 		controller.sendMoves(model.getPlayers().getlocalPlayer().getName(), moves);
+	}
+	
+	public void sendMessageSignal(String messages) {
+		controller.sendMessages(model.getPlayers().getlocalPlayer().getName(), messages);
 	}
 
 }

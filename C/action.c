@@ -312,3 +312,12 @@ int tropLong(char *username, int socket) {
     }
     return 0;
 }
+
+// S -> C : MESSAGE/user/message
+int envoyerMessageAuxAutres(char *user,  char *message, int socket) {
+    char *msg = (char*)calloc(strlen(user) + strlen(message) + 11 + 1, sizeof(char));
+    sprintf(msg, "MESSAGE/%s/%s/\n", user, message);
+    fprintf(stderr, "(Server:action.c:envoyerMessageAuxAutres) : %s\n", msg);
+    sendMessageAllExceptOne(msg, user, &client_mutex);
+    return 0;
+}

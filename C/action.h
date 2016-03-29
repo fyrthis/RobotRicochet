@@ -58,4 +58,11 @@ int mauvaiseSolution(char *username, int socket);
 int finResolution(int socket);
 int tropLong(char *username, int socket);
 
+
+/*********
+*  CHAT  *
+**********/
+
+int envoyerMessageAuxAutres(char *user,  char *message, int socket);
+
 #endif

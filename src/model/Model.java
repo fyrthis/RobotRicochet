@@ -10,16 +10,19 @@ public class Model {
 	Players players;
 	Grid grid;
 	GameState gameState;
+	ChatModel chatModel;
 	
 	public Model() {
 		players = new Players();
 		grid = new Grid();
 		gameState = new GameState();
+		chatModel = new ChatModel();
 	}
 
 	public Players getPlayers() { return players; }
 	public Grid getGrid() { return grid; }
 	public GameState getGameState() { return gameState; }
+	public ChatModel getChatModel() { return chatModel; }
 
 	public void playerConnected(String name) {
 		players.add(name);	

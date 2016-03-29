@@ -251,6 +251,25 @@ void handle_request(task_t * task, int thread_id) {
 
             if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
         }
+        //C -> S : MESSAGE/user/message
+        else if (strcmp(pch,"MESSAGE")==0) {
+            if(pthread_mutex_lock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
+
+            pch = strtok(NULL, "/");
+            char *user = (char*)calloc(strlen(pch)+1, sizeof(char));
+            strncpy(user, pch, strlen(pch));
+
+            pch = strtok(NULL, "/");
+            char *message = (char*)calloc(strlen(pch)+1, sizeof(char));
+            strncpy(message, pch, strlen(pch));
+
+            fprintf(stderr, "(Server:serveur.c:handle_request) : Message envoyé par %s : %s\n", user, message);
+
+            envoyerMessageAuxAutres(user, message, task->socket);
+
+            if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
+        }
+
         else {
             fprintf(stderr, "(Server:serveur.c:handle_request) : ERROR : received bad protocol : %s.\n", task->command);
         }

@@ -22,6 +22,7 @@ public class Controller implements Observer {
 	Enchere enc;
 	Reflexion ref;
 	Resolution res;
+	Chat chat;
 
 	public Controller(Model model) {
 		Controller.model=model;
@@ -30,6 +31,7 @@ public class Controller implements Observer {
 		enc = new Enchere(model);
 		ref = new Reflexion(model);
 		res = new Resolution(model);
+		chat = new Chat(model);
 	}
 
 	public void connect(String name) throws ConnectException, UnknownHostException, IOException {
@@ -93,6 +95,17 @@ public class Controller implements Observer {
 			e.printStackTrace();
 		}
 		model.getGameState().setSolutionMoves(moves);
+	}
+	
+
+	public void sendMessages(String name, String message) {
+		System.out.println("(Client:"+Debug.curName+")(Controller:sendMessages) sent : MESSAGE/"+name+"/"+message+"/");
+		try {
+			Client.getInstance().sendMessage("MESSAGE/"+name+"/"+message+"/");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -177,7 +190,10 @@ public class Controller implements Observer {
 		//S->C : TROPLONG/user/
 		} else if (tokens.length>1 && tokens[0].compareTo("TROPLONG")==0) {
 			res.tropLong(tokens[1]);
-			
+		
+		//S->C : MESSAGE/user/message/	
+		} else if (tokens.length>2 && tokens[0].compareTo("MESSAGE")==0) {
+			chat.receiveMessageFrom(tokens[1], tokens[2]);
 		} else {
 			//DO NOTHING
 			try {

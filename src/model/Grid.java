@@ -11,6 +11,11 @@ public class Grid extends Observable {
 	int x_b, y_b;
 	int x_j, y_j;
 	int x_v, y_v;
+	
+	Robot rouge;
+	Robot bleu;
+	Robot jaune;
+	Robot vert;
 
 	public Grid(){
 		this.grid = new Integer[2][][];
@@ -44,21 +49,25 @@ public class Grid extends Observable {
 		case 'r':
 			x_r = x;
 			y_r = y;
+			rouge = new Robot(x_r, y_r);
 			grid[1][x_r][y_r] = 21;
 			break;
 		case 'b':
 			x_b = x;
 			y_b = y;
+			bleu = new Robot(x_b, y_b);
 			grid[1][x_b][y_b] = 31;
 			break;
 		case 'j':
 			x_j = x;
 			y_j = y;
+			jaune = new Robot(x_j, y_j);
 			grid[1][x_j][y_j] = 51;
 			break;
 		case 'v':
 			x_v = x;
 			y_v = y;
+			vert = new Robot(x_v, y_v);
 			grid[1][x_v][y_v] = 41;
 			break;
 		default:;
@@ -70,6 +79,11 @@ public class Grid extends Observable {
 	public int getSizeX(){ return this.grid[0].length; }
 	public int getSizeY(){ return this.grid[0][0].length; }
 	public char getTarget(){ return this.target; }
+	
+	public Robot getRedRobot(){ return this.rouge; }
+	public Robot getBlueRobot(){ return this.bleu; }
+	public Robot getYellowRobot(){ return this.jaune; }
+	public Robot getGreenRobot(){ return this.vert; }
 
 	public void update() {
 		this.setChanged();
@@ -176,6 +190,7 @@ public class Grid extends Observable {
 				break;
 			default:;
 			}
+			rouge.setXY(x_r, y_r);
 			grid[1][x_r][y_r] = 21;
 			break;
 		case 'B':
@@ -271,6 +286,7 @@ public class Grid extends Observable {
 				break;
 			default:;
 			}
+			bleu.setXY(x_b, y_b);
 			grid[1][x_b][y_b] = 31;
 			break;
 		case 'J':
@@ -367,6 +383,7 @@ public class Grid extends Observable {
 				break;
 			default:;
 			}
+			jaune.setXY(x_j, y_j);
 			grid[1][x_j][y_j] = 51;
 			break;
 		case 'V':
@@ -463,6 +480,7 @@ public class Grid extends Observable {
 				break;
 			default:;
 			}
+			vert.setXY(x_v, y_v);
 			grid[1][x_v][y_v] = 41;
 			break;
 		default:;

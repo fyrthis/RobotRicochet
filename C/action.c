@@ -149,19 +149,14 @@ int sendGrid(char *gridStr, int socket) {
 *******************/
 
 // S -> C : TOUR/enigme/bilan
-int sendEnigmaBilan(char *enigma, char *bilan, int socket) {
+int sendEnigmaBilan(char *enigma, char *bilan) {
     fprintf(stderr, "(Server:action.c:sendEnigmaBilan) : Sending the Enigma:\n");
     char *msg = (char*)calloc(strlen(enigma)+strlen(bilan)+9, sizeof(char));
     
     sprintf(msg, "TOUR/%s/%s/\n", enigma, bilan);
 
     printf("%s", msg);
-    if(write(socket,msg,(strlen(msg)*sizeof(char))) < 0) {
-    	perror("(Server:action.c:sendEnigmaBilan) : Erreur in sendEnigmaBilan, cannot write on socket\n");
-    }
-    else {
-        fprintf(stderr, "(Server:action.c:sendEnigmaBilan) : Enigma + bilan send!\n");
-    }
+    sendMessageAll(msg, &client_mutex);
 
     return 0;
 }

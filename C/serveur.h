@@ -25,10 +25,15 @@
 
 #define __USE_GNU 
 #include <pthread.h>
+#include <unistd.h>
 
 /* CONSTANTS */
 #define NB_MAX_THREADS 8
 #define NB_MAX_CLIENTS 50
+
+#define REFLEXION 0
+#define ENCHERE 1
+#define RESOLUTION 2
 
 #include "game_state.h"
 #include "task.h"
@@ -43,7 +48,7 @@ extern pthread_cond_t  cond_got_task;//   = PTHREAD_COND_INITIALIZER;
 char *enigma;
 char *bilan;
 
-int phase = 0;
+int phase = REFLEXION;
 int nbTour = 1;
 
 // Variable qui permet de savoir si le client qui se connecte

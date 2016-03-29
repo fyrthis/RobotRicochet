@@ -24,6 +24,13 @@
 
 pthread_cond_t  cond_got_task   = PTHREAD_COND_INITIALIZER;
 
+pthread_t ptimer;
+int nbSecondsTimer;
+int nbTours = 10;
+int etat_reso=0;
+
+void * session_loop(void * nbToursSession);
+
 // client_t * clients = NULL;  --> ça pourrait très bien être le serveur qui intialise tout .. !!
 
 /******************************************
@@ -67,10 +74,10 @@ void handle_request(task_t * task, int thread_id) {
             //S -> C : SESSION/plateau/
             sendGrid(gridStr, task->socket);
 
-            //S -> C : TOUR/enigme/       bilan to do
-            setEnigma();
-            setBilanCurrentSession();
-            sendEnigmaBilan(enigma, bilan, task->socket);
+            if(nbClientsConnecte==2)
+                pthread_create(&ptimer, NULL, session_loop, (void*)&nbTours);
+
+            
         }
         //C -> S : SORT/user/
         else if(strcmp(pch,"SORT")==0)
@@ -119,8 +126,8 @@ void handle_request(task_t * task, int thread_id) {
 
 
             // si la phase est toujours a 0, c'est que le serveur a recu la premiere (et unique) solution
-            if(phase == 0){
-                phase = 1;
+            if(phase == REFLEXION){
+                phase = ENCHERE;
 
                 // On va chercher dans la liste des clients le joueur qui correspond a celui qui a proposé
                 // une solution pour le garder en mémoire en tant que joueur actif (activePlayer)
@@ -131,8 +138,6 @@ void handle_request(task_t * task, int thread_id) {
                 client_t *client = clients;
                 while(client != NULL){
                     if(strcmp(client->name, activePlayerStr) == 0) {
-                        // normalement activePlayer étant défini comme un pointeur vers un client déjà existant
-                        // on a ni besoin de l'initialiser avec des malloc, ni besoin de remplir ses champs
                         activePlayer = client;
                         break;
                     }
@@ -146,9 +151,7 @@ void handle_request(task_t * task, int thread_id) {
                 fprintf(stderr, "(Server:serveur.c:handle_request) : Solution trouvée par %s\n", activePlayer->name);
                 tuAsTrouve(task->socket);
                 ilATrouve(activePlayer->name, currentSolution, task->socket);
-                // Il faut appeler finReflexion() seulement si personne n'a proposé de solution
-                // pendant le laps de temps restant, qu'il faudra implementer dans timer
-                // finReflexion();
+
             }
             // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé :
             // au lieu de SOLUTION/user/coups on envoie ENCHERE/user/coups
@@ -170,8 +173,8 @@ void handle_request(task_t * task, int thread_id) {
             strncpy(username, pch, strlen(pch));
             
             // si la phase est a 1, c'est que le serveur a recu une echere
-            if(phase == 1){
-                phase = 2;
+            if(phase == ENCHERE){
+                //phase = RESOLUTION;
 
                 fprintf(stderr, "(Server:serveur.c:handle_request) : Enchère reçues de la part de %s\n", username);
                 
@@ -218,7 +221,7 @@ void handle_request(task_t * task, int thread_id) {
 
             
             // si la phase est a 2 alors on est dans la phase de résolution
-            if(phase == 2) {
+            if(phase == RESOLUTION) {
                 
                 pch = strtok (NULL, "/");
                 char *deplacements = (char*)calloc(strlen(pch)+1, sizeof(char));
@@ -294,9 +297,6 @@ void * handle_tasks_loop(void* data) {
 }
 
 
-
-
-
 /***************
 *     MAIN     *
 ****************/
@@ -315,8 +315,9 @@ int main(int argc, char* argv[]) {
         pthread_create(&p_threads[i], NULL, handle_tasks_loop, (void*)&thr_id[i]);
         printf("(Server:serveur.c:main) : Thread %d created and ready\n", i);
     }
+    
     printf("(Server:serveur.c:main) : Initialize server socket...\n");
-    int port = 2188;
+    int port = 2199;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;
@@ -343,8 +344,8 @@ int main(int argc, char* argv[]) {
 
 
     /* A enlver ultérieurement, sert à éviter le bind already in use */
-    if (setsockopt(socket_server, SOL_SOCKET, SO_REUSEADDR, &(int){ 1 }, sizeof(int)) < 0)
-        perror("(Server:serveur.c:main) : setsockopt(SO_REUSEADDR) failed");
+    //if (setsockopt(socket_server, SOL_SOCKET, SO_REUSEADDR, &(int){ 1 }, sizeof(int)) < 0)
+    //    perror("(Server:serveur.c:main) : setsockopt(SO_REUSEADDR) failed");
     /* ************************************************************** */
     bzero((char *) &server_address, sizeof(server_address));
     server_address.sin_family = AF_INET;
@@ -458,7 +459,7 @@ int setEnigma(){
     // nbRobots*nbCoordonnées*tailleCoordonnée + nbLettres + nbVirgule + parenthèses + lettreCible
     enigma = calloc(5*2*2 + 10 + 10 + 2 + 1, sizeof(char));
     
-    if(firstLaunch == 0){
+    //if(firstLaunch == 0){
         // Generation aleatoire des positions des robots
         srand(time(NULL));
         
@@ -531,8 +532,8 @@ int setEnigma(){
                 break;
             default:;
         }
-        firstLaunch = -1;
-    }
+        //firstLaunch = -1;
+    //}
 
     sprintf(enigma, "(%dr,%dr,%db,%db,%dj,%dj,%dv,%dv,%dc,%dc,%c)", x_r, y_r, x_b, y_b, x_j, y_j, x_v, y_v, x_cible, y_cible, lettreCible);
     return 0;
@@ -586,4 +587,72 @@ int setBilanCurrentSession(){
     fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : Bilan current session set!\n");
 
     return 0;
+}
+
+
+void * session_loop(void* nbToursSession) {
+    printf("SESSION_LOOP BEGINS\n");
+    int cptTours = 0;
+    int i;
+    int timer;
+    while(nbClientsConnecte>=2 && cptTours<*((int*)nbToursSession)) {
+        
+        if( phase==REFLEXION && nbClientsConnecte>=2) {
+            printf("DEBUT REFLEXION\n");
+            //S -> C : TOUR/enigme/
+            setEnigma();
+            setBilanCurrentSession();
+            sendEnigmaBilan(enigma, bilan);
+            i=0;
+            timer=5*60;
+            while(i < timer && phase==REFLEXION && nbClientsConnecte>=2) {
+                sleep(1);
+                i++;
+                printf("REFLEXION : %d sec.\n", i);
+            }
+            if(i==timer) { //Délai écoulé
+                printf("REFLEXION : DELAI ECOULE\n");
+                phase=ENCHERE;
+                char *msg = "FINREFLEXION/\n";
+                sendMessageAll(msg, &client_mutex);
+            } else { //Quelqu'un a proposé une solution
+                //DO NOTHING : Géré dans Handle_request
+                printf("REFLEXION : SOLTUION PROPOSEE \n");
+            }
+        }
+        if( phase==ENCHERE && nbClientsConnecte>=2) {
+            printf("DEBUT ENCHERE\n");
+            i=0;
+            timer=30;
+            while(i < timer && nbClientsConnecte>=2) {
+                sleep(1);
+                i++;
+                printf("ENCHERE : %d sec.\n", i);
+            }
+            phase=RESOLUTION;
+        }
+        if( phase==RESOLUTION && nbClientsConnecte>=2) {
+            printf("DEBUT RESOLUTION\n");
+            i=0;
+            timer=30;
+            while(i < timer && nbClientsConnecte>=2) { //Et tant qu'unjoueur a une solution a proposer
+                sleep(1);
+                i++;
+                if(etat_reso==1) { //Si mauvaise
+                    etat_reso = 0; //Base
+                   // if(joueur_a_une_solution()==0) {
+                    //    i = 0; //Nouveau temps de résolution pour un joueur
+                    //}
+                } else if(etat_reso==2) { //Si bonne
+                    etat_reso=0; //Base
+                    break; //Nouveau tour, énigme !
+                }
+                printf("RESOLUTION : %d sec.\n", i);
+                //if(mauvaise => new joueur => i = 0)
+            }
+            phase=REFLEXION;
+        }
+        cptTours++;
+    }
+    printf("SESSION_LOOP ENDS\n");
 }

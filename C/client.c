@@ -93,6 +93,7 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
         last_client = client;
     }
 
+    nbClientsConnecte++;
     nbClients++;
 
     printf("(Server:client.c:addClient) : added client with socket '%d'\n", client->socket);

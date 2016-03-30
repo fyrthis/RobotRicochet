@@ -373,8 +373,9 @@ int main(int argc, char* argv[]) {
                     FD_SET(socket_client, &readfds); //Add socket file descriptor to the set
                     printf("(Server:serveur.c:main) : New socket connection on %d\n", socket_client);
                 }
-                else if(FD_ISSET(STDIN_FILENO, &readfds))
+                else if(socket==STDIN_FILENO)
                 { //Activité stdin : l'administrateur parle !
+                    printf("socket stdin is %d", socket);
                     fgets(buffer, 255, stdin);
                     printf("L'admin dit : %s\n", buffer);
                     if(strncmp(buffer, "exit",4)==0) shutdown_server(0);

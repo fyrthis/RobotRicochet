@@ -50,7 +50,7 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
     if(pthread_mutex_lock(p_mutex) < 0) {
     	perror("(Server:client.c:addClient) : on addClient, cannot lock the first p_mutex\n");
     }
-    if((client=findClient(socket, name))!=NULL) {
+    if((client=findClient(name))!=NULL) {
     /*Client déjà connecté*/
         if(client->isConnected==0) {
             printf("(Server:client.c:addClient) : Client %s deja connecte !\n", name);
@@ -80,6 +80,7 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
     client->name = name;
     client->isConnected = 0;
     client->score = 0;
+    client->nbCoups=0;
     client->next = NULL;
 
     
@@ -109,6 +110,24 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
 
 /******************************************
 *                                         *
+*  déconnecte un client dans la liste des *
+*  clients. Opération protégée par un     *
+*  mutex.                                 *
+*                                         *
+*******************************************/
+
+void disconnectClient(char* name, pthread_mutex_t* p_mutex) {
+    if(pthread_mutex_lock(p_mutex) < 0) { perror("(Server:client.c:printClientsState) : cannot lock the first p_mutex\n"); }
+    client_t *client = findClient(name);
+    if(client != NULL) {
+        client->isConnected = 1;
+        nbClientsConnecte--;
+    }
+    if(pthread_mutex_lock(p_mutex) < 0) { perror("(Server:client.c:printClientsState) : cannot lock the first p_mutex\n"); }
+}
+
+/******************************************
+*                                         *
 *  Enlève un client dans la liste des     *
 *  clients. Opération protégée par un     *
 *  mutex.                                 *
@@ -116,9 +135,11 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
 *******************************************/
 
 void rmClient(int socket, pthread_mutex_t* p_mutex) {
+    if(pthread_mutex_lock(p_mutex) < 0) { perror("(Server:client.c:printClientsState) : cannot lock the first p_mutex\n"); }
 //TODO : Retirer un client de la liste.
 //TODO : ce n'est pas ici qu'on envoie le message et qu'on clore la socket !!
     printClientsState(&client_mutex);
+    if(pthread_mutex_lock(p_mutex) < 0) { perror("(Server:client.c:printClientsState) : cannot lock the first p_mutex\n"); }
 }
 
 /******************************************
@@ -132,10 +153,10 @@ void rmClient(int socket, pthread_mutex_t* p_mutex) {
 *******************************************/
 
 //Mutex dans addClient
-client_t *findClient(int socket, char * name) {
+client_t *findClient(char * name) {
     client_t * client = clients;
     while(client != NULL) {
-        if(strcicmp(name, client->name)==0/* || socket==client->socket*/) {
+        if(strcicmp(name, client->name)==0) {
             return client;
         }
         client = client->next;

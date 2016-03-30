@@ -121,7 +121,7 @@ int readGridFromFile(char *filename) {
 int isValideSolution(char *deplacements) {
     int nbCoups = 0;
 
-    fprintf(stderr, "(Server:grid.c:isValideSolution) : le serveur a reçu comme deplacement : %s, et la chaine de caractere fait %d\n", deplacements, strlen(deplacements));
+    fprintf(stderr, "(Server:grid.c:isValideSolution) : le serveur a reçu comme deplacement : %s, et la chaine de caractere fait %zu\n", deplacements, strlen(deplacements));
 
     // deplacements de la forme: RDRHVDVHVDRB
     int index = 0;

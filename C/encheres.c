@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#include "enchere.h"
+#include "encheres.h"
 
 
 /*MUTEX & CONDITIONS*/
@@ -37,7 +37,7 @@ int nbEncheres = 0;
 *                                         *
 *******************************************/
 
-void addEnchere(int socket, char *name, pthread_mutex_t* p_mutex) {
+void addEnchere(int socket, char *name, int solution, pthread_mutex_t* p_mutex) {
     enchere_t * enchere = NULL;
     if(pthread_mutex_lock(p_mutex) < 0) {
     	perror("(Server:enchere.c:addEnchere) : on addEnchere, cannot lock the first p_mutex\n");
@@ -51,12 +51,12 @@ void addEnchere(int socket, char *name, pthread_mutex_t* p_mutex) {
     }
     enchere->socket = socket;
     enchere->name = name;
-    enchere->nbCoups = 0;
+    enchere->nbCoups = solution;
     enchere->next = NULL;
 
     
     /* M.a.j. de la liste : insertion au bon endroit, i.e. au début puisqu'on accepte si elle est inf.*/
-    if (nbEncheress == 0) {
+    if (nbEncheres == 0) {
         encheres = enchere;
     }
     else { //Ajout en tête de liste
@@ -71,6 +71,7 @@ void addEnchere(int socket, char *name, pthread_mutex_t* p_mutex) {
     fflush(stdout);
 
     printEncheresState(&enchere_mutex);
+    
     if(pthread_mutex_unlock(p_mutex) < 0) {
     	perror("(Server:enchere.c:addEnchere) : cannot unlock the final p_mutex, in the end of the instanciation of the new enchere\n");
     }
@@ -86,61 +87,62 @@ void addEnchere(int socket, char *name, pthread_mutex_t* p_mutex) {
 *                                         *
 *******************************************/
 
-enchere_t * getEnchere(int socket, pthread_mutex_t* p_mutex) {
+enchere_t * getEnchere(pthread_mutex_t* p_mutex) {
+    if(pthread_mutex_lock(p_mutex) < 0) {
+        perror("(Server:encheres.c:printEncheresState) : cannot lock the first p_mutex\n");
+    }
     enchere_t * enchere = encheres;
     encheres = encheres->next;
     nbEncheres--;
+
+
+    printEncheresState(p_mutex);
+
+    if(pthread_mutex_unlock(p_mutex) < 0) {
+        perror("(Server:encheres.c:printEncheresState) : cannot unlock the final p_mutex\n");
+    }
+
     return enchere;
     //printClientsState(&client_mutex);
+
 }
 
-/******************************************
-*                                         *
-*  Retourne le client dans la liste des   *
-*  clients. Opération protégée par un     *
-*  mutex afin  de s'assurer qu'une seule  *
-*  entité accède aux clients à la fois,   *
-*  renvoie NULL si non trouvé.            *
-*                                         *
-*******************************************/
-
-//Mutex dans addClient
-client_t *findClient(int socket, char * name) {
-    client_t * client = clients;
-    while(client != NULL) {
-        if(strcicmp(name, client->name)==0/* || socket==client->socket*/) {
-            return client;
-        }
-        client = client->next;
-    }
-    return NULL;
-}
-
-
-void printClientsState(pthread_mutex_t* p_mutex) {
+void rmEncheres(pthread_mutex_t* p_mutex) {
     if(pthread_mutex_lock(p_mutex) < 0) {
-    	perror("(Server:client.c:printClientsState) : cannot lock the first p_mutex\n");
+        perror("(Server:encheres.c:printEncheresState) : cannot lock the first p_mutex\n");
+    }
+    enchere_t * enchere;
+    while(encheres!=NULL) {
+        enchere = encheres;
+        encheres = encheres->next;
+        free(enchere);
+    }
+    if(pthread_mutex_unlock(p_mutex) < 0) {
+        perror("(Server:encheres.c:printEncheresState) : cannot unlock the final p_mutex\n");
+    }
+}
+
+
+
+void printEncheresState(pthread_mutex_t* p_mutex) {
+    if(pthread_mutex_lock(p_mutex) < 0) {
+    	perror("(Server:encheres.c:printEncheresState) : cannot lock the first p_mutex\n");
     }
     
-    printf("(Server:client.c:printClientsState) : Etat de la liste des %d clients : \n", nbClients);
-    if(clients==NULL) {
-        printf("(Server:client.c:printClientsState) : Aucun client.\n");
+    printf("(Server:encheres.c:printEncheresState) : Etat de la liste des %d encheres : \n", nbEncheres);
+    if(encheres==NULL) {
+        printf("(Server:encheres.c:printEncheresState) : Aucune enchere.\n");
     } else {
         int i = 1;
-        client_t * client = clients;
-        while(client != NULL) {
-            printf("(Server:client.c:printClientsState) : client %d : [name:%s ; socket:%d ; connected:", i, client->name, client->socket);
-            if(client->isConnected==0) {
-                puts("true].\n");
-            } else {
-                puts("false].\n");
-            }
-            client = client->next;
+        enchere_t * enchere = encheres;
+        while(enchere != NULL) {
+            printf("(Server:encheres.c:printEncheresState) : enchere %d : [name:%s ; socket:%d ; nbCoups: %d]\n", i, enchere->name, enchere->socket, enchere->nbCoups);
+            enchere = enchere->next;
             i++;
         }
     }
     if(pthread_mutex_unlock(p_mutex) < 0) {
-    	perror("(Server:client.c:printClientsState) : cannot unlock the final p_mutex\n");
+    	perror("(Server:encheres.c:printEncheresState) : cannot unlock the final p_mutex\n");
     }
     
 }

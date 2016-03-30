@@ -78,7 +78,7 @@ int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex) { /
 ****************************/
 
 // S -> C : BIENVENUE/user
-int bienvenue(char *username, int socket) {
+int send_bienvenue(char *username, int socket) {
 	//S -> C : BIENVENUE/user/
     char *msg = (char*)calloc(13+strlen(username), sizeof(char));
     sprintf(msg, "BIENVENUE/%s/\n", username);
@@ -94,7 +94,7 @@ int bienvenue(char *username, int socket) {
 }
 
 // S -> C : CONNECTE/user/
-int connexion(char *username, int socket) {
+int send_connexion(char *username, int socket) {
     char *msg = (char*)calloc(12+strlen(username), sizeof(char));
     sprintf(msg, "CONNECTE/%s/\n", username);
     printf("%s", msg);
@@ -104,7 +104,7 @@ int connexion(char *username, int socket) {
 }
 
 // S -> C : DECONNEXION/user/
-int deconnexion(char *username, int socket) {
+int send_deconnexion(char *username, int socket) {
 	char *msg = (char*)calloc(15+strlen(username), sizeof(char));
     sprintf(msg, "DECONNEXION/%s/\n", username);
     sendMessageAllExceptOne(msg, username, &client_mutex);
@@ -181,7 +181,7 @@ int ilATrouve(char *activePlayer, int solution, int socket) {
 	// On indique aux autres players qu'un joueur a proposé une solution
     int currentSolutionLength = getIntLength(solution);
     char *msgOtherPlayers = (char*)calloc(15+strlen(activePlayer)+currentSolutionLength, sizeof(char));
-    sprintf(msgOtherPlayers, "ILATROUVE/%s/%d/\n", activePlayer, currentSolution);
+    sprintf(msgOtherPlayers, "ILATROUVE/%s/%d/\n", activePlayer, solution);
    
     fprintf(stderr, "(Server:action.c:ilATrouve) : %s\n", msgOtherPlayers);
     
@@ -202,7 +202,7 @@ int finReflexion() {
 *********************/
 
 // S -> C : VALIDATION/
-int validation(int socket) {
+int send_validation(int socket) {
     char *msg = (char*)calloc(13, sizeof(char));
     sprintf(msg, "VALIDATION/\n");
     fprintf(stderr, "(Server:action.c:validation) : %s\n", msg);
@@ -216,7 +216,7 @@ int validation(int socket) {
 }
 
 // S -> C : ECHEC/user/
-int echec(char *username, int socket) {
+int send_echec(char *username, int socket) {
 	char *msg = (char*)calloc(9 + strlen(username), sizeof(char));
     sprintf(msg, "ECHEC/%s/\n", username);
     fprintf(stderr, "(Server:action.c:echec) : %s\n", msg);
@@ -230,7 +230,7 @@ int echec(char *username, int socket) {
 }
 
 // S -> C : NOUVELLEENCHERE/user/coups/
-int nouvelleEnchere(char *username, int nbCoups, int socket) {
+int send_nouvelleEnchere(char *username, int nbCoups, int socket) {
     int nbCoupsLength = getIntLength(nbCoups);
 	char *msg = (char*)calloc(20 + strlen(username) + nbCoupsLength, sizeof(char));
     sprintf(msg, "NOUVELLEENCHERE/%s/%d/\n", username, nbCoups);
@@ -245,7 +245,7 @@ int nouvelleEnchere(char *username, int nbCoups, int socket) {
 }
 
 // S -> C : FINENCHERE/user/coups/
-int finEnchere(char *username, int nbCoups, int socket) {
+int send_finEnchere(char *username, int nbCoups, int socket) {
     int nbCoupsLength = getIntLength(nbCoups);
     char *msg = (char*)calloc(15 + strlen(username) + nbCoupsLength, sizeof(char));
     sprintf(msg, "FINENCHERE/%s/%d/\n", username, nbCoups);
@@ -273,7 +273,7 @@ int solutionActive(char *username, char *deplacements, int socket) {
 }
 
 // S -> C : BONNE/
-int bonneSolution(int socket) {
+int send_bonneSolution() {
 	char *msg = (char*)calloc(8, sizeof(char));
     sprintf(msg, "BONNE/\n");
     fprintf(stderr, "(Server:action.c:bonneSolution) : %s\n", msg);
@@ -282,7 +282,7 @@ int bonneSolution(int socket) {
 }
 
 // S -> C : MAUVAISE/user/
-int mauvaiseSolution(char *username, int socket) {
+int send_mauvaiseSolution(char *username) {
 	char *msg = (char*)calloc(12 + strlen(username), sizeof(char));
     sprintf(msg, "MAUVAISE/%s/\n", username);
     fprintf(stderr, "(Server:action.c:mauvaiseSolution) : %s\n", msg);
@@ -291,7 +291,7 @@ int mauvaiseSolution(char *username, int socket) {
 }
 
 // S -> C : FINRESO/
-int finResolution(int socket) {
+int send_finReso() {
 	char *msg = (char*)calloc(10, sizeof(char));
     sprintf(msg, "FINRESO/\n");
     fprintf(stderr, "(Server:action.c:finResolution) : %s\n", msg);
@@ -300,16 +300,11 @@ int finResolution(int socket) {
 }
 
 // S -> C : TROPLONG/user/
-int tropLong(char *username, int socket) {
+int send_tropLong(char *username) {
 	char *msg = (char*)calloc(12 + strlen(username), sizeof(char));
     sprintf(msg, "TROPLONG/%s/\n", username);
     fprintf(stderr, "(Server:action.c:tropLong) : %s\n", msg);
-    if(write(socket,msg,(strlen(msg))*sizeof(char)) < 0){
-        perror("(Server:action.c:tropLong) : Erreur in tropLong(), cannot write on socket\n");
-    }
-    else {
-        fprintf(stderr, "(Server:action.c:tropLong) : Message send to the bet sender : %s\n", msg);
-    }
+    sendMessageAll(msg, &client_mutex);
     return 0;
 }
 

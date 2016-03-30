@@ -18,6 +18,7 @@ typedef struct client {
     int isConnected; //0 if true
     char *name;
     int score;
+    int nbCoups;
     struct client * next;
 }client_t;
 
@@ -29,7 +30,8 @@ extern int nbClientsConnecte;// = 0;
 
 void addClient(int socket, char *name, pthread_mutex_t* p_mutex);
 void rmClient(int socket, pthread_mutex_t* p_mutex);
-client_t *findClient(int socket, char * name);
+void disconnectClient(char *username, pthread_mutex_t* p_mutex);
+client_t *findClient(char * name);
 void printClientsState(pthread_mutex_t* p_mutex);
 
 #endif

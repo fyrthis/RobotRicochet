@@ -21,9 +21,9 @@ int sendMessageAllExceptOne(char *msg, char *name, pthread_mutex_t* p_mutex);
 /***************************
 *  PHASE D'INITIALISATION  *
 ****************************/
-int bienvenue(char *username, int socket);
-int connexion(char *username, int socket);
-int deconnexion(char *username, int socket);
+int send_bienvenue(char *username, int socket);
+int send_connexion(char *username, int socket);
+int send_deconnexion(char *username, int socket);
 
 
 /************************
@@ -42,10 +42,10 @@ int finReflexion();
 /********************
 *  PHASE D'ENCHERE  *
 *********************/
-int validation(int socket);
-int echec(char *username, int socket);
-int nouvelleEnchere(char *username, int nbCoups, int socket);
-int finEnchere(char *username, int nbCoups, int socket);
+int send_validation(int socket);
+int send_echec(char *username, int socket);
+int send_nouvelleEnchere(char *username, int nbCoups, int socket);
+int send_finEnchere(char *username, int nbCoups, int socket);
 
 
 /************************
@@ -53,10 +53,10 @@ int finEnchere(char *username, int nbCoups, int socket);
 *************************/
 
 int solutionActive(char *username, char *deplacement, int socket);
-int bonneSolution(int socket);
-int mauvaiseSolution(char *username, int socket);
-int finResolution(int socket);
-int tropLong(char *username, int socket);
+int send_bonneSolution();
+int send_mauvaiseSolution(char *username);
+int send_finReso();
+int send_tropLong(char *username);
 
 
 /*********

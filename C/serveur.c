@@ -26,7 +26,6 @@ pthread_cond_t  cond_got_task   = PTHREAD_COND_INITIALIZER;
 
 pthread_t ptimer;
 int nbSecondsTimer;
-int nbTours = 10;
 int etat_reso=0;
 
 void * session_loop(void * nbToursSession);
@@ -49,38 +48,34 @@ void handle_request(task_t * task, int thread_id) {
         printf ("(Server:serveur.c:handle_request) : Splitting string \"%s\" into tokens:\n",task->command);
         pch = strtok (task->command,"/");
 
-        /*Dispatche*/
-        if(pch==NULL)
+        if(pch==NULL) //Should never happen.
         {
             printf("(Server:serveur.c:handle_request) : ERROR : received something NULL : %s.\n", task->command);
-            perror("(Server:serveur.c:handle_request) : ERROR : close socket.\n"); //Maybe need to flush client datastructure ?
+            perror("(Server:serveur.c:handle_request) : ERROR : close socket.\n");
             close(task->socket);
         }
-        //C -> S : CONNEXION/user/
-        else if(strcmp(pch,"CONNEXION")==0)
+
+        
+        else if(strcmp(pch,"CONNEXION")==0) //C -> S : CONNEXION/user/
         {
-            //ADD THE CLIENT
-            printf("(Server:serveur.c:handle_request) : found CONNEXION\n");
+            //ADD THE CLIENT AND WELCOME
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(username, pch, strlen(pch));
-            printf("(Server:serveur.c:handle_request) : pch is %s\n",username);
-            printf("(Server:serveur.c:handle_request) : add new client %s\n", username);
             addClient(task->socket, username, &client_mutex);
-
-            bienvenue(username, task->socket);
-            connexion(username, task->socket);
+            send_bienvenue(username, task->socket);
+            send_connexion(username, task->socket);
             
             //S -> C : SESSION/plateau/
             sendGrid(gridStr, task->socket);
 
+            //TODO : A modifier !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             if(nbClientsConnecte==2)
-                pthread_create(&ptimer, NULL, session_loop, (void*)&nbTours);
-
-            
+                pthread_create(&ptimer, NULL, session_loop, (void*)&nbTours); 
         }
-        //C -> S : SORT/user/
-        else if(strcmp(pch,"SORT")==0)
+
+
+        else if(strcmp(pch,"SORT")==0) //C -> S : SORT/user/
         {
             //ICI SE FAIT LA SUPPRESSION D'UN CLIENT
             pch = strtok (NULL, "/");
@@ -88,133 +83,70 @@ void handle_request(task_t * task, int thread_id) {
             strncpy(username, pch, strlen(pch));
             printf("(Server:serveur.c:handle_request) : handle Task SORT\n");
 
-            if(clients == NULL) {
-                printf("(Server:serveur.c:handle_request) : Aucun client. Should never happened\n");
-            }
+            if(clients == NULL) { puts("(Server:serveur.c:handle_request) : Aucun client. Should never happened\n"); return; }
 
-            else {
-                if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
-                client_t *client = clients;
-                while(client != NULL){
-                    if(strcmp(client->name, username) == 0) {
-                        client->isConnected = 1;
-                        break;
-                    }
-                    client = client->next;
-                }
-                if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
-            }
-            if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex on locking variable nbClientsConnecte ");
-            nbClientsConnecte--;
-            if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex on unlocking variable nbClientsConnecte ");
-            
-
-            printf("(Server:serveur.c:handle_request) : pch is %s\n",username);
-            printf("(Server:serveur.c:handle_request) : add new client %s\n", username);
-            
-
-            deconnexion(username, task->socket);
+            disconnectClient(username, &client_mutex);
+            send_deconnexion(username, task->socket);
         }
-        //C -> S : SOLUTION/user/coups/    ( a gerer plus tard : //C -> S : SOLUTION/user/deplacements/  )
-        else if(strcmp(pch,"SOLUTION")==0)
-        {
-            if(pthread_mutex_lock(&task_mutex) != 0) perror("error mutex");
 
+
+        else if(strcmp(pch,"SOLUTION")==0) //C -> S : SOLUTION/user/...
+        {
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(username, pch, strlen(pch));
-
-
-            // si la phase est toujours a 0, c'est que le serveur a recu la premiere (et unique) solution
-            if(phase == REFLEXION){
+            if(phase == REFLEXION) //C -> S : SOLUTION/user/coups/
+            {
                 phase = ENCHERE;
-
-                // On va chercher dans la liste des clients le joueur qui correspond a celui qui a proposé
-                // une solution pour le garder en mémoire en tant que joueur actif (activePlayer)
-                char *activePlayerStr = (char*)calloc(strlen(pch)+1, sizeof(char));
-                strncpy(activePlayerStr, username, strlen(username));
-                
-                if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
-                client_t *client = clients;
-                while(client != NULL){
-                    if(strcmp(client->name, activePlayerStr) == 0) {
-                        activePlayer = client;
-                        break;
-                    }
-                    client = client->next;
-                }
-                if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
                 pch = strtok(NULL, "/");
-                currentSolution = atoi(pch);
-                activePlayer->score = currentSolution; 
-
-                fprintf(stderr, "(Server:serveur.c:handle_request) : Solution trouvée par %s\n", activePlayer->name);
+                int solution = atoi(pch);
                 tuAsTrouve(task->socket);
-                ilATrouve(activePlayer->name, currentSolution, task->socket);
-
+                ilATrouve(username, solution, task->socket);
+                addEnchere(task->socket, username, solution, &enchere_mutex);
+                fprintf(stderr, "(Server:serveur.c:handle_request) : Solution trouvée par %s\n", username);
             }
-            // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé :
-            // au lieu de SOLUTION/user/coups on envoie ENCHERE/user/coups
+            else if(phase == RESOLUTION) //C -> S : SOLUTION/user/deplacements/
+            { 
+                
+            }
             else {
-                char *msg = (char*)calloc(50, sizeof(char));
-                sprintf(msg, "(Server:serveur.c:handle_request) : Trop tard: une solution a déjà été trouvée...\n");
-                fprintf(stderr, "%s", msg);
-                exit(1);
+                puts("ERROR !\n");
             }
-            if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
         }
-        //C -> S : ENCHERE/user/coups/
-        else if(strcmp(pch,"ENCHERE")==0)
+
+
+        
+        else if(strcmp(pch,"ENCHERE")==0) //C -> S : ENCHERE/user/coups/
         {
-            if(pthread_mutex_lock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
+            if(pthread_mutex_lock(&enchere_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
 
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(username, pch, strlen(pch));
             
-            // si la phase est a 1, c'est que le serveur a recu une echere
-            if(phase == ENCHERE){
-                //phase = RESOLUTION;
-
-                fprintf(stderr, "(Server:serveur.c:handle_request) : Enchère reçues de la part de %s\n", username);
-                
-                // Il faut tester la validité de l'enchère envoyée par le client
+            // TEST DE L'ENCHERE
+            if(phase == ENCHERE){                
                 pch = strtok(NULL, "/");
                 int betSolution = atoi(pch);
-
-                if(activePlayer != NULL){
-                    // si l'enchère propose une solution moins bonne que celle de l'activePlayer
-                    // alors le serveur renvoie ECHEC/activePlayer
-                    if(betSolution >= activePlayer->score) {
-                        echec(activePlayer->name, task->socket);
-                    }
-                    // sinon, l'enchère est meilleure que la solution courante:
-                    // il faut donc mettre a jour la solution courante, et enre
-                    else {
-                        validation(task->socket);
-                        activePlayer = findClient(task->socket, username);
-                        activePlayer->score = betSolution;
-                        currentSolution = activePlayer->score;
-                    }
+                if(betSolution >= encheres->nbCoups) {
+                    fprintf(stderr, "(Server:serveur.c:handle_request) : Enchère reçue de la part de %s refusee.\n", username);
+                    send_echec(username, task->socket);
+                }
+                else {
+                    fprintf(stderr, "(Server:serveur.c:handle_request) : Enchère reçue de la part de %s acceptee.\n", username);
+                    send_validation(task->socket);
+                    addEnchere(task->socket, username, betSolution, &enchere_mutex);
                 }
 
             }
-            // sinon c'est qu'on a deja changé de phase donc le protocole d'envoi de solution a changé :
-            // au lieu de SOLUTION/user/coups on envoie ENCHERE/user/coups
-            else {
-                char *msg = (char*)calloc(50, sizeof(char));
-                sprintf(msg, "la phase d'enchère est terminée...\n");
-                fprintf(stderr, "(Server:serveur.c:handle_request) : %s", msg);
-                exit(1);
+            else { //Si on n'est pas dans la phase d'enchere : un client hack pourrait provoquer ça. Ou bien une tâche qui arrive trop tard.
+                fprintf(stderr, "(Server:serveur.c:handle_request) : ERROR, reçue enchère phase resolution\n");
             }
-
-            if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
+            if(pthread_mutex_unlock(&enchere_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
         }
         // erreur dans le protocole, à redéfinir mais correspond à l'envoi de la solution
         // proposée par le joueur actif lors de la phase de résolution
         else if(strcmp(pch,"ENVOISOLUTION")==0) {
-            if(pthread_mutex_lock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
-
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(username, pch, strlen(pch));
@@ -222,7 +154,6 @@ void handle_request(task_t * task, int thread_id) {
             
             // si la phase est a 2 alors on est dans la phase de résolution
             if(phase == RESOLUTION) {
-                
                 pch = strtok (NULL, "/");
                 char *deplacements = (char*)calloc(strlen(pch)+1, sizeof(char));
                 strncpy(deplacements, pch, strlen(pch));
@@ -231,15 +162,18 @@ void handle_request(task_t * task, int thread_id) {
                 solutionActive(username, deplacements, task->socket);
 
                 // isValideSolution() renvoie le nombre de deplacements necessaire pour la solution
-                fprintf(stderr, "solution courante : %d\n", currentSolution);
-                if(isValideSolution(deplacements) == currentSolution) {
+                enchere_t * enchere = getEnchere(&enchere_mutex); //Get la meilleure enchère
+                fprintf(stderr, "solution courante : %d\n", enchere->nbCoups);
+                if(isValideSolution(deplacements) == enchere->nbCoups) {
                     // Solution acceptée
-                    bonneSolution(task->socket);
+                    send_bonneSolution();
+                    etat_reso = 1;
                 }
                 else {
-                    // Il faut mettre àjour l'activePlayer courant en le remplaçant avec
-                    // le joueur ayant le meilleur score après lui
-                    mauvaiseSolution(username, task->socket);
+                    if(encheres!=NULL) { //Il reste un joueur qui peut proposer une solution
+                        send_mauvaiseSolution(encheres->name);
+                    }
+                    etat_reso = 2;
                 }
             }
             else {
@@ -248,12 +182,10 @@ void handle_request(task_t * task, int thread_id) {
                 fprintf(stderr, "(Server:serveur.c:handle_request) : %s", msg);
                 exit(1);
             }
-
-            if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
         }
-        //C -> S : MESSAGE/user/message
-        else if (strcmp(pch,"MESSAGE")==0) {
-            if(pthread_mutex_lock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
+        
+        else if (strcmp(pch,"MESSAGE")==0) //C -> S : MESSAGE/user/message
+        {
 
             pch = strtok(NULL, "/");
             char *user = (char*)calloc(strlen(pch)+1, sizeof(char));
@@ -266,15 +198,12 @@ void handle_request(task_t * task, int thread_id) {
             fprintf(stderr, "(Server:serveur.c:handle_request) : Message envoyé par %s : %s\n", user, message);
 
             envoyerMessageAuxAutres(user, message, task->socket);
-
-            if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
         }
 
         else {
             fprintf(stderr, "(Server:serveur.c:handle_request) : ERROR : received bad protocol : %s.\n", task->command);
         }
     }
-    printf("(Server:serveur.c:handle_request) : FIN handle_request.\n");
 }
 
 
@@ -293,7 +222,7 @@ void * handle_tasks_loop(void* data) {
     int thread_id = *((int*)data);
 
     /* lock the mutex, to access the tasks list exclusively. */
-    if(pthread_mutex_lock(&task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : error mutex");
+    if(pthread_mutex_lock(&task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : error mutex\n");
 
     while (1) {
         if (nbTasks > 0) { /* a request is pending */
@@ -307,12 +236,12 @@ void * handle_tasks_loop(void* data) {
         }
         else {
             printf("(Server:serveur.c:handle_tasks_loop) : Thread %d is waiting some task.\n", thread_id);
-            if(pthread_cond_wait(&cond_got_task, &task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : err condition wait ");
+            if(pthread_cond_wait(&cond_got_task, &task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : err condition wait \n");
         }
     }
     //Unreachable code bellow
-    if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : error mutex");
-    puts("(Server:serveur.c:handle_tasks_loop) :  ended");
+    if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : error mutex\n");
+    puts("(Server:serveur.c:handle_tasks_loop) :  ended\n");
 }
 
 
@@ -323,6 +252,8 @@ void * handle_tasks_loop(void* data) {
 // serveur.c
 
 int main(int argc, char* argv[]) {
+    //Seed rand
+    srand(time(NULL));
     //INITIALIZE SERVER
     printf("(Server:serveur.c:main) : Initialize server...\n");
     printf("(Server:serveur.c:main) : Initialize threads...\n");
@@ -336,12 +267,12 @@ int main(int argc, char* argv[]) {
     }
     
     printf("(Server:serveur.c:main) : Initialize server socket...\n");
-    int port = 2199;
+    int port = 2214;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;
     struct sockaddr_in client_address = { 0 };
-    socklen_t client_size;// = sizeof(client_address);
+    socklen_t client_size;
     if(argc>1) {
         port = atoi(argv[1]);
     }
@@ -361,11 +292,6 @@ int main(int argc, char* argv[]) {
         puts("(Server:serveur.c:main) : The server socket is now open\n");
     }
 
-
-    /* A enlver ultérieurement, sert à éviter le bind already in use */
-    //if (setsockopt(socket_server, SOL_SOCKET, SO_REUSEADDR, &(int){ 1 }, sizeof(int)) < 0)
-    //    perror("(Server:serveur.c:main) : setsockopt(SO_REUSEADDR) failed");
-    /* ************************************************************** */
     bzero((char *) &server_address, sizeof(server_address));
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
@@ -458,7 +384,7 @@ int main(int argc, char* argv[]) {
                     addTask(socket, buffer, &task_mutex, &cond_got_task);
                 }
             } else {
-                //puts("no data received since 5 seconds.\n");
+
             }
         }
     }
@@ -467,146 +393,9 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-/*********************************************
-*                                            *
-*  Crée une nouvelle enigme en initialisant  *
-*  les coordoonées du robot aléatoirement    *
-*                                            *
-*********************************************/
-//serveur.c
-int setEnigma(){
-    // nbRobots*nbCoordonnées*tailleCoordonnée + nbLettres + nbVirgule + parenthèses + lettreCible
-    enigma = calloc(5*2*2 + 10 + 10 + 2 + 1, sizeof(char));
-    
-    //if(firstLaunch == 0){
-        // Generation aleatoire des positions des robots
-        srand(time(NULL));
-        
-        // Cible
-        int center1_x = (size_x-1) / 2;
-        int center1_y = (size_y-1) / 2;
-        int center2_x = (size_x-1) / 2 + 1;
-        int center2_y = (size_x-1) / 2;
-        int center3_x = (size_x-1) / 2;
-        int center3_y = (size_y-1) / 2 + 1;
-        int center4_x = (size_x-1) / 2 + 1;
-        int center4_y = (size_y-1) / 2 + 1;
-        
-        do { 
-            // Rouge
-            x_r = rand() % size_x;
-            y_r = rand() % size_y;
-            // Bleu
-            x_b = rand() % size_x;
-            y_b = rand() % size_y;
-            // Jaune
-            x_j = rand() % size_x;
-            y_j = rand() % size_y;
-            // Vert
-            x_v = rand() % size_x;
-            y_v = rand() % size_y;
-        } while((x_r == x_b && y_r == y_b) || (x_r == x_j && y_r == y_j) || (x_r == x_v && y_r == y_v)
-             || (x_b == x_j && y_b == y_j) || (x_b == x_v && y_b == y_v) || (x_j == x_v && y_j == y_v)
-             || (x_r == center1_x && y_r == center1_y) || (x_r == center2_x && y_r == center2_y)
-             || (x_r == center3_x && y_r == center3_y) || (x_r == center4_x && y_r == center4_y)
-             || (x_b == center1_x && y_b == center1_y) || (x_b == center2_x && y_b == center2_y)
-             || (x_b == center3_x && y_b == center3_y) || (x_b == center4_x && y_b == center4_y)
-             || (x_j == center1_x && y_j == center1_y) || (x_j == center2_x && y_j == center2_y)
-             || (x_j == center3_x && y_j == center3_y) || (x_j == center4_x && y_j == center4_y)
-             || (x_v == center1_x && y_v == center1_y) || (x_v == center2_x && y_v == center2_y)
-             || (x_v == center3_x && y_v == center3_y) || (x_v == center4_x && y_v == center4_y));
 
-        
-        x_cible = rand() % size_x;
-        y_cible = rand() % size_y;
-        while(grid[x_cible][y_cible] == 0
-            || grid[x_cible][y_cible] == 1
-            || grid[x_cible][y_cible] == 2
-            || grid[x_cible][y_cible] == 4
-            || grid[x_cible][y_cible] == 8
-            || grid[x_cible][y_cible] == 5
-            || grid[x_cible][y_cible] == 10
-            || (x_cible == center1_x && y_cible == center1_y)
-            || (x_cible == center2_x && y_cible == center2_y)
-            || (x_cible == center3_x && y_cible == center3_y)
-            || (x_cible == center4_x && y_cible == center4_y)){
-            x_cible = rand() % size_x;
-            y_cible = rand() % size_y;
-        }
 
-        // LettreCible
-        int cible = rand() % 4;
-        switch(cible){
-            case 0:
-                lettreCible = 'r';
-                break;
-            case 1:
-                lettreCible = 'b';
-                break;
-            case 2:
-                lettreCible = 'j';
-                break;
-            case 3:
-                lettreCible = 'v';
-                break;
-            default:;
-        }
-        //firstLaunch = -1;
-    //}
 
-    sprintf(enigma, "(%dr,%dr,%db,%db,%dj,%dj,%dv,%dv,%dc,%dc,%c)", x_r, y_r, x_b, y_b, x_j, y_j, x_v, y_v, x_cible, y_cible, lettreCible);
-    return 0;
-}
-
-/*********************************************
-*                                            *
-*    Set le bilan de la session courante     *
-*                                            *
-*********************************************/
-//serveur.c
-int setBilanCurrentSession(){
-    fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : Setting the bilan of the current session:\n");
-
-    if(clients == NULL) {
-        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : ERREUR: la liste des clients est nulle\n");
-        exit(EXIT_FAILURE);
-    }
-
-    client_t* first_client = clients;
-
-    int nbTourLength = getIntLength(nbTour);
-    int sizeAll = nbTourLength;
-    while(clients != NULL){
-        int scoreLength = getIntLength(clients->score);
-        sizeAll += (strlen(clients->name) + scoreLength + 3);
-        clients = clients->next;
-    }
-
-    clients = first_client;
-    bilan = (char *) malloc(sizeAll+1);
-    sprintf(bilan, "%d", nbTour);    
-    fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : %s", bilan);
-    fprintf(stderr, "SizeAll : %d\n", sizeAll);
-    fprintf(stderr, "toto1\n");
-    while(clients != NULL){
-        int scoreLength = getIntLength(clients->score);
-        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : scoreLength : %d\tclientNameLength : %zu\n", scoreLength, strlen(clients->name));
-        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : name : %s\n", clients->name);
-        char *user = (char *)calloc(sizeof(char), strlen(clients->name)+scoreLength+4);
-        sprintf(user, "(%s,%d)", clients->name, clients->score);
-        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : userBuffer : %s\n", user);
-        
-        sprintf(bilan,"%s%s", bilan, user);
-        clients = clients->next;
-    }
-
-    clients = first_client;
-
-    fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : Bilan : %s\n", bilan);
-    fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : Bilan current session set!\n");
-
-    return 0;
-}
 
 
 void * session_loop(void* nbToursSession) {
@@ -616,6 +405,17 @@ void * session_loop(void* nbToursSession) {
     int timer;
     while(nbClientsConnecte>=2 && cptTours<*((int*)nbToursSession)) {
         
+        rmEncheres(&enchere_mutex); //On vide les enchères du tour précédent.
+        etat_reso=0; //Personne n'a encore trouvé de solution
+
+        i=0;
+        timer=10;
+        while(i < timer) {
+            sleep(1);
+            i++;
+            printf("Waiting players... : %d sec.\n", i);
+        }
+
         if( phase==REFLEXION && nbClientsConnecte>=2) {
             printf("DEBUT REFLEXION\n");
             //S -> C : TOUR/enigme/
@@ -644,6 +444,9 @@ void * session_loop(void* nbToursSession) {
             i=0;
             timer=30;
             while(i < timer && nbClientsConnecte>=2) {
+                if(encheres==NULL) { //Personne n'a proposée de solution lors de la réfexion
+                    break;
+                }
                 sleep(1);
                 i++;
                 printf("ENCHERE : %d sec.\n", i);
@@ -655,23 +458,33 @@ void * session_loop(void* nbToursSession) {
             i=0;
             timer=30;
             while(i < timer && nbClientsConnecte>=2) { //Et tant qu'unjoueur a une solution a proposer
+                if(etat_reso==1) { //Solution trouvée
+                     //Base
+                    break; //Nouveau tour, énigme !
+                } else if(etat_reso==2 && encheres!=NULL) { //Solution erronée, relance du compte à rebours si il reste quelqu'un
+                    i = 0;
+                    etat_reso=0;
+                }
+
+                if(encheres == NULL) { //Plus personne n'a d'enchère à proposer
+                    send_finReso();
+                    break;
+                }
                 sleep(1);
                 i++;
-                if(etat_reso==1) { //Si mauvaise
-                    etat_reso = 0; //Base
-                   // if(joueur_a_une_solution()==0) {
-                    //    i = 0; //Nouveau temps de résolution pour un joueur
-                    //}
-                } else if(etat_reso==2) { //Si bonne
-                    etat_reso=0; //Base
-                    break; //Nouveau tour, énigme !
+                if(i==timer) { //l'utilisateur a mis trop de temps à répondre !
+                    getEnchere(&enchere_mutex); //Enlève l'enchère du joueur.
+                    if(encheres!=NULL) { //Si ilreste quelqu'un avec une solution possible
+                        send_tropLong(encheres->name);
+                    }
+                    i = 0;
                 }
                 printf("RESOLUTION : %d sec.\n", i);
-                //if(mauvaise => new joueur => i = 0)
             }
             phase=REFLEXION;
         }
         cptTours++;
     }
     printf("SESSION_LOOP ENDS\n");
+    return NULL;
 }

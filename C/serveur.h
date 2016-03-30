@@ -42,14 +42,13 @@
 #include "client.h"
 #include "game_state.h"
 #include "utils.h"
+#include "encheres.h"
 
 extern pthread_cond_t  cond_got_task;//   = PTHREAD_COND_INITIALIZER;
 
-char *enigma;
-char *bilan;
+
 
 int phase = REFLEXION;
-int nbTour = 1;
 
 // Variable qui permet de savoir si le client qui se connecte
 // est le premier ou pas
@@ -58,6 +57,5 @@ int firstLaunch = 0;
 
 void handle_request(task_t * task, int thread_id);
 void * handle_tasks_loop(void* data);
-int setEnigma();
-int setBilanCurrentSession();
+
 #endif

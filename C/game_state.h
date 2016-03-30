@@ -6,11 +6,15 @@
 
 #include <string.h>
 #include "client.h"
+#include "grid.h"
 
-
-extern int currentSolution;// = -1;
 
 client_t *activePlayer;
+char *enigma;
+char *bilan;
+extern int nbTours;
 //char *activePlayer;
+int setEnigma();
+int setBilanCurrentSession();
 
 #endif

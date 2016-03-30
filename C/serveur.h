@@ -35,6 +35,7 @@
 #define ENCHERE 1
 #define RESOLUTION 2
 
+#include <signal.h>
 #include "game_state.h"
 #include "task.h"
 #include "action.h"
@@ -57,5 +58,7 @@ int firstLaunch = 0;
 
 void handle_request(task_t * task, int thread_id);
 void * handle_tasks_loop(void* data);
+void shutdown_server(int sig);
+void * session_loop(void * nbToursSession);
 
 #endif

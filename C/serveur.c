@@ -24,11 +24,15 @@
 
 pthread_cond_t  cond_got_task = PTHREAD_COND_INITIALIZER;
 
-pthread_t ptimer;
+
 int nbSecondsTimer;
 int etat_reso=0;
+int isShutingDown=0;
 
-void * session_loop(void * nbToursSession);
+pthread_t ptimer;
+pthread_t  p_threads[NB_MAX_THREADS];       /* thread's structures   */
+
+
 
 // client_t * clients = NULL;  --> ça pourrait très bien être le serveur qui intialise tout .. !!
 
@@ -236,11 +240,15 @@ void * handle_tasks_loop(void* data) {
         else {
             //printf("(Server:serveur.c:handle_tasks_loop) : Thread %d is waiting some task.\n", thread_id);
             if(pthread_cond_wait(&cond_got_task, &task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : err condition wait \n");
+            if(isShutingDown==1) {
+                break;
+            }
         }
     }
     //Unreachable code bellow
     if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : error mutex\n");
     //puts("(Server:serveur.c:handle_tasks_loop) :  ended\n");
+    return NULL;
 }
 
 
@@ -253,6 +261,9 @@ void * handle_tasks_loop(void* data) {
 int main(int argc, char* argv[]) {
     
     //INITIALIZE SERVER
+    //To catch Ctrl+C (SIGINT)
+    signal(SIGINT, shutdown_server);
+
     printf("(Server:serveur.c:main) : Initialize server...\n");
     printf("(Server:serveur.c:main) : Initialize map seed...\n");
     //Seed rand
@@ -261,7 +272,7 @@ int main(int argc, char* argv[]) {
     printf("(Server:serveur.c:main) : Initialize threads...\n");
     int        i;                               /* loop counter          */
     int        thr_id[NB_MAX_THREADS];          /* thread IDs            */
-    pthread_t  p_threads[NB_MAX_THREADS];       /* thread's structures   */
+    
     for (i=0; i<NB_MAX_THREADS; i++) {
         thr_id[i] = i;
         pthread_create(&p_threads[i], NULL, handle_tasks_loop, (void*)&thr_id[i]);
@@ -312,6 +323,7 @@ int main(int argc, char* argv[]) {
     fd_set readfds, testfds;
     FD_ZERO(&readfds);
     FD_SET(socket_server, &readfds);
+    FD_SET(STDIN_FILENO, &readfds); //add stdin
     int select_result;
     while(1) {
         char buffer[256];
@@ -341,6 +353,7 @@ int main(int argc, char* argv[]) {
                         //We must kick it from the fd_set structure (named readfds ? or testfds ? both ?)
                         FD_CLR(client->socket, &readfds);
                         FD_CLR(client->socket, &testfds);
+                        FD_SET(STDIN_FILENO, &readfds); //On rajoute l'entrée clavier quand même !
                         printClientsState(&client_mutex);
                     }
                     client = client->next;
@@ -353,18 +366,27 @@ int main(int argc, char* argv[]) {
         
         for(socket = 0; socket < FD_SETSIZE; socket++) {
             if(FD_ISSET(socket,&testfds)) { //Si une activité est détecté sur un socket
-                if(socket == socket_server) {
+                if(socket == socket_server)
+                 { //Activité socket serveur : quelqu'un essaie de se connecter.
                     client_size = sizeof(client_address);
                     socket_client = accept(socket_server, (struct sockaddr *)&client_address, &client_size);
                     FD_SET(socket_client, &readfds); //Add socket file descriptor to the set
                     printf("(Server:serveur.c:main) : New socket connection on %d\n", socket_client);
                 }
-                else {
+                else if(FD_ISSET(STDIN_FILENO, &readfds))
+                { //Activité stdin : l'administrateur parle !
+                    fgets(buffer, 255, stdin);
+                    printf("L'admin dit : %s\n", buffer);
+                    if(strncmp(buffer, "exit",4)==0) shutdown_server(0);
+                }
+                else
+                { //Activité sur un socket client : un client nous parle !
                     n = read(socket,buffer,255);
                     if(n == 0) {
                         printf("(Server:serveur.c:main) : Main received empty message from %d.\n", socket);
                         FD_CLR(socket, &readfds);
                         FD_CLR(socket, &testfds);
+                        FD_SET(STDIN_FILENO, &readfds); //Onrajoute l'entrée clavier quand même !
                         if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
                         client_t *client = clients;
                         while(client != NULL){
@@ -421,18 +443,21 @@ void * session_loop(void* nbToursSession) {
             perror("(Server:client.c:addClient) : on addClient, cannot unlock the p_mutex when an already connected client asks for a new connection\n");
         }
 
+        if(isShutingDown==1) break;
+
         cptTours = 0;
         i=0;
         timer=0;
         
         while(nbClientsConnecte>=2 && cptTours<*((int*)nbToursSession)) {
-            
+            if(isShutingDown==1) return NULL;
             rmEncheres(&enchere_mutex); //On vide les enchères du tour précédent.
             etat_reso=0; //Personne n'a encore trouvé de solution
 
             i=0;
             timer=10;
             while(i < timer) {
+                if(isShutingDown==1) return NULL;
                 sleep(1);
                 i++;
                 printf("Waiting players... : %d sec.\n", i);
@@ -447,6 +472,7 @@ void * session_loop(void* nbToursSession) {
                 i=0;
                 timer=5*60;
                 while(i < timer && phase==REFLEXION && nbClientsConnecte>=2) {
+                    if(isShutingDown==1) return NULL;
                     sleep(1);
                     i++;
                     printf("REFLEXION : %d sec.\n", i);
@@ -466,6 +492,7 @@ void * session_loop(void* nbToursSession) {
                 i=0;
                 timer=30;
                 while(i < timer && nbClientsConnecte>=2) {
+                    if(isShutingDown==1) return NULL;
                     if(encheres==NULL) { //Personne n'a proposée de solution lors de la réfexion
                         break;
                     }
@@ -480,6 +507,7 @@ void * session_loop(void* nbToursSession) {
                 i=0;
                 timer=60;
                 while(i < timer && nbClientsConnecte>=2) { //Et tant qu'unjoueur a une solution a proposer
+                    if(isShutingDown==1) return NULL;
                     if(etat_reso==1) { //Solution trouvée
                          //Base
                         break; //Nouveau tour, énigme !
@@ -509,4 +537,15 @@ void * session_loop(void* nbToursSession) {
         }
     }
     return NULL;
+}
+
+
+void shutdown_server(int sig) {
+
+    signal(sig, SIG_IGN);
+    puts("server is shuting down...\n");
+    isShutingDown=1; //To terminate threads
+    pthread_cond_broadcast(&cond_got_task);
+    pthread_cond_broadcast(&cond_at_least_2_players);
+    exit(0);
 }

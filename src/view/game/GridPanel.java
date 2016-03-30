@@ -37,19 +37,33 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	private Image wallH;
 	private Image emptySprite;
 
-	private Image redPawnSprite;
+	private Image redRobotSprite;
+	private Image redRobotRightSprite;
+	private Image redRobotLeftSprite;
+	private Image redRobotBackSprite;
 	private Image redTargetSprite;
 	
-	private Image bluePawnSprite;
+	private Image blueRobotSprite;
+	private Image blueRobotRightSprite;
+	private Image blueRobotLeftSprite;
+	private Image blueRobotBackSprite;
 	private Image blueTargetSprite;
 	
-	private Image greenPawnSprite;
+	private Image greenRobotSprite;
+	private Image greenRobotRightSprite;
+	private Image greenRobotLeftSprite;
+	private Image greenRobotBackSprite;
 	private Image greenTargetSprite;
 	
-	private Image yellowPawnSprite;
+	private Image yellowRobotSprite;
+	private Image yellowRobotRightSprite;
+	private Image yellowRobotLeftSprite;
+	private Image yellowRobotBackSprite;
 	private Image yellowTargetSprite;
 	
 	private Image mainTargetSprite;
+	
+	int random = 0;
 	
 	Model model;
 	
@@ -86,10 +100,81 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 			else
 				mainTargetSprite = ImageIO.read(new File("res/mainTargetSprite.png"));
 			
-			redPawnSprite = ImageIO.read(new File("res/redPawnSprite.png"));
-			bluePawnSprite = ImageIO.read(new File("res/bluePawnSprite.png"));
-			greenPawnSprite = ImageIO.read(new File("res/greenPawnSprite.png"));
-			yellowPawnSprite = ImageIO.read(new File("res/yellowPawnSprite.png"));
+			redRobotSprite = ImageIO.read(new File("res/redPawnSprite.png"));
+			blueRobotSprite = ImageIO.read(new File("res/bluePawnSprite.png"));
+			greenRobotSprite = ImageIO.read(new File("res/greenPawnSprite.png"));
+			yellowRobotSprite = ImageIO.read(new File("res/yellowPawnSprite.png"));
+			
+			
+			
+			switch(random){
+			case 0:
+				redRobotSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_front.png"));
+				blueRobotSprite = ImageIO.read(new File("res/TortankSprites/tortank_front.png"));
+				greenRobotSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_front.png"));
+				yellowRobotSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_front.png"));
+				
+				redRobotRightSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_right.png"));
+				blueRobotRightSprite = ImageIO.read(new File("res/TortankSprites/tortank_right.png"));
+				greenRobotRightSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_right.png"));
+				yellowRobotRightSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_right.png"));
+				
+				redRobotLeftSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_left.png"));
+				blueRobotLeftSprite = ImageIO.read(new File("res/TortankSprites/tortank_left.png"));
+				greenRobotLeftSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_left.png"));
+				yellowRobotLeftSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_left.png"));
+				
+				redRobotBackSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_back.png"));
+				blueRobotBackSprite = ImageIO.read(new File("res/TortankSprites/tortank_back.png"));
+				greenRobotBackSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_back.png"));
+				yellowRobotBackSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_back.png"));
+				
+				break;
+			case 1:
+				redRobotSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_front_2.png"));
+				blueRobotSprite = ImageIO.read(new File("res/TortankSprites/tortank_front_2.png"));
+				greenRobotSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_front_2.png"));
+				yellowRobotSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_front_2.png"));
+
+				redRobotRightSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_right_2.png"));
+				blueRobotRightSprite = ImageIO.read(new File("res/TortankSprites/tortank_right_2.png"));
+				greenRobotRightSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_right_2.png"));
+				yellowRobotRightSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_right_2.png"));
+				
+				redRobotLeftSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_left_2.png"));
+				blueRobotLeftSprite = ImageIO.read(new File("res/TortankSprites/tortank_left_2.png"));
+				greenRobotLeftSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_left_2.png"));
+				yellowRobotLeftSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_left_2.png"));
+				
+				redRobotBackSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_back_2.png"));
+				blueRobotBackSprite = ImageIO.read(new File("res/TortankSprites/tortank_back_2.png"));
+				greenRobotBackSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_back_2.png"));
+				yellowRobotBackSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_back_2.png"));
+				break;
+			case 2:
+				redRobotSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_front_3.png"));
+				blueRobotSprite = ImageIO.read(new File("res/TortankSprites/tortank_front_3.png"));
+				greenRobotSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_front_3.png"));
+				yellowRobotSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_front_3.png"));
+
+				redRobotRightSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_right_3.png"));
+				blueRobotRightSprite = ImageIO.read(new File("res/TortankSprites/tortank_right_3.png"));
+				greenRobotRightSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_right_3.png"));
+				yellowRobotRightSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_right_3.png"));
+				
+				redRobotLeftSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_left_3.png"));
+				blueRobotLeftSprite = ImageIO.read(new File("res/TortankSprites/tortank_left_3.png"));
+				greenRobotLeftSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_left_3.png"));
+				yellowRobotLeftSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_left_3.png"));
+				
+				redRobotBackSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_back_3.png"));
+				blueRobotBackSprite = ImageIO.read(new File("res/TortankSprites/tortank_back_3.png"));
+				greenRobotBackSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_back_3.png"));
+				yellowRobotBackSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_back_3.png"));
+				break;
+			}
+			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -182,28 +267,32 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 		
 		if(model.getGameState().getPhase() == Phase.RESOLUTION){
 			if(model.getGrid().getRedRobot().getPath().size() > 1){
-				for(Line2D line : model.getGrid().getRedRobot().getPath()){
+				for(int l = 0; l < model.getGrid().getRedRobot().getPath().size()-1; l++){
+					Line2D line = model.getGrid().getRedRobot().getPath().get(l);
 					g2.setColor(Color.RED);
 					g2.drawLine((int)((line.getP1().getX()+0.5)*spriteLength), (int)((line.getP1().getY()+0.5)*spriteLength),
 								(int)((line.getP2().getX()+0.5)*spriteLength), (int)((line.getP2().getY()+0.5)*spriteLength));
 				}	
 			}
 			if(model.getGrid().getBlueRobot().getPath().size() > 1){
-				for(Line2D line : model.getGrid().getBlueRobot().getPath()){
+				for(int l = 0; l < model.getGrid().getBlueRobot().getPath().size()-1; l++){
+					Line2D line = model.getGrid().getBlueRobot().getPath().get(l);
 					g2.setColor(Color.BLUE);
 					g2.drawLine((int)((line.getP1().getX()+0.5)*spriteLength), (int)((line.getP1().getY()+0.5)*spriteLength),
 								(int)((line.getP2().getX()+0.5)*spriteLength), (int)((line.getP2().getY()+0.5)*spriteLength));
 				}
 			}
 			if(model.getGrid().getYellowRobot().getPath().size() > 1){
-				for(Line2D line : model.getGrid().getYellowRobot().getPath()){
+				for(int l = 0; l < model.getGrid().getYellowRobot().getPath().size()-1; l++){
+					Line2D line = model.getGrid().getYellowRobot().getPath().get(l);
 					g2.setColor(Color.YELLOW);
 					g2.drawLine((int)((line.getP1().getX()+0.5)*spriteLength), (int)((line.getP1().getY()+0.5)*spriteLength),
 							(int)((line.getP2().getX()+0.5)*spriteLength), (int)((line.getP2().getY()+0.5)*spriteLength));
 				}
 			}
 			if(model.getGrid().getGreenRobot().getPath().size() > 1){
-				for(Line2D line : model.getGrid().getGreenRobot().getPath()){
+				for(int l = 0; l < model.getGrid().getGreenRobot().getPath().size()-1; l++){
+					Line2D line = model.getGrid().getGreenRobot().getPath().get(l);
 					g2.setColor(Color.GREEN);
 					g2.drawLine((int)((line.getP1().getX()+0.5)*spriteLength), (int)((line.getP1().getY()+0.5)*spriteLength),
 								(int)((line.getP2().getX()+0.5)*spriteLength), (int)((line.getP2().getY()+0.5)*spriteLength));
@@ -228,32 +317,163 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 							break;
 						// ROUGE
 						case 21:
-							g2.drawImage(redPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							break;
-						case 22:
-							g2.drawImage(redTargetSprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(redRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
 							break;
 						// BLEU
 						case 31:
-							g2.drawImage(bluePawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							break;
-						case 32:
-							g2.drawImage(blueTargetSprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(blueRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
 							break;
 						// VERT
 						case 41:
-							g2.drawImage(greenPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							break;
-						case 42:
-							g2.drawImage(greenTargetSprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							g2.drawImage(greenRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
 							break;
 						// JAUNE
 						case 51:
-							g2.drawImage(yellowPawnSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							g2.drawImage(yellowRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
 							break;
+							
+						
+						// HANDLE THE ORIENTATION
+						
+						// ROUGE:
+						// HAUT
+						case 22:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(redRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(redRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
+							break;
+						// DROITE
+						case 24:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(redRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(redRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+							break;
+						// BAS
+						case 26:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(redRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(redRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
+							break;
+						// GAUCHE
+						case 28:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(redRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(redRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+							break;
+							
+						// BLEU:
+						// HAUT
+						case 32:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(blueRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(blueRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
+							break;
+							
+						// DROITE
+						case 34:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(blueRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(blueRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+							break;
+						// BAS
+						case 36:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(blueRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(blueRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
+							break;
+						// GAUCHE
+						case 38:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(blueRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(blueRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+							break;
+								
+						// VERT
+						// HAUT
+						case 42:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(greenRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(greenRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
+							break;
+						// DROITE
+						case 44:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(greenRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(greenRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+							break;
+						// BAS
+						case 46:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(greenRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(greenRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
+							break;
+						// GAUCHE
+						case 48:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(greenRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(greenRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+							break;
+							
+							
+						// JAUNE
+							// HAUT
 						case 52:
-							g2.drawImage(yellowTargetSprite,spriteLength*x+targetMargin,spriteLength*y+targetMargin,spriteLength,spriteLength, this);
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(yellowRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(yellowRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
 							break;
+						// DROITE
+						case 54:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(yellowRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(yellowRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+							break;
+						// BAS
+						case 56:
+							random = ((random+1) % 2) + 1;
+							if(random == 0)
+								g2.drawImage(yellowRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							else
+								g2.drawImage(yellowRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
+							break;
+						// GAUCHE
+						case 58:
+							random = ((random+1) % 2) + 1;
+							if(random == 0){
+								g2.drawImage(yellowRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+							}
+							else
+								g2.drawImage(yellowRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+							break;
+							
 						default:;
 						}
 					}

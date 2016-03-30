@@ -73,15 +73,15 @@ public class GamePanel extends JPanel {
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 0;
 		c.gridy = 0;
-		c.weightx=25;
+		c.weightx=30;
 		c.weighty=15;
-		c.gridwidth = 25;
+		c.gridwidth = 30;
 		c.gridheight = 15;
 
 		this.add(timer, c);
 		
 		c.fill = GridBagConstraints.BOTH;
-		c.gridx = 26;
+		c.gridx = 31;
 		c.gridy = 0;
 		c.weightx=60;
 		c.weighty=15;
@@ -90,7 +90,7 @@ public class GamePanel extends JPanel {
 		this.add(state, c);
 		
 		c.fill = GridBagConstraints.BOTH;
-		c.gridx = 86;
+		c.gridx = 91;
 		c.gridy = 0;
 		c.weightx=15;
 		c.weighty=15;
@@ -101,16 +101,16 @@ public class GamePanel extends JPanel {
 		//MIDDLE
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 0;
-		c.gridy = 21;
-		c.weightx=25;
+		c.gridy = 16;
+		c.weightx=30;
 		c.weighty=60;
-		c.gridwidth = 25;
+		c.gridwidth = 30;
 		c.gridheight = 60;
 		this.add(round, c);
 		
 		c.fill = GridBagConstraints.BOTH;
-		c.gridx = 26;
-		c.gridy = 21;
+		c.gridx = 31;
+		c.gridy = 16;
 		c.weightx=60;
 		c.weighty=60;
 		c.gridwidth = 60;
@@ -119,34 +119,34 @@ public class GamePanel extends JPanel {
 		//System.out.println(grid.getSize());
 		
 		c.fill = GridBagConstraints.BOTH;
-		c.gridx = 86;
+		c.gridx = 91;
 		c.gridy = 16;
 		c.weightx=15;
-		c.weighty=84;
+		c.weighty=60;
 		c.gridwidth = 15;
-		c.gridheight = 84;
+		c.gridheight = 60;
 
 		this.add(score, c);
 		
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 0;
 		c.gridy = 81;
-		c.weightx=25;
+		c.weightx=30;
 		c.weighty=20;
-		c.gridwidth = 25;
+		c.gridwidth = 30;
 		c.gridheight = 20;
 
 		this.add(interaction, c);
 		
 		c.fill = GridBagConstraints.BOTH;
-		c.gridx = 26;
+		c.gridx = 31;
 		c.gridy = 81;
-		c.weightx=60;
+		c.weightx=75;
 		c.weighty=20;
-		c.gridwidth = 60;
+		c.gridwidth = 75;
 		c.gridheight = 20;
 		
-		this.add(chat);
+		this.add(chat, c);
 	}
 
 

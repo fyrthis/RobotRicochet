@@ -9,7 +9,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import launcher.Debug;
-import model.ChatModel;
 import model.Model;
 import utils.AskNameDialog;
 import utils.Phase;

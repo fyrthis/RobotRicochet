@@ -267,7 +267,7 @@ int main(int argc, char* argv[]) {
     }
     
     printf("(Server:serveur.c:main) : Initialize server socket...\n");
-    int port = 2214;
+    int port = 2238;
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;

@@ -45,13 +45,13 @@ public class ChatPanel extends JPanel implements ActionListener, Observer {
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		add(msgEntry, c);
-		
 		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		add(scrollPane, c);
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(msgEntry, c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		add(sendMsgButton, c);
@@ -80,10 +80,12 @@ public class ChatPanel extends JPanel implements ActionListener, Observer {
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		@SuppressWarnings("unchecked")
+		String message = "";
 		ArrayList<String> messages = (ArrayList<String>) arg;
 		for(String msg : messages){
-			msgArea.setText(msgArea.getText().concat("\n" + msg));
+			message += "\n" + msg;
 		}
+		msgArea.setText(message);
 		System.out.println("(Client:"+Debug.curName+")(InteractionPanel:update)receive notifyObserver from the GameState...");
 	}
 }

@@ -4,12 +4,9 @@ import java.util.Observable;
 
 import launcher.Debug;
 import model.Model;
-import players.AbstractPlayer;
 import utils.Phase;
 
 class Resolution extends Observable  {
-
-	private AbstractPlayer activeUser;
 
 	private Model model;
 	
@@ -20,7 +17,7 @@ class Resolution extends Observable  {
 	//SASOLUTION/user/deplacements/
 	//(S -> C) Signalement aux clients de la solution proposée
 	void saSolution(String user, String deplacements) {
-		activeUser = model.getPlayers().get(user);
+		model.getPlayers().get(user);
 		model.getGameState().setSolutionMoves(deplacements);
 		//TODO : Lancer l'animation des robots des cas déplacements.
 		setChanged();
@@ -36,10 +33,8 @@ class Resolution extends Observable  {
 			char color = moves.charAt(i);
 			char direction = moves.charAt(i+1);
 			
-			model.getGrid().moveRobot(color, direction);
 			try {
-				System.out.println("(Client:"+Debug.curName+")(Resolution:bonne) waiting 1 seconde...");
-				Thread.sleep(1000);
+				model.getGrid().moveRobot(color, direction);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -57,18 +52,15 @@ class Resolution extends Observable  {
 			char color = moves.charAt(i);
 			char direction = moves.charAt(i+1);
 
-			model.getGrid().moveRobot(color, direction);
 			try {
-				System.out.println("(Client:"+Debug.curName+")(Resolution:mauvaise) waiting 1 seconde...");
-				Thread.sleep(1000);
+				model.getGrid().moveRobot(color, direction);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			model.getGrid().update();
 		}
-		//LocalPlayer actif, comme on est dans la phase de résolution, on sait que c'est à lui de jouer
-		activeUser = model.getPlayers().get(user);
+		model.getPlayers().get(user);
 	}
 	
 	//FINRESO/

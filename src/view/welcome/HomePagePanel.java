@@ -13,12 +13,9 @@ import view.View;
 public class HomePagePanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 4745105620276261056L;
 	JButton signIn, signUp, playAsGuest;
-	private Controller controller;
-	
 	
 	public HomePagePanel(Controller controller) {
 		super();
-		this.controller = controller;
 		signIn = new JButton("Sign In");
 		signUp = new JButton("Sign Up");
 		playAsGuest = new JButton("Play as guest");

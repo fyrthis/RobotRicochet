@@ -339,103 +339,151 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 						// HAUT
 						case 22:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(redRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(redRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 						// DROITE
 						case 24:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(redRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(redRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 						// BAS
 						case 26:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(redRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(redRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 						// GAUCHE
 						case 28:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(redRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(redRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 							
 						// BLEU:
 						// HAUT
 						case 32:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(blueRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(blueRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 							
 						// DROITE
 						case 34:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(blueRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(blueRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 						// BAS
 						case 36:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(blueRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(blueRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 						// GAUCHE
 						case 38:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(blueRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(blueRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 								
 						// VERT
 						// HAUT
 						case 42:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(greenRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(greenRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 						// DROITE
 						case 44:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(greenRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(greenRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 						// BAS
 						case 46:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(greenRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(greenRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
+								random = 1;
+							} 
 							break;
 						// GAUCHE
 						case 48:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1) {
 								g2.drawImage(greenRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(greenRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 							
 							
@@ -443,35 +491,50 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 							// HAUT
 						case 52:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1){
 								g2.drawImage(yellowRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(yellowRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 						// DROITE
 						case 54:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1){
 								g2.drawImage(yellowRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(yellowRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 						// BAS
 						case 56:
 							random = ((random+1) % 2) + 1;
-							if(random == 0)
+							if(random == 1){
 								g2.drawImage(yellowRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-							else
+								random = 2;
+							}
+							else {
 								g2.drawImage(yellowRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 						// GAUCHE
 						case 58:
 							random = ((random+1) % 2) + 1;
-							if(random == 0){
+							if(random == 1){
 								g2.drawImage(yellowRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+								random = 2;
 							}
-							else
+							else {
 								g2.drawImage(yellowRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
+								random = 1;
+							}
 							break;
 							
 						default:;

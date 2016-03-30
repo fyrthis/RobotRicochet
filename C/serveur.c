@@ -173,6 +173,7 @@ void handle_request(task_t * task, int thread_id) {
                     etat_reso = 2;
                     puts("Solution incorrecte ! \n");
                 }
+                free(enchere);
             }
             else {
                 char *msg = (char*)calloc(50, sizeof(char));
@@ -494,7 +495,7 @@ void * session_loop(void* nbToursSession) {
                     sleep(1);
                     i++;
                     if(i==timer) { //l'utilisateur a mis trop de temps à répondre !
-                        getEnchere(&enchere_mutex); //Enlève l'enchère du joueur.
+                        free(getEnchere(&enchere_mutex)); //Enlève l'enchère du joueur.
                         if(encheres!=NULL) { //Si ilreste quelqu'un avec une solution possible
                             send_tropLong(encheres->name);
                         }

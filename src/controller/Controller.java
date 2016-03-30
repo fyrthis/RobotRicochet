@@ -24,7 +24,8 @@ public class Controller implements Observer {
 	Resolution res;
 	Chat chat;
 
-	public Controller(Model model) {
+	public Controller(Model model, int port) {
+		Client.getInstance().setPort(port);
 		Controller.model=model;
 		ds = new DebutSession(model);
 		dc = new DeconnexionConnexion(model);

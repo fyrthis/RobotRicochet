@@ -22,7 +22,7 @@
 
 #include "serveur.h"
 
-pthread_cond_t  cond_got_task   = PTHREAD_COND_INITIALIZER;
+pthread_cond_t  cond_got_task = PTHREAD_COND_INITIALIZER;
 
 pthread_t ptimer;
 int nbSecondsTimer;
@@ -68,10 +68,6 @@ void handle_request(task_t * task, int thread_id) {
             
             //S -> C : SESSION/plateau/
             sendGrid(gridStr, task->socket);
-
-            //TODO : A modifier !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if(nbClientsConnecte==2)
-                pthread_create(&ptimer, NULL, session_loop, (void*)&nbTours); 
         }
 
 
@@ -282,7 +278,7 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
     printf("(Server:serveur.c:main) : Initialize server socket on %d...\n", port);
-    
+
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;
@@ -304,10 +300,12 @@ int main(int argc, char* argv[]) {
        exit(1);
     }
 
+    printf("(Server:serveur.c:main) : Initialize game loop with %d rounds each...", nbTours);
+    pthread_create(&ptimer, NULL, session_loop, (void*)&nbTours);
 
-    printf("(Server:serveur.c:main) : Start listenning with %d simultaneously clients max\n",NB_MAX_CLIENTS);
-    
-    
+
+    printf("(Server:serveur.c:main) : Start listenning with %d simultaneously clients max\n",NB_MAX_CLIENTS); 
+
 
     listen(socket_server,NB_MAX_CLIENTS);
     fd_set readfds, testfds;
@@ -403,92 +401,111 @@ int main(int argc, char* argv[]) {
 
 
 void * session_loop(void* nbToursSession) {
-    printf("SESSION_LOOP BEGINS\n");
     int cptTours = 0;
     int i;
     int timer;
-    while(nbClientsConnecte>=2 && cptTours<*((int*)nbToursSession)) {
-        
-        rmEncheres(&enchere_mutex); //On vide les enchères du tour précédent.
-        etat_reso=0; //Personne n'a encore trouvé de solution
+    while(1) {
+        if(pthread_mutex_lock(&client_mutex) < 0) {
+            perror("(Server:client.c:addClient) : on addClient, cannot lock the first p_mutex\n");
+        }
 
+        //Si pas assez de client, on attend le feu vert, sinon on continue
+        while(nbClientsConnecte<2) {
+            if(pthread_cond_wait(&cond_at_least_2_players, &client_mutex) != 0) {
+                perror("(Server:serveur.c:handle_tasks_loop) : err condition wait \n");
+            }
+        }
+
+        if(pthread_mutex_unlock(&client_mutex) < 0) {
+            perror("(Server:client.c:addClient) : on addClient, cannot unlock the p_mutex when an already connected client asks for a new connection\n");
+        }
+
+        cptTours = 0;
         i=0;
-        timer=10;
-        while(i < timer) {
-            sleep(1);
-            i++;
-            printf("Waiting players... : %d sec.\n", i);
-        }
+        timer=0;
+        
+        while(nbClientsConnecte>=2 && cptTours<*((int*)nbToursSession)) {
+            
+            rmEncheres(&enchere_mutex); //On vide les enchères du tour précédent.
+            etat_reso=0; //Personne n'a encore trouvé de solution
 
-        if( phase==REFLEXION && nbClientsConnecte>=2) {
-            printf("DEBUT REFLEXION\n");
-            //S -> C : TOUR/enigme/
-            setEnigma();
-            setBilanCurrentSession();
-            sendEnigmaBilan(enigma, bilan);
             i=0;
-            timer=5*60;
-            while(i < timer && phase==REFLEXION && nbClientsConnecte>=2) {
+            timer=10;
+            while(i < timer) {
                 sleep(1);
                 i++;
-                printf("REFLEXION : %d sec.\n", i);
+                printf("Waiting players... : %d sec.\n", i);
             }
-            if(i==timer) { //Délai écoulé
-                printf("REFLEXION : DELAI ECOULE\n");
-                phase=ENCHERE;
-                char *msg = "FINREFLEXION/\n";
-                sendMessageAll(msg, &client_mutex);
-            } else { //Quelqu'un a proposé une solution
-                //DO NOTHING : Géré dans Handle_request
-                printf("REFLEXION : SOLTUION PROPOSEE \n");
-            }
-        }
-        if( phase==ENCHERE && nbClientsConnecte>=2) {
-            printf("DEBUT ENCHERE\n");
-            i=0;
-            timer=30;
-            while(i < timer && nbClientsConnecte>=2) {
-                if(encheres==NULL) { //Personne n'a proposée de solution lors de la réfexion
-                    break;
-                }
-                sleep(1);
-                i++;
-                printf("ENCHERE : %d sec.\n", i);
-            }
-            phase=RESOLUTION;
-        }
-        if( phase==RESOLUTION && nbClientsConnecte>=2) {
-            printf("DEBUT RESOLUTION\n");
-            i=0;
-            timer=30;
-            while(i < timer && nbClientsConnecte>=2) { //Et tant qu'unjoueur a une solution a proposer
-                if(etat_reso==1) { //Solution trouvée
-                     //Base
-                    break; //Nouveau tour, énigme !
-                } else if(etat_reso==2 && encheres!=NULL) { //Solution erronée, relance du compte à rebours si il reste quelqu'un
-                    i = 0;
-                    etat_reso=0;
-                }
 
-                if(encheres == NULL) { //Plus personne n'a d'enchère à proposer
-                    send_finReso();
-                    break;
+            if( phase==REFLEXION && nbClientsConnecte>=2) {
+                printf("DEBUT REFLEXION\n");
+                //S -> C : TOUR/enigme/
+                setEnigma();
+                setBilanCurrentSession();
+                sendEnigmaBilan(enigma, bilan);
+                i=0;
+                timer=5*60;
+                while(i < timer && phase==REFLEXION && nbClientsConnecte>=2) {
+                    sleep(1);
+                    i++;
+                    printf("REFLEXION : %d sec.\n", i);
                 }
-                sleep(1);
-                i++;
-                if(i==timer) { //l'utilisateur a mis trop de temps à répondre !
-                    getEnchere(&enchere_mutex); //Enlève l'enchère du joueur.
-                    if(encheres!=NULL) { //Si ilreste quelqu'un avec une solution possible
-                        send_tropLong(encheres->name);
+                if(i==timer) { //Délai écoulé
+                    printf("REFLEXION : DELAI ECOULE\n");
+                    phase=ENCHERE;
+                    char *msg = "FINREFLEXION/\n";
+                    sendMessageAll(msg, &client_mutex);
+                } else { //Quelqu'un a proposé une solution
+                    //DO NOTHING : Géré dans Handle_request
+                    printf("REFLEXION : SOLTUION PROPOSEE \n");
+                }
+            }
+            if( phase==ENCHERE && nbClientsConnecte>=2) {
+                printf("DEBUT ENCHERE\n");
+                i=0;
+                timer=30;
+                while(i < timer && nbClientsConnecte>=2) {
+                    if(encheres==NULL) { //Personne n'a proposée de solution lors de la réfexion
+                        break;
                     }
-                    i = 0;
+                    sleep(1);
+                    i++;
+                    printf("ENCHERE : %d sec.\n", i);
                 }
-                printf("RESOLUTION : %d sec.\n", i);
+                phase=RESOLUTION;
             }
-            phase=REFLEXION;
+            if( phase==RESOLUTION && nbClientsConnecte>=2) {
+                printf("DEBUT RESOLUTION\n");
+                i=0;
+                timer=60;
+                while(i < timer && nbClientsConnecte>=2) { //Et tant qu'unjoueur a une solution a proposer
+                    if(etat_reso==1) { //Solution trouvée
+                         //Base
+                        break; //Nouveau tour, énigme !
+                    } else if(etat_reso==2 && encheres!=NULL) { //Solution erronée, relance du compte à rebours si il reste quelqu'un
+                        i = 0;
+                        etat_reso=0;
+                    }
+
+                    if(encheres == NULL) { //Plus personne n'a d'enchère à proposer
+                        send_finReso();
+                        break;
+                    }
+                    sleep(1);
+                    i++;
+                    if(i==timer) { //l'utilisateur a mis trop de temps à répondre !
+                        getEnchere(&enchere_mutex); //Enlève l'enchère du joueur.
+                        if(encheres!=NULL) { //Si ilreste quelqu'un avec une solution possible
+                            send_tropLong(encheres->name);
+                        }
+                        i = 0;
+                    }
+                    printf("RESOLUTION : %d sec.\n", i);
+                }
+                phase=REFLEXION;
+            }
+            cptTours++;
         }
-        cptTours++;
     }
-    printf("SESSION_LOOP ENDS\n");
     return NULL;
 }

@@ -28,6 +28,9 @@ client_t * last_client = NULL;
 int nbClients = 0;
 int nbClientsConnecte = 0;
 
+pthread_cond_t cond_at_least_2_players = PTHREAD_COND_INITIALIZER;
+
+
 /******************************************
 *                                         *
 *  Ajoute un client dans la liste des     *
@@ -99,6 +102,10 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
 
     printf("(Server:client.c:addClient) : added client with socket '%d'\n", client->socket);
     fflush(stdout);
+
+    if(nbClientsConnecte==2) {
+        if(pthread_cond_signal(&cond_at_least_2_players) != 0) perror("(Server:client.c:addClient) : signal at least two clients");
+    }
 
     printClientsState(&client_mutex);
     if(pthread_mutex_unlock(p_mutex) < 0) {

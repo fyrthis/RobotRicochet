@@ -45,7 +45,7 @@ void handle_request(task_t * task, int thread_id) {
         /* parse la commande */
         char * pch = (char*)calloc(strlen(task->command)+1, sizeof(char)); // TOKEN
         char* username = NULL;
-        printf ("(Server:serveur.c:handle_request) : Splitting string \"%s\" into tokens:\n",task->command);
+        //printf ("(Server:serveur.c:handle_request) : Splitting string \"%s\" into tokens:\n",task->command);
         pch = strtok (task->command,"/");
 
         if(pch==NULL) //Should never happen.
@@ -81,7 +81,7 @@ void handle_request(task_t * task, int thread_id) {
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch), sizeof(char));
             strncpy(username, pch, strlen(pch));
-            printf("(Server:serveur.c:handle_request) : handle Task SORT\n");
+            //printf("(Server:serveur.c:handle_request) : handle Task SORT\n");
 
             if(clients == NULL) { puts("(Server:serveur.c:handle_request) : Aucun client. Should never happened\n"); return; }
 
@@ -163,17 +163,19 @@ void handle_request(task_t * task, int thread_id) {
 
                 // isValideSolution() renvoie le nombre de deplacements necessaire pour la solution
                 enchere_t * enchere = getEnchere(&enchere_mutex); //Get la meilleure enchère
-                fprintf(stderr, "solution courante : %d\n", enchere->nbCoups);
+                //fprintf(stderr, "solution courante : %d\n", enchere->nbCoups);
                 if(isValideSolution(deplacements) == enchere->nbCoups) {
                     // Solution acceptée
                     send_bonneSolution();
                     etat_reso = 1;
+                    puts("Solution correcte ! \n");
                 }
                 else {
                     if(encheres!=NULL) { //Il reste un joueur qui peut proposer une solution
                         send_mauvaiseSolution(encheres->name);
                     }
                     etat_reso = 2;
+                    puts("Solution incorrecte ! \n");
                 }
             }
             else {
@@ -195,7 +197,7 @@ void handle_request(task_t * task, int thread_id) {
             char *message = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(message, pch, strlen(pch));
 
-            fprintf(stderr, "(Server:serveur.c:handle_request) : Message envoyé par %s : %s\n", user, message);
+            //fprintf(stderr, "(Server:serveur.c:handle_request) : Message envoyé par %s : %s\n", user, message);
 
             envoyerMessageAuxAutres(user, message, task->socket);
         }
@@ -217,10 +219,10 @@ void handle_request(task_t * task, int thread_id) {
 // serveur.c
 void * handle_tasks_loop(void* data) {
 
-    puts("(Server:serveur.c:handle_tasks_loop) : handle_task_loop began");
+    //puts("(Server:serveur.c:handle_tasks_loop) : handle_task_loop began");
     task_t * taskWeDo;
     int thread_id = *((int*)data);
-
+    printf("(Server:serveur.c:handle_task_loop) : Thread %d created and ready\n", thread_id);
     /* lock the mutex, to access the tasks list exclusively. */
     if(pthread_mutex_lock(&task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : error mutex\n");
 
@@ -229,19 +231,19 @@ void * handle_tasks_loop(void* data) {
             taskWeDo = getTask(&task_mutex);
             //printf("(handle_tasks_loop) Thread %d got task %s.\n", thread_id, taskWeDo->command);
             if (taskWeDo) { /* got a request - handle it and free it */
-                printf("(Server:serveur.c:handle_tasks_loop) : Thread %d handles task %s.\n", thread_id, taskWeDo->command);
+                //printf("(Server:serveur.c:handle_tasks_loop) : Thread %d handles task %s.\n", thread_id, taskWeDo->command);
                 handle_request(taskWeDo, thread_id);
                 free(taskWeDo);
             }
         }
         else {
-            printf("(Server:serveur.c:handle_tasks_loop) : Thread %d is waiting some task.\n", thread_id);
+            //printf("(Server:serveur.c:handle_tasks_loop) : Thread %d is waiting some task.\n", thread_id);
             if(pthread_cond_wait(&cond_got_task, &task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : err condition wait \n");
         }
     }
     //Unreachable code bellow
     if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : error mutex\n");
-    puts("(Server:serveur.c:handle_tasks_loop) :  ended\n");
+    //puts("(Server:serveur.c:handle_tasks_loop) :  ended\n");
 }
 
 
@@ -252,10 +254,13 @@ void * handle_tasks_loop(void* data) {
 // serveur.c
 
 int main(int argc, char* argv[]) {
-    //Seed rand
-    srand(time(NULL));
+    
     //INITIALIZE SERVER
     printf("(Server:serveur.c:main) : Initialize server...\n");
+    printf("(Server:serveur.c:main) : Initialize map seed...\n");
+    //Seed rand
+    //srand(time(NULL));
+    srand(1);
     printf("(Server:serveur.c:main) : Initialize threads...\n");
     int        i;                               /* loop counter          */
     int        thr_id[NB_MAX_THREADS];          /* thread IDs            */
@@ -263,33 +268,31 @@ int main(int argc, char* argv[]) {
     for (i=0; i<NB_MAX_THREADS; i++) {
         thr_id[i] = i;
         pthread_create(&p_threads[i], NULL, handle_tasks_loop, (void*)&thr_id[i]);
-        printf("(Server:serveur.c:main) : Thread %d created and ready\n", i);
     }
     
-    printf("(Server:serveur.c:main) : Initialize server socket...\n");
-    int port = 2238;
+    
+    int port;
+    
+    
+    if(argc>2) {
+        port = atoi(argv[1]);
+        readGridFromFile(argv[2]);
+    }else {
+        puts("please use : ./serveur n_port map_file.txt.\n");
+        exit(1);
+    }
+    printf("(Server:serveur.c:main) : Initialize server socket on %d...\n", port);
+    
     int socket_server;
     int socket_client;
     struct sockaddr_in server_address;
     struct sockaddr_in client_address = { 0 };
     socklen_t client_size;
-    if(argc>1) {
-        port = atoi(argv[1]);
-    }
-    if(argc>2) {
-        readGridFromFile(argv[2]);
-    } else {
-        readGridFromFile("./res/BasicGrid.txt");
-    }
-    
-    printf("(Server:serveur.c:main) : setting port : %d\n", port);
     socket_server = socket(AF_INET, SOCK_STREAM, 0);
    
     if (socket_server < 0) {
         perror("(Server:serveur.c:main) : ERROR opening server socket\n");
         exit(1);
-    } else {
-        puts("(Server:serveur.c:main) : The server socket is now open\n");
     }
 
     bzero((char *) &server_address, sizeof(server_address));
@@ -368,6 +371,7 @@ int main(int argc, char* argv[]) {
                         while(client != NULL){
                             if(client->socket == socket) {
                                 client->isConnected = 1;
+                                nbClientsConnecte--;
                                 break;
                             }
                             client = client->next;

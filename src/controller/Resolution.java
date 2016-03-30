@@ -39,8 +39,8 @@ class Resolution extends Observable  {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			model.getGrid().update();
 		}
+		model.getGrid().update();
 	}
 	
 	//MAUVAISE/user/
@@ -58,8 +58,8 @@ class Resolution extends Observable  {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			model.getGrid().update();
 		}
+		model.getGrid().update();
 		model.getPlayers().get(user);
 	}
 	

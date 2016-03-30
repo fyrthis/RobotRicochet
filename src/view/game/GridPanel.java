@@ -63,8 +63,9 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	
 	private Image mainTargetSprite;
 	
-	int random = 0;
+	int random = 1;
 	boolean isChanged = false;
+	boolean first = true;
 	
 	Model model;
 	
@@ -339,251 +340,74 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 						// ROUGE:
 						// HAUT
 						case 22:
-							if(random == 0) {
-								g2.drawImage(redRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(redRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationUp(g2, redRobotBackSprite, x, y, spriteLength, spriteLength);
 							break;
 						// DROITE
 						case 24:
-							if(random == 0) {
-								g2.drawImage(redRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(redRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationRight(g2, redRobotRightSprite, x, y, spriteLength, spriteLength);
 							break;
 						// BAS
 						case 26:
-							if(random == 0) {
-								g2.drawImage(redRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(redRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationDown(g2, redRobotSprite, x, y, spriteLength, spriteLength);
 							break;
 						// GAUCHE
 						case 28:
-							if(random == 0) {
-								g2.drawImage(redRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(redRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationLeft(g2, redRobotLeftSprite, x, y, spriteLength, spriteLength);
 							break;
 							
 						// BLEU:
 						// HAUT
 						case 32:
-							if(random == 0) {
-								g2.drawImage(blueRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(blueRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationUp(g2, blueRobotBackSprite, x, y, spriteLength, spriteLength);
 							break;
-							
 						// DROITE
 						case 34:
-							if(random == 0) {
-								g2.drawImage(blueRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(blueRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationRight(g2, blueRobotRightSprite, x, y, spriteLength, spriteLength);
 							break;
 						// BAS
 						case 36:
-							if(random == 0) {
-								g2.drawImage(blueRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(blueRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationDown(g2, blueRobotSprite, x, y, spriteLength, spriteLength);
 							break;
 						// GAUCHE
 						case 38:
-							if(random == 0) {
-								g2.drawImage(blueRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(blueRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationLeft(g2, blueRobotLeftSprite, x, y, spriteLength, spriteLength);
 							break;
 								
 						// VERT
 						// HAUT
 						case 42:
-							if(random == 0) {
-								g2.drawImage(greenRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(greenRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationUp(g2, greenRobotBackSprite, x, y, spriteLength, spriteLength);
 							break;
 						// DROITE
 						case 44:
-							if(random == 0) {
-								g2.drawImage(greenRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(greenRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationRight(g2, greenRobotRightSprite, x, y, spriteLength, spriteLength);
 							break;
 						// BAS
 						case 46:
-							if(random == 0) {
-								g2.drawImage(greenRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(greenRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
-								random = 0;
-							} 
+							paintAnimationDown(g2, greenRobotBackSprite, x, y, spriteLength, spriteLength);
 							break;
 						// GAUCHE
 						case 48:
-							if(random == 0) {
-								g2.drawImage(greenRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(greenRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationLeft(g2, greenRobotBackSprite, x, y, spriteLength, spriteLength);
 							break;
 							
 							
 						// JAUNE
-							// HAUT
+						// HAUT
 						case 52:
-							if(random == 0){
-								g2.drawImage(yellowRobotBackSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(yellowRobotBackSprite,spriteLength*x,(int)((spriteLength+0.5)*y),spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationUp(g2, yellowRobotBackSprite, x, y, spriteLength, spriteLength);
 							break;
 						// DROITE
 						case 54:
-							if(random == 0){
-								g2.drawImage(yellowRobotRightSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(yellowRobotRightSprite,(int) ((spriteLength-0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationRight(g2, yellowRobotRightSprite, x, y, spriteLength, spriteLength);
 							break;
 						// BAS
 						case 56:
-							if(random == 0){
-								g2.drawImage(yellowRobotSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(yellowRobotSprite,spriteLength*x,(int)((spriteLength-0.5)*y),spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationDown(g2, yellowRobotSprite, x, y, spriteLength, spriteLength);
 							break;
 						// GAUCHE
 						case 58:
-							if(random == 0){
-								g2.drawImage(yellowRobotLeftSprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
-								if(isChanged)
-									random = 2;
-								else
-									random = 1;
-								isChanged = !isChanged;
-							}
-							else {
-								g2.drawImage(yellowRobotLeftSprite,(int)((spriteLength+0.5)*x),spriteLength*y,spriteLength,spriteLength, this);
-								random = 0;
-							}
+							paintAnimationLeft(g2, yellowRobotBackSprite, x, y, spriteLength, spriteLength);
 							break;
 							
 						default:;
@@ -594,6 +418,100 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 		}
 
 		System.out.println("(Client:"+Debug.curName+")(GridPanel:paint)---> end call paint");
+	}
+	
+	
+	
+	public void paintAnimationUp(Graphics2D g2, Image sprite, int x, int y, int width, int height) {
+		if(random == 0){
+			if(first)
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y+0.5)),spriteLength,spriteLength, this);
+			else
+				g2.drawImage(sprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+				
+			if(isChanged)
+				random = 2;
+			else
+				random = 1;
+			isChanged = !isChanged;
+			first = !first;
+		}
+		else {
+			if(first)
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y+0.75)),spriteLength,spriteLength, this);
+			else
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y+0.25)),spriteLength,spriteLength, this);
+			random = 0;
+		}
+	}
+	
+	public void paintAnimationDown(Graphics2D g2, Image sprite, int x, int y, int width, int height) {
+		if(random == 0){
+			if(first)
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y-0.5)),spriteLength,spriteLength, this);
+			else
+				g2.drawImage(sprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+			
+			if(isChanged)
+				random = 2;
+			else
+				random = 1;
+			isChanged = !isChanged;
+			first = !first;
+		}
+		else {
+			if(first)
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y-0.75)),spriteLength,spriteLength, this);
+			else
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y-0.25)),spriteLength,spriteLength, this);
+			random = 0;
+		}
+	}
+	
+	public void paintAnimationLeft(Graphics2D g2, Image sprite, int x, int y, int width, int height) {
+		if(random == 0){
+			if(first)
+				g2.drawImage(sprite,(int)(spriteLength*(x+0.5)),spriteLength*y,spriteLength,spriteLength, this);
+			else
+				g2.drawImage(sprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+			
+			if(isChanged)
+				random = 2;
+			else
+				random = 1;
+			isChanged = !isChanged;
+			first = !first;
+		}
+		else {
+			if(first)
+				g2.drawImage(sprite,(int)(spriteLength*(x+0.75)),spriteLength*y,spriteLength,spriteLength, this);
+			else
+				g2.drawImage(sprite,(int)(spriteLength*(x+0.25)),spriteLength*y,spriteLength,spriteLength, this);
+			random = 0;
+		}
+	}
+	
+	public void paintAnimationRight(Graphics2D g2, Image sprite, int x, int y, int width, int height) {
+		if(random == 0){
+			if(first)
+				g2.drawImage(sprite,(int)(spriteLength*(x-0.5)),spriteLength*y,spriteLength,spriteLength, this);
+			else
+				g2.drawImage(sprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+			
+			if(isChanged)
+				random = 2;
+			else
+				random = 1;
+			isChanged = !isChanged;
+			first = !first;
+		}
+		else {
+			if(first)
+				g2.drawImage(sprite,(int)(spriteLength*(x-0.75)),spriteLength*y,spriteLength,spriteLength, this);
+			else
+				g2.drawImage(sprite,(int)(spriteLength*(x-0.25)),spriteLength*y,spriteLength,spriteLength, this);
+			random = 0;
+		}
 	}
 	
 	public String toString(){

@@ -10,13 +10,6 @@ make -C C/
 # compile *.java files
 javac -d binaries $(find ./src/* | grep .java)
 
-
-# launch server
-valgrind --track-origins=yes ./C/serveur $2 ./res/BasicGrid.txt &
-
-#We suppose here server takes 5 seconds to be ready
-#sleep 5
-
 # launch N clients
 
 NB_CLIENTS=$1
@@ -24,3 +17,6 @@ for (( i = 0; i < $NB_CLIENTS; i++ )); do
 	#statements
 	java -cp ./binaries/ launcher.Launcher $2 &
 done
+
+# launch server
+valgrind --track-origins=yes ./C/serveur $2 ./res/BasicGrid.txt

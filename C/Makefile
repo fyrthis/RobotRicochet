@@ -7,10 +7,10 @@ EXEC=serveur
 # Ensemble des exécutables à produire
 all: $(EXEC)
 
-serveur: serveur.o action.o game_state.o task.o client.o grid.o utils.o
-	$(CC) -o serveur serveur.o action.o game_state.o task.o client.o grid.o utils.o $(LDFLAGS)
+serveur: serveur.o action.o game_state.o task.o client.o grid.o utils.o encheres.o
+	$(CC) -o serveur serveur.o action.o game_state.o task.o client.o grid.o utils.o encheres.o $(LDFLAGS)
 
-serveur.o: task.o client.o action.o game_state.o grid.o utils.o
+serveur.o: task.o client.o action.o game_state.o grid.o utils.o encheres.o
 	$(CC) -o serveur.o -c serveur.c $(CFLAGS) $(LDFLAGS)
 
 action.o: client.o utils.o action.c action.h
@@ -21,6 +21,9 @@ game_state.o: grid.o utils.o game_state.c game_state.h
 
 client.o: utils.o client.c client.h
 	$(CC) -o client.o -c client.c $(CFLAGS) $(LDFLAGS)
+
+encheres.o: encheres.c encheres.h
+	$(CC) -o encheres.o -c encheres.c $(CFLAGS) $(LDFLAGS)
 
 tasks.o: utils.o task.c task.h
 	$(CC) -o task.o -c task.c $(CFLAGS) $(LDFLAGS)

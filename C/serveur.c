@@ -328,7 +328,7 @@ int main(int argc, char* argv[]) {
     while(1) {
         char buffer[256];
         bzero(buffer,256);
-        int socket;
+        int file_descr;
         int n;
         testfds = readfds;
         printf("(Server:serveur.c:main) : server waiting\n");
@@ -364,34 +364,34 @@ int main(int argc, char* argv[]) {
             if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
         }
         
-        for(socket = 0; socket < FD_SETSIZE; socket++) {
-            if(FD_ISSET(socket,&testfds)) { //Si une activité est détecté sur un socket
-                if(socket == socket_server)
+        for(file_descr = 0; file_descr < FD_SETSIZE; file_descr++) {
+            if(FD_ISSET(file_descr,&testfds)) { //Si une activité est détecté sur un socket
+                if(file_descr == socket_server)
                  { //Activité socket serveur : quelqu'un essaie de se connecter.
                     client_size = sizeof(client_address);
                     socket_client = accept(socket_server, (struct sockaddr *)&client_address, &client_size);
                     FD_SET(socket_client, &readfds); //Add socket file descriptor to the set
                     printf("(Server:serveur.c:main) : New socket connection on %d\n", socket_client);
                 }
-                else if(socket==STDIN_FILENO)
+                else if(file_descr==STDIN_FILENO)
                 { //Activité stdin : l'administrateur parle !
-                    printf("socket stdin is %d", socket);
+                    printf("socket stdin is %d", file_descr);
                     fgets(buffer, 255, stdin);
                     printf("L'admin dit : %s\n", buffer);
                     if(strncmp(buffer, "exit",4)==0) shutdown_server(0);
                 }
-                else
+                else //file_descr est une socket client
                 { //Activité sur un socket client : un client nous parle !
-                    n = read(socket,buffer,255);
+                    n = read(file_descr,buffer,255);
                     if(n == 0) {
-                        printf("(Server:serveur.c:main) : Main received empty message from %d.\n", socket);
-                        FD_CLR(socket, &readfds);
-                        FD_CLR(socket, &testfds);
+                        printf("(Server:serveur.c:main) : Main received empty message from %d.\n", file_descr);
+                        FD_CLR(file_descr, &readfds);
+                        FD_CLR(file_descr, &testfds);
                         FD_SET(STDIN_FILENO, &readfds); //Onrajoute l'entrée clavier quand même !
                         if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
                         client_t *client = clients;
                         while(client != NULL){
-                            if(client->socket == socket) {
+                            if(client->socket == file_descr) {
                                 client->isConnected = 1;
                                 nbClientsConnecte--;
                                 break;
@@ -401,16 +401,14 @@ int main(int argc, char* argv[]) {
                         if(client==NULL) printf("(Server:serveur.c:main) : error : client null\n");
                         if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
                         sprintf(buffer, "SORT/%s/", client->name);
-                        addTask(socket, buffer, &task_mutex, &cond_got_task);
+                        addTask(file_descr, buffer, &task_mutex, &cond_got_task);
 
                         break;
                     }
-                    printf("(Server:serveur.c:main) : Server received %d bytes from %d.\n", n, socket);
-                    printf("(Server:serveur.c:main) : Server received %s from %d.\n", buffer, socket);
-                    addTask(socket, buffer, &task_mutex, &cond_got_task);
+                    printf("(Server:serveur.c:main) : Server received %d bytes from %d.\n", n, file_descr);
+                    printf("(Server:serveur.c:main) : Server received %s from %d.\n", buffer, file_descr);
+                    addTask(file_descr, buffer, &task_mutex, &cond_got_task);
                 }
-            } else {
-
             }
         }
     }
@@ -545,8 +543,18 @@ void shutdown_server(int sig) {
 
     signal(sig, SIG_IGN);
     puts("server is shuting down...\n");
-    isShutingDown=1; //To terminate threads
+    isShutingDown=1; //To terminate threads, we signal condition in order to unlock them.
     pthread_cond_broadcast(&cond_got_task);
     pthread_cond_broadcast(&cond_at_least_2_players);
+
+    //free tasks
+    task_t * task = getTask(&task_mutex);
+    while(task!=NULL) {
+        free(task);
+        task = getTask(&task_mutex);
+    }
+    printTasksState(&task_mutex);
+    //free encheres
+    //free clients
     exit(0);
 }

@@ -79,7 +79,7 @@ void handle_request(task_t * task, int thread_id) {
         {
             //ICI SE FAIT LA SUPPRESSION D'UN CLIENT
             pch = strtok (NULL, "/");
-            username = (char*)calloc(strlen(pch), sizeof(char));
+            username = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(username, pch, strlen(pch));
             //printf("(Server:serveur.c:handle_request) : handle Task SORT\n");
 
@@ -452,7 +452,7 @@ void * session_loop(void* nbToursSession) {
             if(isShutingDown==1) return NULL;
             rmEncheres(&enchere_mutex); //On vide les enchères du tour précédent.
             etat_reso=0; //Personne n'a encore trouvé de solution
-
+            phase=REFLEXION;
             i=0;
             timer=10;
             while(i < timer) {
@@ -530,7 +530,6 @@ void * session_loop(void* nbToursSession) {
                     }
                     printf("RESOLUTION : %d sec.\n", i);
                 }
-                phase=REFLEXION;
             }
             cptTours++;
         }

@@ -39,6 +39,7 @@ public class GamePanel extends AbstractGamePanel {
 		model.getGrid().addObserver(grid);
 		model.getGameState().addObserver(interaction);
 		model.getGameState().addObserver(state);
+		model.getGameState().addObserver(timer);
 		model.getChatModel().addObserver(chat);
 		System.out.println("(Client:"+Debug.curName+")(GamePanel:initializeObservers) initializeObservers Done");
 	}

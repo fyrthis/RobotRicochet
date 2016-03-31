@@ -76,13 +76,12 @@ public class ChatPanel extends JPanel implements ActionListener, Observer {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
-		@SuppressWarnings("unchecked")
 		String message = "";
-		ArrayList<String> messages = (ArrayList<String>) arg;
-		for(String msg : messages){
+		for(String msg : (ArrayList<String>) arg){
 			message += "\n" + msg;
 		}
 		msgArea.setText(message);

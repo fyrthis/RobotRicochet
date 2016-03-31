@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import launcher.Debug;
+import model.GameState;
 import model.Model;
 import utils.Phase;
 import view.View;
@@ -209,7 +210,8 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
-		Phase phase = (Phase) arg;
+		GameState gameState = (GameState) arg;
+		Phase phase = gameState.getPhase();
 		this.setPanelByPhase(phase);
 		System.out.println("(Client:"+Debug.curName+")(InteractionPanel:update)receive notifyObserver from the GameState...");
 	}

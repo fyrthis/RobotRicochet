@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import utils.Phase;
+import model.GameState;
 import model.Model;
 
 public class StatePanel extends JPanel implements Observer {
@@ -41,7 +42,8 @@ public class StatePanel extends JPanel implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
-		Phase phase = (Phase) arg;
+		GameState gameState = (GameState) arg;
+		Phase phase = gameState.getPhase();
 		if(phase == Phase.INITIALISATION)
 			txt = "Phase d'initialisation";
 		else if(phase == Phase.REFLEXION)

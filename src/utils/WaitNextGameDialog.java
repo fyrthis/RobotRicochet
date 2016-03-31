@@ -7,9 +7,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class WaitNextGameDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 5020160951408381474L;

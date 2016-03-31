@@ -18,6 +18,7 @@ class Reflexion extends Observable {
 	//TOUR/enigme/bilan/
 	//(S -> C) Bilan de la session, description de l'énigme courante et initialisation de la phase de réflexion
 	void tour(String enigme, String bilan) {
+		model.getGameState().setPhase(Phase.REFLEXION);
 		model.setRobotsFromBuffer(enigme);
 		if(bilan != null && bilan.length()>0)
 			model.setBilanCurrentSession(bilan);

@@ -40,6 +40,7 @@ public class NonGamerPanel extends AbstractGamePanel {
 			model.getPlayers().addObserver(score);
 			model.getGrid().addObserver(grid);
 			model.getGameState().addObserver(state);
+			model.getGameState().addObserver(timer);
 			model.getChatModel().addObserver(chat);
 			System.out.println("(Client:"+Debug.curName+")(GamePanel:initializeObservers) initializeObservers Done");
 		}

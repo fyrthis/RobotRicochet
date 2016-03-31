@@ -51,41 +51,38 @@ public class View extends JFrame {
 		}
 		
 		else {
-			gamePane = new GamePanel(model);
-			
-			// On initialise le contexte courant du jeu
-			model.getGameState().setPhase(Phase.REFLEXION);
-			model.getGameState().setTour(1);
-			model.getGameState().setCurrentSolution(-1);
-			
-			add(gamePane);
-			gamePane.setVisible(false);
-			try {
-				controller.connect(name);
-				gamePane.setNamePlayer(name);
-			} catch (ConnectException e) {
-				JOptionPane.showMessageDialog(this, "Server seems to be offline.");
-				return;
-			} catch (UnknownHostException e) {
-				JOptionPane.showMessageDialog(this, "Server not found.");
-				return;
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(this, "I/O error...");
-				return;
-			}
-			
-			for(Component c : getContentPane().getComponents()) {
-				if(c!=connectionWindow && c!=gamePane)
-					remove(c);
-			}
-			this.getContentPane().getComponent(0).setVisible(false);
-			
-			
+			if(model.getGameState().getPhase() == Phase.INITIALISATION){
+				gamePane = new GamePanel(model);
+				model.getGameState().setTour(1);
+				model.getGameState().setCurrentSolution(-1);
+				
+				add(gamePane);
+				gamePane.setVisible(false);
+				try {
+					controller.connect(name);
+					gamePane.setNamePlayer(name);
+				} catch (ConnectException e) {
+					JOptionPane.showMessageDialog(this, "Server seems to be offline.");
+					return;
+				} catch (UnknownHostException e) {
+					JOptionPane.showMessageDialog(this, "Server not found.");
+					return;
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(this, "I/O error...");
+					return;
+				}
+				
+				for(Component c : getContentPane().getComponents()) {
+					if(c!=connectionWindow && c!=gamePane)
+						remove(c);
+				}
+				this.getContentPane().getComponent(0).setVisible(false);
 
-
-			gamePane.setVisible(true);
-			this.revalidate();
-			this.repaint();	
+				gamePane.setVisible(true);
+				this.revalidate();
+				this.repaint();	
+				
+			}
 		}
 	}
 

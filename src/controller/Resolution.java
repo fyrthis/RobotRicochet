@@ -2,7 +2,6 @@ package controller;
 
 import java.util.Observable;
 
-import launcher.Debug;
 import model.Model;
 import utils.Phase;
 

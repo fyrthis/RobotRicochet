@@ -2,16 +2,16 @@ package view.game;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.Timer;
 
+import model.GameState;
 import model.Model;
 
-public class TimerPanel extends JPanel {
+public class TimerPanel extends JPanel implements Observer {
 	private static final long serialVersionUID = -650268772194032577L;
 	//private JTextField timerField;
 	Model model;
@@ -21,7 +21,6 @@ public class TimerPanel extends JPanel {
 	 * 
 	 */
 
-	private Timer timer;
 	private JTextField title = new JTextField("Timer : ");;
 	private JTextField time;
 
@@ -45,22 +44,13 @@ public class TimerPanel extends JPanel {
 		time.setEditable(false);
 		time.setHorizontalAlignment(JTextField.CENTER);
 		add(time, c);
-		
-		int delay = 1000; //milliseconds
-		ActionListener taskPerformer = new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				//...Perform a task...
-				update();
-			}
-		};
-		timer = new Timer(delay, taskPerformer);
-		timer.start();
 	}
 
-	public void update(){
-		Integer currentTime = Integer.parseInt(time.getText());
-		currentTime++;
-		time.setText(currentTime.toString());
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		GameState gameState = (GameState) arg;
+		time.setText(Integer.toString(gameState.getTime()));
 	}
 
 }

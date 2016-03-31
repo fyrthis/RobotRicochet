@@ -180,7 +180,6 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	
 	public void paint(Graphics g)
 	{
-		System.out.println("(Client:"+Debug.curName+")(GridPanel:paint) ---> call paint");
 		Graphics2D g2 = (Graphics2D)g;
 		super.paint(g2);
 		
@@ -307,7 +306,6 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 				for ( int y = 0; y < symbolsGrid.length; y++){
 					int targetMargin = (spriteLength-targetSpriteLength)/2;
 					if(this.symbolsGrid[x][y] != null && this.symbolsGrid[x][y].getValue() != 0){
-						System.out.print("(Client:"+Debug.curName+")(GridPanel:paint) ["+x+","+y+"] = "+this.symbolsGrid[x][y] + " | ");
 						switch(this.symbolsGrid[x][y].getValue()){
 						// TARGET
 						case 99:
@@ -460,8 +458,6 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 				}
 			}
 		}
-
-		System.out.println("(Client:"+Debug.curName+")(GridPanel:paint)---> end call paint");
 	}
 	
 	
@@ -587,7 +583,6 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		//Should receives a map as arg, then computes it and displays it
-		System.out.println("(Client:"+Debug.curName+")(GridPanel:update)updating...");
 		Integer[][][] newGrid = (Integer[][][]) arg;
 		this.size_x = newGrid[0].length;
 		this.size_y = newGrid[0][0].length;
@@ -607,18 +602,6 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 				}
 			}
 		}
-		
-		System.out.println("AFTER function update... ");
-		if(newGrid[1] != null){
-			for(int ligne = 0; ligne < newGrid[1][0].length; ligne++){
-				for(int colonne = 0; colonne < newGrid[1].length; colonne++){
-					System.out.print(this.symbolsGrid[colonne][ligne].getValue()+" ");
-				}
-				System.out.println();
-			}
-		}
-
-		System.out.println("(Client:"+Debug.curName+")(GridPanel:update) END updating");
 		//placeColorRoles();
 		readSprites();
 		this.repaint();

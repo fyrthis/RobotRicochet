@@ -16,16 +16,12 @@ class Enchere extends Observable {
 
 	//ENCHERE/user/coups/
 	//(C -> S) Enchère d'une solution trouvée par 'user' en 'coups' déplacements.
-	void enchere(String user, String coups) {
-		
+	void enchere(String user, String coups) {	
 	}
 	
 	//VALIDATION/
 	//(S -> C) Validation de l'enchère
 	void validation() {
-		// Permet de changer de la phase d'enchere a la phase de résolution
-		// MAIS NE RESPECTE ABSOLUMENT PAS LE PROTOCOLE DONC A CHANGER DES QUE POSSIBLE
-		model.getGameState().setPhase(Phase.RESOLUTION);
 	}
 	
 	//ECHEC/user/
@@ -43,6 +39,6 @@ class Enchere extends Observable {
 	//FINENCHERE/user/coups/
 	//(S -> C) Fin des enchères, le joueur actif est user.
 	void finEnchere(String user, String coups) {
-		
+		model.getGameState().setPhase(Phase.RESOLUTION);
 	}
 }

@@ -81,13 +81,14 @@ public class Client extends Observable implements Runnable {
 	@Override public void run() { 
 		listenMessages();
 	}
+	
 	public void listenMessages()
 	{
 		String msg;
 		try {
 			while(connected && (msg = in.readLine())!= null)
 			{
-				System.out.println("(Client:"+Debug.curName+")(Client:listenMessages) received : "+msg);
+				System.out.println("(Client:"+Debug.curName+")(Client:listenMessages) received :>>>>"+msg+"<<<<<<");
 				this.setChanged();
 				this.notifyObservers(msg);
 			}

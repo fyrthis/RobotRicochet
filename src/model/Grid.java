@@ -32,16 +32,16 @@ public class Grid extends Observable {
 		if(!(x_r == -1 || y_r == -1 || x_b == -1 || y_b == -1 || x_j == -1 || y_j == -1 || x_v == -1 || y_v == -1)){
 			switch(color){
 			case 'r':
-				grid[1][x_r][y_r] = null;
+				grid[1][x_r][y_r] = 0;
 				break;
 			case 'b':
-				grid[1][x_b][y_b] = null;
+				grid[1][x_b][y_b] = 0;
 				break;
 			case 'j':
-				grid[1][x_j][y_j] = null;
+				grid[1][x_j][y_j] = 0;
 				break;
 			case 'v':
-				grid[1][x_v][y_v] = null;
+				grid[1][x_v][y_v] = 0;
 				break;
 			default:;
 			}

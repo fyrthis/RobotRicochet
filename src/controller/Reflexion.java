@@ -23,7 +23,6 @@ class Reflexion extends Observable {
 		if(bilan != null && bilan.length()>0)
 			model.setBilanCurrentSession(bilan);
 		model.getGrid().update();
-
 	}
 	
 	//SOLUTION/user/coups/

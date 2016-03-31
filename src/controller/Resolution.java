@@ -66,7 +66,7 @@ class Resolution extends Observable  {
 	//(S -> C) Plus de joueurs restants, fin du tour.
 	void finReso() {
 		//Mettre GameState à aucun jeu.
-		model.getGameState().setPhase(Phase.NOGAME);
+		model.getGameState().setPhase(Phase.INITIALISATION);
 	}
 	
 	//TROPLONG/user/

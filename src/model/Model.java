@@ -71,14 +71,6 @@ public class Model {
 			i++;
 		}
 		
-		System.out.println("GRID AFTER RECEIVING FROM SERVEUR");
-		for(int ligne = 0; ligne < size_y; ligne++){
-			for(int colonne = 0; colonne < size_x; colonne++){
-				System.out.print(mat[colonne][ligne]+" ");
-			}
-			System.out.println();
-		}
-		
 		return mat;
 	}
 	

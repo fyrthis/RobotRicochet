@@ -14,14 +14,10 @@ class Enchere extends Observable {
 		this.model = model;
 	}
 
-	//ENCHERE/user/coups/
-	//(C -> S) Enchère d'une solution trouvée par 'user' en 'coups' déplacements.
-	void enchere(String user, String coups) {	
-	}
-	
 	//VALIDATION/
 	//(S -> C) Validation de l'enchère
 	void validation() {
+		
 	}
 	
 	//ECHEC/user/

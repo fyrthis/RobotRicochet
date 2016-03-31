@@ -93,7 +93,7 @@ public class Client extends Observable implements Runnable {
 				this.notifyObservers(msg);
 			}
 		}
-		catch(IOException e) { e.printStackTrace(); }
+		catch(Exception e) { e.printStackTrace(); }
 		finally {
 			try {
 				socket.close(); //From doc : Closing this socket will also close the socket's InputStream and OutputStream.

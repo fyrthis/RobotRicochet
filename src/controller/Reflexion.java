@@ -25,12 +25,6 @@ class Reflexion extends Observable {
 		model.getGrid().update();
 	}
 	
-	//SOLUTION/user/coups/
-	//(C -> S) Annonce d'une solution trouvée par 'user' en 'coups' déplacements
-	void solution(String user, String coups) {
-		
-	}
-	
 	//TUASTROUVE/
 	//(S -> C) Validation de l'annonce par le serveur, fin de la phase de réflexion
 	void tuAsTrouve() {

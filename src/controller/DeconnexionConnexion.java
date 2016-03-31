@@ -29,6 +29,5 @@ class DeconnexionConnexion extends Observable {
 	void deconnexion(String user) {
 		model.playerLeaved(user);
 	}
-	
 
 }

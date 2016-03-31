@@ -56,6 +56,8 @@ public class Controller implements Observer {
 		Client.getInstance().disconnect();
 	}
 	
+	//SOLUTION/user/coups/
+	//(C -> S) Annonce d'une solution trouvée par 'user' en 'coups' déplacements
 	public void sendSolution(String name, int solutionInt){
 		String solution = String.valueOf(solutionInt);
 		System.out.println("(Client:"+Debug.curName+")(Controller:sendSolution) sent : SOLUTION/"+name+"/"+solution+"/");
@@ -70,6 +72,8 @@ public class Controller implements Observer {
 		model.getGameState().setCurrentSolution(solutionInt);
 	}
 	
+	//ENCHERE/user/coups/
+	//(C -> S) Enchère d'une solution trouvée par 'user' en 'coups' déplacements.
 	public void sendBet(String name, int solutionInt){
 		String solution = String.valueOf(solutionInt);
 		System.out.println("(Client:"+Debug.curName+")(Controller:sendBet) sent : ENCHERE/"+name+"/"+solution+"/");

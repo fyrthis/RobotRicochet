@@ -67,7 +67,6 @@ public class Controller implements Observer {
 		}
 		// On va enregistrer le contexte de l'état courant du jeu au moment où un joueur envoie une solution
 		// durant la phase de reflexion
-		model.getGameState().setPhase(Phase.REFLEXION);
 		model.getGameState().setCurrentSolution(solutionInt);
 	}
 	

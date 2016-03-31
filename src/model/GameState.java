@@ -34,6 +34,13 @@ public class GameState extends Observable implements Observer {
 	public void setPhase(Phase p){
 		System.out.println("(Client:"+Debug.curName+")(GameState:setPhase) setting phase to : "+p);
 		GameState.phase = p;
+		if(phase == Phase.REFLEXION)
+			Timer.getInstance().setTime(TIME_REFLEXION);
+		if(phase == Phase.ENCHERE)
+			Timer.getInstance().setTime(TIME_ENCHERE);
+		if(phase == Phase.RESOLUTION)
+			Timer.getInstance().setTime(TIME_RESOLUTION);
+
 		this.setChanged();
 		this.notifyObservers(GameState.phase);
 	}

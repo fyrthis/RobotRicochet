@@ -20,7 +20,7 @@ int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
         while(client != NULL) {
             if(client->isConnected==0) {
                 if(write(client->socket,msg,(strlen(msg)*sizeof(char))) < 0){
-                    perror("(Server:action.c:sendMessageAll) : Erreur in tuAsTrouve, cannot write on socket\n");
+                    perror("(Server:action.c:sendMessageAll) : Erreur ,cannot write on socket\n");
                 }
                 else {
                     fprintf(stderr, "(Server:action.c:sendMessageAll) : Message send to all : %s\n", msg);
@@ -230,17 +230,12 @@ int send_echec(char *username, int socket) {
 }
 
 // S -> C : NOUVELLEENCHERE/user/coups/
-int send_nouvelleEnchere(char *username, int nbCoups, int socket) {
+int send_nouvelleEnchere(char *username, int nbCoups) {
     int nbCoupsLength = getIntLength(nbCoups);
 	char *msg = (char*)calloc(20 + strlen(username) + nbCoupsLength, sizeof(char));
     sprintf(msg, "NOUVELLEENCHERE/%s/%d/\n", username, nbCoups);
     fprintf(stderr, "(Server:action.c:nouvelleEnchere) : %s\n", msg);
-    if(write(socket,msg,(strlen(msg))*sizeof(char)) < 0){
-        perror("(Server:action.c:nouvelleEnchere) : Erreur in nouvelleEnchere(), cannot write on socket\n");
-    }
-    else {
-        fprintf(stderr, "(Server:action.c:nouvelleEnchere) : Message send to the bet sender : %s\n", msg);
-    }
+    sendMessageAllExceptOne(msg, username, &client_mutex);
     return 0;
 }
 

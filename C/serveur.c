@@ -267,8 +267,8 @@ int main(int argc, char* argv[]) {
     printf("(Server:serveur.c:main) : Initialize server...\n");
     printf("(Server:serveur.c:main) : Initialize map seed...\n");
     //Seed rand
-    //srand(time(NULL));
-    srand(1);
+    srand(time(NULL));
+    //srand(1);
     printf("(Server:serveur.c:main) : Initialize threads...\n");
     int        i;                               /* loop counter          */
     int        thr_id[NB_MAX_THREADS];          /* thread IDs            */

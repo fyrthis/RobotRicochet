@@ -8,7 +8,6 @@ import java.awt.event.ComponentListener;
 import java.awt.geom.Line2D;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -41,31 +40,27 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	private Image redRobotRightSprite;
 	private Image redRobotLeftSprite;
 	private Image redRobotBackSprite;
-	private Image redTargetSprite;
 	
 	private Image blueRobotSprite;
 	private Image blueRobotRightSprite;
 	private Image blueRobotLeftSprite;
 	private Image blueRobotBackSprite;
-	private Image blueTargetSprite;
 	
 	private Image greenRobotSprite;
 	private Image greenRobotRightSprite;
 	private Image greenRobotLeftSprite;
 	private Image greenRobotBackSprite;
-	private Image greenTargetSprite;
 	
 	private Image yellowRobotSprite;
 	private Image yellowRobotRightSprite;
 	private Image yellowRobotLeftSprite;
 	private Image yellowRobotBackSprite;
-	private Image yellowTargetSprite;
 	
 	private Image mainTargetSprite;
 	
-	int random = 1;
-	boolean isChanged = false;
-	boolean first = true;
+	int[] update = new int[4];
+	boolean[] isChanged = new boolean[4];
+	boolean[] isFirst = new boolean[4];
 	
 	Model model;
 	
@@ -76,6 +71,10 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 		this.addComponentListener(this);
 		setBackground(Color.gray);
 		readSprites();
+		
+		update[0] = update[1] = update[2] = update[3] = 1;
+		isChanged[0] = isChanged[1] = isChanged[2] = isChanged[3] = false;
+		isFirst[0] = isFirst[1] = isFirst[2] = isFirst[3] = true;
 	}
 	
 	public GridPanel(String filename, Model model){
@@ -102,81 +101,77 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 			else
 				mainTargetSprite = ImageIO.read(new File("res/mainTargetSprite.png"));
 			
-			redRobotSprite = ImageIO.read(new File("res/redPawnSprite.png"));
-			blueRobotSprite = ImageIO.read(new File("res/bluePawnSprite.png"));
-			greenRobotSprite = ImageIO.read(new File("res/greenPawnSprite.png"));
-			yellowRobotSprite = ImageIO.read(new File("res/yellowPawnSprite.png"));
-			
-			
-			
-			switch(random){
-			case 0:
-				redRobotSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_front.png"));
-				blueRobotSprite = ImageIO.read(new File("res/TortankSprites/tortank_front.png"));
-				greenRobotSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_front.png"));
-				yellowRobotSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_front.png"));
-				
-				redRobotRightSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_right.png"));
-				blueRobotRightSprite = ImageIO.read(new File("res/TortankSprites/tortank_right.png"));
-				greenRobotRightSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_right.png"));
-				yellowRobotRightSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_right.png"));
-				
-				redRobotLeftSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_left.png"));
-				blueRobotLeftSprite = ImageIO.read(new File("res/TortankSprites/tortank_left.png"));
-				greenRobotLeftSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_left.png"));
-				yellowRobotLeftSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_left.png"));
-				
-				redRobotBackSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_back.png"));
-				blueRobotBackSprite = ImageIO.read(new File("res/TortankSprites/tortank_back.png"));
-				greenRobotBackSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_back.png"));
-				yellowRobotBackSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_back.png"));
-				
-				break;
-			case 1:
-				redRobotSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_front_2.png"));
-				blueRobotSprite = ImageIO.read(new File("res/TortankSprites/tortank_front_2.png"));
-				greenRobotSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_front_2.png"));
-				yellowRobotSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_front_2.png"));
-
-				redRobotRightSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_right_2.png"));
-				blueRobotRightSprite = ImageIO.read(new File("res/TortankSprites/tortank_right_2.png"));
-				greenRobotRightSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_right_2.png"));
-				yellowRobotRightSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_right_2.png"));
-				
-				redRobotLeftSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_left_2.png"));
-				blueRobotLeftSprite = ImageIO.read(new File("res/TortankSprites/tortank_left_2.png"));
-				greenRobotLeftSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_left_2.png"));
-				yellowRobotLeftSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_left_2.png"));
-				
-				redRobotBackSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_back_2.png"));
-				blueRobotBackSprite = ImageIO.read(new File("res/TortankSprites/tortank_back_2.png"));
-				greenRobotBackSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_back_2.png"));
-				yellowRobotBackSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_back_2.png"));
-				break;
-			case 2:
-				redRobotSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_front_3.png"));
-				blueRobotSprite = ImageIO.read(new File("res/TortankSprites/tortank_front_3.png"));
-				greenRobotSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_front_3.png"));
-				yellowRobotSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_front_3.png"));
-
-				redRobotRightSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_right_3.png"));
-				blueRobotRightSprite = ImageIO.read(new File("res/TortankSprites/tortank_right_3.png"));
-				greenRobotRightSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_right_3.png"));
-				yellowRobotRightSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_right_3.png"));
-				
-				redRobotLeftSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_left_3.png"));
-				blueRobotLeftSprite = ImageIO.read(new File("res/TortankSprites/tortank_left_3.png"));
-				greenRobotLeftSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_left_3.png"));
-				yellowRobotLeftSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_left_3.png"));
-				
-				redRobotBackSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_back_3.png"));
-				blueRobotBackSprite = ImageIO.read(new File("res/TortankSprites/tortank_back_3.png"));
-				greenRobotBackSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_back_3.png"));
-				yellowRobotBackSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_back_3.png"));
-				break;
+			for(int updateN : update){
+				switch(updateN){
+				case 0:
+					redRobotSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_front.png"));
+					redRobotRightSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_right.png"));
+					redRobotLeftSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_left.png"));
+					redRobotBackSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_back.png"));
+					
+					blueRobotSprite = ImageIO.read(new File("res/TortankSprites/tortank_front.png"));
+					blueRobotRightSprite = ImageIO.read(new File("res/TortankSprites/tortank_right.png"));
+					blueRobotLeftSprite = ImageIO.read(new File("res/TortankSprites/tortank_left.png"));
+					blueRobotBackSprite = ImageIO.read(new File("res/TortankSprites/tortank_back.png"));
+					
+					yellowRobotSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_front.png"));
+					yellowRobotRightSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_right.png"));
+					yellowRobotLeftSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_left.png"));
+					yellowRobotBackSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_back.png"));
+					
+					greenRobotSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_front.png"));
+					greenRobotRightSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_right.png"));
+					greenRobotLeftSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_left.png"));
+					greenRobotBackSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_back.png"));
+					
+					break;
+				case 1:
+					redRobotSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_front_2.png"));
+					redRobotRightSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_right_2.png"));
+					redRobotLeftSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_left_2.png"));
+					redRobotBackSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_back_2.png"));
+					
+					blueRobotSprite = ImageIO.read(new File("res/TortankSprites/tortank_front_2.png"));
+					blueRobotRightSprite = ImageIO.read(new File("res/TortankSprites/tortank_right_2.png"));
+					blueRobotLeftSprite = ImageIO.read(new File("res/TortankSprites/tortank_left_2.png"));
+					blueRobotBackSprite = ImageIO.read(new File("res/TortankSprites/tortank_back_2.png"));
+					
+					yellowRobotSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_front_2.png"));
+					yellowRobotRightSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_right_2.png"));
+					yellowRobotLeftSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_left_2.png"));
+					yellowRobotBackSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_back_2.png"));
+					
+					greenRobotSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_front_2.png"));
+					greenRobotRightSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_right_2.png"));
+					greenRobotLeftSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_left_2.png"));
+					greenRobotBackSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_back_2.png"));
+					
+					break;
+				case 2:
+					redRobotSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_front_3.png"));
+					redRobotRightSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_right_3.png"));
+					redRobotLeftSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_left_3.png"));
+					redRobotBackSprite = ImageIO.read(new File("res/DracofeuSprites/dracofeu_back_3.png"));
+					
+					blueRobotSprite = ImageIO.read(new File("res/TortankSprites/tortank_front_3.png"));
+					blueRobotRightSprite = ImageIO.read(new File("res/TortankSprites/tortank_right_3.png"));
+					blueRobotLeftSprite = ImageIO.read(new File("res/TortankSprites/tortank_left_3.png"));
+					blueRobotBackSprite = ImageIO.read(new File("res/TortankSprites/tortank_back_3.png"));
+					
+					yellowRobotSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_front_3.png"));
+					yellowRobotRightSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_right_3.png"));
+					yellowRobotLeftSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_left_3.png"));
+					yellowRobotBackSprite = ImageIO.read(new File("res/PikachuSprites/pikachu_back_3.png"));
+					
+					greenRobotSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_front_3.png"));
+					greenRobotRightSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_right_3.png"));
+					greenRobotLeftSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_left_3.png"));
+					greenRobotBackSprite = ImageIO.read(new File("res/FlorizarreSprites/florizarre_back_3.png"));
+					
+					break;
+				default:;
+				}
 			}
-			
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -188,6 +183,7 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 		System.out.println("(Client:"+Debug.curName+")(GridPanel:paint) ---> call paint");
 		Graphics2D g2 = (Graphics2D)g;
 		super.paint(g2);
+		
 		
 		/****************
 		 *  GRID TILES  *
@@ -340,74 +336,122 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 						// ROUGE:
 						// HAUT
 						case 22:
-							paintAnimationUp(g2, redRobotBackSprite, x, y, spriteLength, spriteLength);
+							paintAnimationUp(g2, redRobotBackSprite, x, y, spriteLength, spriteLength, 0);
+							break;
+						case 23:
+							g2.drawImage(redRobotBackSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// DROITE
 						case 24:
-							paintAnimationRight(g2, redRobotRightSprite, x, y, spriteLength, spriteLength);
+							paintAnimationRight(g2, redRobotRightSprite, x, y, spriteLength, spriteLength, 0);
+							break;
+						case 25:
+							g2.drawImage(redRobotRightSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// BAS
 						case 26:
-							paintAnimationDown(g2, redRobotSprite, x, y, spriteLength, spriteLength);
+							paintAnimationDown(g2, redRobotSprite, x, y, spriteLength, spriteLength, 0);
+							break;
+						case 27:
+							g2.drawImage(redRobotSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// GAUCHE
 						case 28:
-							paintAnimationLeft(g2, redRobotLeftSprite, x, y, spriteLength, spriteLength);
+							paintAnimationLeft(g2, redRobotLeftSprite, x, y, spriteLength, spriteLength, 0);
+							break;
+						case 29:
+							g2.drawImage(redRobotLeftSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 							
 						// BLEU:
 						// HAUT
 						case 32:
-							paintAnimationUp(g2, blueRobotBackSprite, x, y, spriteLength, spriteLength);
+							paintAnimationUp(g2, blueRobotBackSprite, x, y, spriteLength, spriteLength, 1);
+							break;
+						case 33:
+							g2.drawImage(blueRobotBackSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// DROITE
 						case 34:
-							paintAnimationRight(g2, blueRobotRightSprite, x, y, spriteLength, spriteLength);
+							paintAnimationRight(g2, blueRobotRightSprite, x, y, spriteLength, spriteLength, 1);
+							break;
+						case 35:
+							g2.drawImage(blueRobotRightSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// BAS
 						case 36:
-							paintAnimationDown(g2, blueRobotSprite, x, y, spriteLength, spriteLength);
+							paintAnimationDown(g2, blueRobotSprite, x, y, spriteLength, spriteLength, 1);
+							break;
+						case 37:
+							g2.drawImage(blueRobotSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// GAUCHE
 						case 38:
-							paintAnimationLeft(g2, blueRobotLeftSprite, x, y, spriteLength, spriteLength);
+							paintAnimationLeft(g2, blueRobotLeftSprite, x, y, spriteLength, spriteLength, 1);
+							break;
+						case 39:
+							g2.drawImage(blueRobotLeftSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 								
 						// VERT
 						// HAUT
 						case 42:
-							paintAnimationUp(g2, greenRobotBackSprite, x, y, spriteLength, spriteLength);
+							paintAnimationUp(g2, greenRobotBackSprite, x, y, spriteLength, spriteLength, 2);
+							break;
+						case 43:
+							g2.drawImage(greenRobotBackSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// DROITE
 						case 44:
-							paintAnimationRight(g2, greenRobotRightSprite, x, y, spriteLength, spriteLength);
+							paintAnimationRight(g2, greenRobotRightSprite, x, y, spriteLength, spriteLength, 2);
+							break;
+						case 45:
+							g2.drawImage(greenRobotRightSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// BAS
 						case 46:
-							paintAnimationDown(g2, greenRobotBackSprite, x, y, spriteLength, spriteLength);
+							paintAnimationDown(g2, greenRobotSprite, x, y, spriteLength, spriteLength, 2);
+							break;
+						case 47:
+							g2.drawImage(greenRobotSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// GAUCHE
 						case 48:
-							paintAnimationLeft(g2, greenRobotBackSprite, x, y, spriteLength, spriteLength);
+							paintAnimationLeft(g2, greenRobotLeftSprite, x, y, spriteLength, spriteLength, 2);
+							break;
+						case 49:
+							g2.drawImage(greenRobotLeftSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 							
 							
 						// JAUNE
 						// HAUT
 						case 52:
-							paintAnimationUp(g2, yellowRobotBackSprite, x, y, spriteLength, spriteLength);
+							paintAnimationUp(g2, yellowRobotBackSprite, x, y, spriteLength, spriteLength, 3);
+							break;
+						case 53:
+							g2.drawImage(yellowRobotBackSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// DROITE
 						case 54:
-							paintAnimationRight(g2, yellowRobotRightSprite, x, y, spriteLength, spriteLength);
+							paintAnimationRight(g2, yellowRobotRightSprite, x, y, spriteLength, spriteLength, 3);
+							break;
+						case 55:
+							g2.drawImage(yellowRobotRightSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// BAS
 						case 56:
-							paintAnimationDown(g2, yellowRobotSprite, x, y, spriteLength, spriteLength);
+							paintAnimationDown(g2, yellowRobotSprite, x, y, spriteLength, spriteLength, 3);
+							break;
+						case 57:
+							g2.drawImage(yellowRobotSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 						// GAUCHE
 						case 58:
-							paintAnimationLeft(g2, yellowRobotBackSprite, x, y, spriteLength, spriteLength);
+							paintAnimationLeft(g2, yellowRobotLeftSprite, x, y, spriteLength, spriteLength, 3);
+							break;
+						case 59:
+							g2.drawImage(yellowRobotLeftSprite, spriteLength*x, spriteLength*y, spriteLength, spriteLength, this);
 							break;
 							
 						default:;
@@ -422,95 +466,95 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	
 	
 	
-	public void paintAnimationUp(Graphics2D g2, Image sprite, int x, int y, int width, int height) {
-		if(random == 0){
-			if(first)
-				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y+0.5)),spriteLength,spriteLength, this);
+	public void paintAnimationUp(Graphics2D g2, Image sprite, int x, int y, int width, int height, int c) {
+		if(update[c] == 0){
+			if(isFirst[c])
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y+0.5)),width,height, this);
 			else
-				g2.drawImage(sprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+				g2.drawImage(sprite,spriteLength*x,spriteLength*y,width,height, this);
 				
-			if(isChanged)
-				random = 2;
+			if(isChanged[c])
+				update[c] = 2;
 			else
-				random = 1;
-			isChanged = !isChanged;
-			first = !first;
+				update[c] = 1;
+			isChanged[c] = !isChanged[c];
+			isFirst[c] = !isFirst[c];
 		}
 		else {
-			if(first)
-				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y+0.75)),spriteLength,spriteLength, this);
+			if(isFirst[c])
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y+0.75)),width,height, this);
 			else
-				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y+0.25)),spriteLength,spriteLength, this);
-			random = 0;
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y+0.25)),width,height, this);
+			update[c] = 0;
 		}
 	}
 	
-	public void paintAnimationDown(Graphics2D g2, Image sprite, int x, int y, int width, int height) {
-		if(random == 0){
-			if(first)
-				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y-0.5)),spriteLength,spriteLength, this);
+	public void paintAnimationDown(Graphics2D g2, Image sprite, int x, int y, int width, int height, int c) {
+		if(update[c] == 0){
+			if(isFirst[c])
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y-0.5)),width,height, this);
 			else
-				g2.drawImage(sprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+				g2.drawImage(sprite,spriteLength*x,spriteLength*y,width,height, this);
 			
-			if(isChanged)
-				random = 2;
+			if(isChanged[c])
+				update[c] = 2;
 			else
-				random = 1;
-			isChanged = !isChanged;
-			first = !first;
+				update[c] = 1;
+			isChanged[c] = !isChanged[c];
+			isFirst[c] = !isFirst[c];
 		}
 		else {
-			if(first)
-				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y-0.75)),spriteLength,spriteLength, this);
+			if(isFirst[c])
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y-0.75)),width,height, this);
 			else
-				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y-0.25)),spriteLength,spriteLength, this);
-			random = 0;
+				g2.drawImage(sprite,spriteLength*x,(int)(spriteLength*(y-0.25)),width,height, this);
+			update[c] = 0;
 		}
 	}
 	
-	public void paintAnimationLeft(Graphics2D g2, Image sprite, int x, int y, int width, int height) {
-		if(random == 0){
-			if(first)
-				g2.drawImage(sprite,(int)(spriteLength*(x+0.5)),spriteLength*y,spriteLength,spriteLength, this);
+	public void paintAnimationLeft(Graphics2D g2, Image sprite, int x, int y, int width, int height, int c) {
+		if(update[c] == 0){
+			if(isFirst[c])
+				g2.drawImage(sprite,(int)(spriteLength*(x+0.5)),spriteLength*y,width,height, this);
 			else
-				g2.drawImage(sprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+				g2.drawImage(sprite,spriteLength*x,spriteLength*y,width,height, this);
 			
-			if(isChanged)
-				random = 2;
+			if(isChanged[c])
+				update[c] = 2;
 			else
-				random = 1;
-			isChanged = !isChanged;
-			first = !first;
+				update[c] = 1;
+			isChanged[c] = !isChanged[c];
+			isFirst[c] = !isFirst[c];
 		}
 		else {
-			if(first)
-				g2.drawImage(sprite,(int)(spriteLength*(x+0.75)),spriteLength*y,spriteLength,spriteLength, this);
+			if(isFirst[c])
+				g2.drawImage(sprite,(int)(spriteLength*(x+0.75)),spriteLength*y,width,height, this);
 			else
-				g2.drawImage(sprite,(int)(spriteLength*(x+0.25)),spriteLength*y,spriteLength,spriteLength, this);
-			random = 0;
+				g2.drawImage(sprite,(int)(spriteLength*(x+0.25)),spriteLength*y,width,height, this);
+			update[c] = 0;
 		}
 	}
 	
-	public void paintAnimationRight(Graphics2D g2, Image sprite, int x, int y, int width, int height) {
-		if(random == 0){
-			if(first)
-				g2.drawImage(sprite,(int)(spriteLength*(x-0.5)),spriteLength*y,spriteLength,spriteLength, this);
+	public void paintAnimationRight(Graphics2D g2, Image sprite, int x, int y, int width, int height, int c) {
+		if(update[c] == 0){
+			if(isFirst[c])
+				g2.drawImage(sprite,(int)(spriteLength*(x-0.5)),spriteLength*y,width,height, this);
 			else
-				g2.drawImage(sprite,spriteLength*x,spriteLength*y,spriteLength,spriteLength, this);
+				g2.drawImage(sprite,spriteLength*x,spriteLength*y,width,height, this);
 			
-			if(isChanged)
-				random = 2;
+			if(isChanged[c])
+				update[c] = 2;
 			else
-				random = 1;
-			isChanged = !isChanged;
-			first = !first;
+				update[c] = 1;
+			isChanged[c] = !isChanged[c];
+			isFirst[c] = !isFirst[c];
 		}
 		else {
-			if(first)
-				g2.drawImage(sprite,(int)(spriteLength*(x-0.75)),spriteLength*y,spriteLength,spriteLength, this);
+			if(isFirst[c])
+				g2.drawImage(sprite,(int)(spriteLength*(x-0.75)),spriteLength*y,width,height, this);
 			else
-				g2.drawImage(sprite,(int)(spriteLength*(x-0.25)),spriteLength*y,spriteLength,spriteLength, this);
-			random = 0;
+				g2.drawImage(sprite,(int)(spriteLength*(x-0.25)),spriteLength*y,width,height, this);
+			update[c] = 0;
 		}
 	}
 	

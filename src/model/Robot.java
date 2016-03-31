@@ -9,7 +9,7 @@ public class Robot {
 	int x;
 	int y;
 	String moves;
-
+	
 	ArrayList<Point> points;
 	ArrayList<Line2D> path;
 	

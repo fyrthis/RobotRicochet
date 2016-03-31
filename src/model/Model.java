@@ -7,16 +7,29 @@ import players.Players;
 
 public class Model {
 	
+	private static volatile Model instance = null;
+	 
 	Players players;
 	Grid grid;
 	GameState gameState;
 	ChatModel chatModel;
 	
-	public Model() {
+	private Model() {
+		super();
 		players = new Players();
 		grid = new Grid();
 		gameState = new GameState();
 		chatModel = new ChatModel();
+	}
+	
+	public final static Model getInstance(){
+		if(Model.instance == null){
+			synchronized (Model.class) {
+				if(Model.instance == null)
+					Model.instance = new Model();
+			}
+		}
+		return Model.instance;
 	}
 
 	public Players getPlayers() { return players; }

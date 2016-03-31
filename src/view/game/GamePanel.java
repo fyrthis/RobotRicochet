@@ -3,13 +3,11 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import javax.swing.JPanel;
-
 import launcher.Debug;
 import model.Model;
 import utils.Phase;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends AbstractGamePanel {
 	
 	private static final long serialVersionUID = -2942785356832417025L;
 	//TOP
@@ -35,7 +33,7 @@ public class GamePanel extends JPanel {
 	}
 
 
-	private void initializeObservers() {
+	public void initializeObservers() {
 		model.getPlayers().addObserver(round);
 		model.getPlayers().addObserver(score);
 		model.getGrid().addObserver(grid);
@@ -46,7 +44,7 @@ public class GamePanel extends JPanel {
 	}
 
 
-	private void initializeAllComponents() {
+	public void initializeAllComponents() {
 		// Note : Need to set preferred size of component otherwise conflict occur with grid constraints
 		timer = new TimerPanel(model);
 		timer.setPreferredSize(new Dimension(0, 0));

@@ -12,7 +12,10 @@ import launcher.Debug;
 import model.Model;
 import utils.AskNameDialog;
 import utils.Phase;
+import utils.WaitNextGameDialog;
+import view.game.AbstractGamePanel;
 import view.game.GamePanel;
+import view.game.NonGamerPanel;
 import view.welcome.HomePagePanel;
 import controller.Controller;
 
@@ -20,7 +23,7 @@ public class View extends JFrame {
 	private static final long serialVersionUID = -3880026026104218593L;
 
 	JPanel connectionWindow;
-	GamePanel gamePane;
+	AbstractGamePanel gamePane;
 	Model model;
 	Controller controller ;
 	
@@ -36,45 +39,54 @@ public class View extends JFrame {
 	}
 
 	public void playAsGuestSignal() {
-		AskNameDialog dialog = new AskNameDialog();
-		String name = dialog.getName();
+		AskNameDialog askNamedialog = new AskNameDialog();
+		String name = askNamedialog.getName();
 		if(name == null) return; //user a annulé.
 		
-		gamePane = new GamePanel(model);
-		
-		// On initialise le contexte courant du jeu
-		model.getGameState().setPhase(Phase.REFLEXION);
-		model.getGameState().setTour(1);
-		model.getGameState().setCurrentSolution(-1);
-		
-		add(gamePane);
-		gamePane.setVisible(false);
-		try {
-			controller.connect(name);
-			gamePane.setNamePlayer(name);
-		} catch (ConnectException e) {
-			JOptionPane.showMessageDialog(this, "Server seems to be offline.");
-			return;
-		} catch (UnknownHostException e) {
-			JOptionPane.showMessageDialog(this, "Server not found.");
-			return;
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(this, "I/O error...");
-			return;
+		// Si on n'est pas en phase d'initialisation lors de la connexion, alors il faut attendre le prochain tour
+		if(model.getGameState().getPhase() != Phase.INITIALISATION){
+			WaitNextGameDialog waitNextGameDialog = new WaitNextGameDialog();
+			waitNextGameDialog.setVisible(true);
+			gamePane = new NonGamerPanel(model);
 		}
 		
-		for(Component c : getContentPane().getComponents()) {
-			if(c!=connectionWindow && c!=gamePane)
-				remove(c);
+		else {
+			gamePane = new GamePanel(model);
+			
+			// On initialise le contexte courant du jeu
+			model.getGameState().setPhase(Phase.REFLEXION);
+			model.getGameState().setTour(1);
+			model.getGameState().setCurrentSolution(-1);
+			
+			add(gamePane);
+			gamePane.setVisible(false);
+			try {
+				controller.connect(name);
+				gamePane.setNamePlayer(name);
+			} catch (ConnectException e) {
+				JOptionPane.showMessageDialog(this, "Server seems to be offline.");
+				return;
+			} catch (UnknownHostException e) {
+				JOptionPane.showMessageDialog(this, "Server not found.");
+				return;
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(this, "I/O error...");
+				return;
+			}
+			
+			for(Component c : getContentPane().getComponents()) {
+				if(c!=connectionWindow && c!=gamePane)
+					remove(c);
+			}
+			this.getContentPane().getComponent(0).setVisible(false);
+			
+			
+
+
+			gamePane.setVisible(true);
+			this.revalidate();
+			this.repaint();	
 		}
-		this.getContentPane().getComponent(0).setVisible(false);
-		
-		
-
-
-		gamePane.setVisible(true);
-		this.revalidate();
-		this.repaint();
 	}
 
 	public void homeSignal() {

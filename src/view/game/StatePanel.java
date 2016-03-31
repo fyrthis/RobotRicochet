@@ -42,8 +42,7 @@ public class StatePanel extends JPanel implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
-		GameState gameState = (GameState) arg;
-		Phase phase = gameState.getPhase();
+		Phase phase = (Phase) arg;
 		if(phase == Phase.INITIALISATION)
 			txt = "Phase d'initialisation";
 		else if(phase == Phase.REFLEXION)

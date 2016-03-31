@@ -8,8 +8,8 @@ import java.util.Observer;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import model.GameState;
 import model.Model;
+import model.Timer;
 
 public class TimerPanel extends JPanel implements Observer {
 	private static final long serialVersionUID = -650268772194032577L;
@@ -49,8 +49,8 @@ public class TimerPanel extends JPanel implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
-		GameState gameState = (GameState) arg;
-		time.setText(Integer.toString(gameState.getTime()));
+		int timeCpt = (int) arg;
+		this.time.setText(Integer.toString(timeCpt));
 	}
 
 }

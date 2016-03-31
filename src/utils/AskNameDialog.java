@@ -51,8 +51,9 @@ public class AskNameDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent evt) {
 		Object source = evt.getSource();
 		if (source == valider) {
-			if(champNom.getText() != null && champNom.getText().matches("[A-Za-z0-9]*") && champNom.getText().length()>=3)
+			if(champNom.getText() != null && champNom.getText().matches("[A-Za-z0-9]*") && champNom.getText().length()>=3){
 				dispose();
+			}
 			else
 				JOptionPane.showMessageDialog(this, "Minimum three alphanumeric caracters !");
 		}

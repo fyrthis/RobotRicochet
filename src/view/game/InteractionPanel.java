@@ -210,8 +210,7 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
-		GameState gameState = (GameState) arg;
-		Phase phase = gameState.getPhase();
+		Phase phase = (Phase) arg;
 		this.setPanelByPhase(phase);
 		System.out.println("(Client:"+Debug.curName+")(InteractionPanel:update)receive notifyObserver from the GameState...");
 	}

@@ -384,8 +384,9 @@ int main(int argc, char* argv[]) {
                 { //Activité sur un socket client : un client nous parle !
                     n = read(file_descr,buffer,255);
                     if(n == 0) {
+                        
                         printf("(Server:serveur.c:main) : Main received empty message from %d.\n", file_descr);
-                        FD_CLR(file_descr, &readfds);
+                        /*FD_CLR(file_descr, &readfds);
                         FD_CLR(file_descr, &testfds);
                         FD_SET(STDIN_FILENO, &readfds); //Onrajoute l'entrée clavier quand même !
                         if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
@@ -402,7 +403,8 @@ int main(int argc, char* argv[]) {
                         if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
                         sprintf(buffer, "SORT/%s/", client->name);
                         addTask(file_descr, buffer, &task_mutex, &cond_got_task);
-
+                        */
+                        exit(1);
                         break;
                     }
                     printf("(Server:serveur.c:main) : Server received %d bytes from %d.\n", n, file_descr);
@@ -412,8 +414,6 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-
-    
     return 0;
 }
 
@@ -510,7 +510,10 @@ puts("HELLO4\n");
                 phase=RESOLUTION;
             }
             puts("FIN ENCHERE\n");
-            if( phase==RESOLUTION && nbClientsConnecte>=2) {
+           
+            
+            if( phase==RESOLUTION && nbClientsConnecte>=2 && encheres != NULL) {
+                send_finEnchere(encheres->name, encheres->nbCoups);
                 printf("DEBUT RESOLUTION\n");
                 i=0;
                 timer=60;

@@ -45,7 +45,7 @@ int finReflexion();
 int send_validation(int socket);
 int send_echec(char *username, int socket);
 int send_nouvelleEnchere(char *username, int nbCoups, int socket);
-int send_finEnchere(char *username, int nbCoups, int socket);
+int send_finEnchere(char *username, int nbCoups);
 
 
 /************************

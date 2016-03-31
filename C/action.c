@@ -245,17 +245,12 @@ int send_nouvelleEnchere(char *username, int nbCoups, int socket) {
 }
 
 // S -> C : FINENCHERE/user/coups/
-int send_finEnchere(char *username, int nbCoups, int socket) {
+int send_finEnchere(char *username, int nbCoups) {
     int nbCoupsLength = getIntLength(nbCoups);
     char *msg = (char*)calloc(15 + strlen(username) + nbCoupsLength, sizeof(char));
     sprintf(msg, "FINENCHERE/%s/%d/\n", username, nbCoups);
     fprintf(stderr, "(Server:action.c:finEnchere) : %s\n", msg);
-    if(write(socket,msg,(strlen(msg))*sizeof(char)) < 0){
-        perror("(Server:action.c:finEnchere) : Erreur in nouvelleEnchere(), cannot write on socket\n");
-    }
-    else {
-        fprintf(stderr, "(Server:action.c:finEnchere) : Message send to the bet sender : %s\n", msg);
-    }
+    sendMessageAll(msg, &client_mutex);
     return 0;
 }
 

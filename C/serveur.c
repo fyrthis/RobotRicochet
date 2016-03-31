@@ -135,6 +135,7 @@ void handle_request(task_t * task, int thread_id) {
                 else {
                     fprintf(stderr, "(Server:serveur.c:handle_request) : Enchère reçue de la part de %s acceptee.\n", username);
                     send_validation(task->socket);
+                    send_nouvelleEnchere(username, betSolution);
                     addEnchere(task->socket, username, betSolution, &enchere_mutex);
                 }
 
@@ -384,9 +385,7 @@ int main(int argc, char* argv[]) {
                 { //Activité sur un socket client : un client nous parle !
                     n = read(file_descr,buffer,255);
                     if(n == 0) {
-                        
-                        printf("(Server:serveur.c:main) : Main received empty message from %d.\n", file_descr);
-                        /*FD_CLR(file_descr, &readfds);
+                        FD_CLR(file_descr, &readfds);
                         FD_CLR(file_descr, &testfds);
                         FD_SET(STDIN_FILENO, &readfds); //Onrajoute l'entrée clavier quand même !
                         if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
@@ -403,8 +402,6 @@ int main(int argc, char* argv[]) {
                         if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
                         sprintf(buffer, "SORT/%s/", client->name);
                         addTask(file_descr, buffer, &task_mutex, &cond_got_task);
-                        */
-                        exit(1);
                         break;
                     }
                     printf("(Server:serveur.c:main) : Server received %d bytes from %d.\n", n, file_descr);
@@ -427,13 +424,11 @@ void * session_loop(void* nbToursSession) {
     int i;
     int timer;
     while(1) {
-        puts("HELLO\n");
         if(pthread_mutex_lock(&client_mutex) != 0) {
             perror("(Server:client.c:addClient) : on addClient, cannot lock the first p_mutex\n");
         }
 
         //Si pas assez de client, on attend le feu vert, sinon on continue
-        puts("HELLO2\n");
         while(nbClientsConnecte<2) {
 
             puts("We need at least two players in order to start a game.\n");
@@ -441,17 +436,14 @@ void * session_loop(void* nbToursSession) {
                 perror("(Server:serveur.c:handle_tasks_loop) : err condition wait \n");
             }
         }
-puts("HELLO3\n");
         if(pthread_mutex_unlock(&client_mutex) != 0) {
             perror("(Server:client.c:addClient) : on addClient, cannot unlock the p_mutex when an already connected client asks for a new connection\n");
         }
 
         if(isShutingDown==1) break;
-puts("HELLO4\n");
         cptTours = 0;
         i=0;
         timer=0;
-        puts("HELLO5\n");
         while(nbClientsConnecte>=2 && cptTours<*((int*)nbToursSession)) {
             printf("nbTours %d\n",cptTours);
             if(isShutingDown==1) return NULL;

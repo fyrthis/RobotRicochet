@@ -29,7 +29,7 @@ int nbTours = 10;
 //serveur.c
 int setEnigma(){
     // nbRobots*nbCoordonnées*tailleCoordonnée + nbLettres + nbVirgule + parenthèses + lettreCible
-    enigma = calloc(5*2*2 + 10 + 10 + 2 + 1, sizeof(char));
+    
     
     //if(firstLaunch == 0){
         // Generation aleatoire des positions des robots
@@ -44,6 +44,8 @@ int setEnigma(){
         int center3_y = (size_y-1) / 2 + 1;
         int center4_x = (size_x-1) / 2 + 1;
         int center4_y = (size_y-1) / 2 + 1;
+
+
         
         do { 
             // Rouge
@@ -104,8 +106,9 @@ int setEnigma(){
                 break;
             default:;
         }
-        //firstLaunch = -1;
-    //}
+    int sizeInts = getIntLength(x_r)+getIntLength(y_r)+getIntLength(x_b)+getIntLength(y_b)+getIntLength(x_j)+getIntLength(y_j);
+    sizeInts+= getIntLength(x_v)+getIntLength(y_v)+getIntLength(x_cible)+getIntLength(y_cible);
+    enigma = calloc(22 + sizeInts+1 + 1, sizeof(char));
 
     sprintf(enigma, "(%dr,%dr,%db,%db,%dj,%dj,%dv,%dv,%dc,%dc,%c)", x_r, y_r, x_b, y_b, x_j, y_j, x_v, y_v, x_cible, y_cible, lettreCible);
     return 0;

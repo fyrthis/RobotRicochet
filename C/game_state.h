@@ -7,6 +7,7 @@
 #include <string.h>
 #include "client.h"
 #include "grid.h"
+#include "utils.h"
 
 
 client_t *activePlayer;

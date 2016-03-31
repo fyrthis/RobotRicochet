@@ -267,8 +267,8 @@ int main(int argc, char* argv[]) {
     printf("(Server:serveur.c:main) : Initialize server...\n");
     printf("(Server:serveur.c:main) : Initialize map seed...\n");
     //Seed rand
-    srand(time(NULL));
-    //srand(1);
+    //srand(time(NULL));
+    srand(1);
     printf("(Server:serveur.c:main) : Initialize threads...\n");
     int        i;                               /* loop counter          */
     int        thr_id[NB_MAX_THREADS];          /* thread IDs            */
@@ -393,7 +393,7 @@ int main(int argc, char* argv[]) {
                         while(client != NULL){
                             if(client->socket == file_descr) {
                                 client->isConnected = 1;
-                                nbClientsConnecte--;
+                                //nbClientsConnecte--; NON, puisqu'on envoie SORT
                                 break;
                             }
                             client = client->next;
@@ -427,28 +427,33 @@ void * session_loop(void* nbToursSession) {
     int i;
     int timer;
     while(1) {
-        if(pthread_mutex_lock(&client_mutex) < 0) {
+        puts("HELLO\n");
+        if(pthread_mutex_lock(&client_mutex) != 0) {
             perror("(Server:client.c:addClient) : on addClient, cannot lock the first p_mutex\n");
         }
 
         //Si pas assez de client, on attend le feu vert, sinon on continue
+        puts("HELLO2\n");
         while(nbClientsConnecte<2) {
+
+            puts("We need at least two players in order to start a game.\n");
             if(pthread_cond_wait(&cond_at_least_2_players, &client_mutex) != 0) {
                 perror("(Server:serveur.c:handle_tasks_loop) : err condition wait \n");
             }
         }
-
-        if(pthread_mutex_unlock(&client_mutex) < 0) {
+puts("HELLO3\n");
+        if(pthread_mutex_unlock(&client_mutex) != 0) {
             perror("(Server:client.c:addClient) : on addClient, cannot unlock the p_mutex when an already connected client asks for a new connection\n");
         }
 
         if(isShutingDown==1) break;
-
+puts("HELLO4\n");
         cptTours = 0;
         i=0;
         timer=0;
-        
+        puts("HELLO5\n");
         while(nbClientsConnecte>=2 && cptTours<*((int*)nbToursSession)) {
+            printf("nbTours %d\n",cptTours);
             if(isShutingDown==1) return NULL;
             rmEncheres(&enchere_mutex); //On vide les enchères du tour précédent.
             etat_reso=0; //Personne n'a encore trouvé de solution
@@ -482,10 +487,13 @@ void * session_loop(void* nbToursSession) {
                     char *msg = "FINREFLEXION/\n";
                     sendMessageAll(msg, &client_mutex);
                 } else { //Quelqu'un a proposé une solution
-                    //DO NOTHING : Géré dans Handle_request
-                    printf("REFLEXION : SOLTUION PROPOSEE \n");
+                    if(nbClientsConnecte>=2) {
+                        puts("REFLEXION : SOLTUION PROPOSEE \n");
+                    }
+                    phase=ENCHERE;
                 }
             }
+            puts("FIN REFLEXION\n");
             if( phase==ENCHERE && nbClientsConnecte>=2) {
                 printf("DEBUT ENCHERE\n");
                 i=0;
@@ -501,11 +509,12 @@ void * session_loop(void* nbToursSession) {
                 }
                 phase=RESOLUTION;
             }
+            puts("FIN ENCHERE\n");
             if( phase==RESOLUTION && nbClientsConnecte>=2) {
                 printf("DEBUT RESOLUTION\n");
                 i=0;
                 timer=60;
-                while(i < timer && nbClientsConnecte>=2) { //Et tant qu'unjoueur a une solution a proposer
+                while(i < timer && nbClientsConnecte>=2) { //Et tant qu'un joueur a une solution a proposer
                     if(isShutingDown==1) return NULL;
                     if(etat_reso==1) { //Solution trouvée
                          //Base

@@ -7,7 +7,7 @@
 
 
 int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
-    if(pthread_mutex_lock(p_mutex) < 0){
+    if(pthread_mutex_lock(p_mutex) != 0){
     	perror("(Server:action.c:sendMessageAll) : Error on sendMessageAll, cannot lock the p_mutex\n");
     }
     
@@ -29,7 +29,7 @@ int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
             client = client->next;
         }
     }
-    if(pthread_mutex_unlock(p_mutex) < 0){
+    if(pthread_mutex_unlock(p_mutex) != 0){
     	perror("(Server:action.c:sendMessageAll) : Error on sendMessageAll, cannot unlock the p_mutex\n");
     }
 

@@ -39,7 +39,7 @@ int nbEncheres = 0;
 
 void addEnchere(int socket, char *name, int solution, pthread_mutex_t* p_mutex) {
     enchere_t * enchere = NULL;
-    if(pthread_mutex_lock(p_mutex) < 0) {
+    if(pthread_mutex_lock(p_mutex) != 0) {
     	perror("(Server:enchere.c:addEnchere) : on addEnchere, cannot lock the first p_mutex\n");
     }
 
@@ -72,7 +72,7 @@ void addEnchere(int socket, char *name, int solution, pthread_mutex_t* p_mutex) 
 
     printEncheresState(&enchere_mutex);
     
-    if(pthread_mutex_unlock(p_mutex) < 0) {
+    if(pthread_mutex_unlock(p_mutex) != 0) {
     	perror("(Server:enchere.c:addEnchere) : cannot unlock the final p_mutex, in the end of the instanciation of the new enchere\n");
     }
     
@@ -88,7 +88,7 @@ void addEnchere(int socket, char *name, int solution, pthread_mutex_t* p_mutex) 
 *******************************************/
 
 enchere_t * getEnchere(pthread_mutex_t* p_mutex) {
-    if(pthread_mutex_lock(p_mutex) < 0) {
+    if(pthread_mutex_lock(p_mutex)!= 0) {
         perror("(Server:encheres.c:printEncheresState) : cannot lock the first p_mutex\n");
     }
     enchere_t * enchere = encheres;
@@ -98,7 +98,7 @@ enchere_t * getEnchere(pthread_mutex_t* p_mutex) {
 
     printEncheresState(p_mutex);
 
-    if(pthread_mutex_unlock(p_mutex) < 0) {
+    if(pthread_mutex_unlock(p_mutex) != 0) {
         perror("(Server:encheres.c:printEncheresState) : cannot unlock the final p_mutex\n");
     }
 
@@ -108,7 +108,7 @@ enchere_t * getEnchere(pthread_mutex_t* p_mutex) {
 }
 
 void rmEncheres(pthread_mutex_t* p_mutex) {
-    if(pthread_mutex_lock(p_mutex) < 0) {
+    if(pthread_mutex_lock(p_mutex) != 0) {
         perror("(Server:encheres.c:printEncheresState) : cannot lock the first p_mutex\n");
     }
     enchere_t * enchere;
@@ -117,7 +117,7 @@ void rmEncheres(pthread_mutex_t* p_mutex) {
         encheres = encheres->next;
         free(enchere);
     }
-    if(pthread_mutex_unlock(p_mutex) < 0) {
+    if(pthread_mutex_unlock(p_mutex) != 0) {
         perror("(Server:encheres.c:printEncheresState) : cannot unlock the final p_mutex\n");
     }
 }
@@ -125,7 +125,7 @@ void rmEncheres(pthread_mutex_t* p_mutex) {
 
 
 void printEncheresState(pthread_mutex_t* p_mutex) {
-    if(pthread_mutex_lock(p_mutex) < 0) {
+    if(pthread_mutex_lock(p_mutex) != 0) {
     	perror("(Server:encheres.c:printEncheresState) : cannot lock the first p_mutex\n");
     }
     
@@ -141,7 +141,7 @@ void printEncheresState(pthread_mutex_t* p_mutex) {
             i++;
         }
     }
-    if(pthread_mutex_unlock(p_mutex) < 0) {
+    if(pthread_mutex_unlock(p_mutex) != 0) {
     	perror("(Server:encheres.c:printEncheresState) : cannot unlock the final p_mutex\n");
     }
     

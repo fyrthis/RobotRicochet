@@ -190,9 +190,8 @@ int ilATrouve(char *activePlayer, int solution, int socket) {
 }
 
 // S -> C : FINREFLEXION/
-int finReflexion() {
-    char *msg = (char*) calloc (15, sizeof(char));
-    sprintf(msg, "FINREFLEXION/\n");
+int send_finReflexion() {
+    char *msg = "FINREFLEXION/\n";
     sendMessageAll(msg, &client_mutex);
     return 0;
 }

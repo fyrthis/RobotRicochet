@@ -200,3 +200,11 @@ void printClientsState(pthread_mutex_t* p_mutex) {
     
 }
 
+int checkIdPlayer(client_t *client, int socket, pthread_mutex_t* p_mutex) {
+    if(pthread_mutex_lock(p_mutex) != 0) { perror("(Server:client.c:printClientsState) : cannot lock the first p_mutex\n"); }
+    if(client->socket != socket) {
+        return -1;
+    }
+    if(pthread_mutex_unlock(p_mutex) != 0) { perror("(Server:client.c:printClientsState) : cannot lock the first p_mutex\n"); }
+    return 0;
+}

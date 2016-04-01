@@ -16,4 +16,5 @@ char * append_strings(const char * old, const char * new);
 int getIntLength(int i);
 char* getCharFromCase(int grid, int i, int j);
 
+
 #endif

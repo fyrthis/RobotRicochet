@@ -109,3 +109,5 @@ char* getCharFromCase(int grid, int i, int j) {
     }
     return chaine;
 }
+
+

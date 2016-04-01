@@ -27,7 +27,7 @@ extern int y_cible;// = -1;
 extern char lettreCible;
 
 int readGridFromFile(char *filename);
-int isValideSolution(char *deplacements);
+int isValideSolution(char *deplacements, int nbCoupsAnnonce);
 int moveRobot(char color, char direction);
 
 #endif

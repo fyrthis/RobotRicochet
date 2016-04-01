@@ -36,5 +36,6 @@ void rmClient(int socket, pthread_mutex_t* p_mutex);
 void disconnectClient(char *username, pthread_mutex_t* p_mutex);
 client_t *findClient(char * name);
 void printClientsState(pthread_mutex_t* p_mutex);
+int checkIdPlayer(client_t *client, int socket, pthread_mutex_t* p_mutex);
 
 #endif

@@ -45,6 +45,21 @@
 #include "utils.h"
 #include "encheres.h"
 
+/*MUTEX & CONDITIONS*/
+#ifdef _WIN32
+    // Windows (x64 and x86)
+    pthread_mutex_t etat_reso_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+#elif __unix__ // all unices, not all compilers
+    // Unix
+    pthread_mutex_t etat_reso_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+#elif __linux__
+    // linux
+    pthread_mutex_t etat_reso_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+#elif __APPLE__
+    // Mac OS
+    pthread_mutex_t etat_reso_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+#endif
+
 extern pthread_cond_t  cond_got_task;//   = PTHREAD_COND_INITIALIZER;
 
 
@@ -60,5 +75,6 @@ void handle_request(task_t * task, int thread_id);
 void * handle_tasks_loop(void* data);
 void shutdown_server(int sig);
 void * session_loop(void * nbToursSession);
+
 
 #endif

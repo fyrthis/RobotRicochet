@@ -118,7 +118,7 @@ int readGridFromFile(char *filename) {
 }
 
 
-int isValideSolution(char *deplacements) {
+int isValideSolution(char *deplacements, int nbCoupsAnnonce) {
     int nbCoups = 0;
 
     fprintf(stderr, "(Server:grid.c:isValideSolution) : le serveur a reçu comme deplacement : %s, et la chaine de caractere fait %zu\n", deplacements, strlen(deplacements));
@@ -163,7 +163,8 @@ int isValideSolution(char *deplacements) {
         default:;
     }
     fprintf(stderr, "Le nombre de coups de la solution : %d\n", nbCoups);
-    return nbCoups;
+    if(nbCoupsAnnonce-nbCoups>=0) return 0;
+    return -1;
 }
 
 /***************************************************************

@@ -52,7 +52,7 @@ int send_finEnchere(char *username, int nbCoups);
 *  PHASE DE RESOLUTION  *
 *************************/
 
-int solutionActive(char *username, char *deplacement, int socket);
+int solutionActive(char *username, char *deplacement);
 int send_bonneSolution();
 int send_mauvaiseSolution(char *username);
 int send_finReso();

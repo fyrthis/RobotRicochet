@@ -253,7 +253,7 @@ int send_finEnchere(char *username, int nbCoups) {
 *************************/
 
 // S -> C : SASOLUTION/user/deplacements/
-int solutionActive(char *username, char *deplacements, int socket) {
+int solutionActive(char *username, char *deplacements) {
 	char *msg = (char*)calloc(15 + strlen(username) + strlen(deplacements), sizeof(char));
     sprintf(msg, "SASOLUTION/%s/%s/\n", username, deplacements);
     fprintf(stderr, "(Server:action.c:solutionActive) : %s\n", msg);

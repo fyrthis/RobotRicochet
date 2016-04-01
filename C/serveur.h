@@ -48,16 +48,16 @@
 /*MUTEX & CONDITIONS*/
 #ifdef _WIN32
     // Windows (x64 and x86)
-    pthread_mutex_t etat_reso_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+    pthread_mutex_t ticTac_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
 #elif __unix__ // all unices, not all compilers
     // Unix
-    pthread_mutex_t etat_reso_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+    pthread_mutex_t ticTac_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 #elif __linux__
     // linux
-    pthread_mutex_t etat_reso_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+    pthread_mutex_t ticTac_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 #elif __APPLE__
     // Mac OS
-    pthread_mutex_t etat_reso_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+    pthread_mutex_t ticTac_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
 #endif
 
 extern pthread_cond_t  cond_got_task;//   = PTHREAD_COND_INITIALIZER;

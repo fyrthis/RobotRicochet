@@ -37,6 +37,7 @@ int nbEncheres = 0;
 *                                         *
 *******************************************/
 
+//Tête de liste
 void addEnchere(int socket, char *name, int solution, pthread_mutex_t* p_mutex) {
     enchere_t * enchere = NULL;
     if(pthread_mutex_lock(p_mutex) != 0) {
@@ -62,7 +63,6 @@ void addEnchere(int socket, char *name, int solution, pthread_mutex_t* p_mutex) 
     else { //Ajout en tête de liste
         enchere->next = encheres;
         encheres = enchere;
-
     }
 
     nbEncheres++;
@@ -147,3 +147,23 @@ void printEncheresState(pthread_mutex_t* p_mutex) {
     
 }
 
+int checkEnchere(char *username, int betSolution, pthread_mutex_t* p_mutex) {
+    if(encheres==NULL) {
+        printf("Aucune enchere.\n");
+    } else {
+        int i = 0;
+        enchere_t * enchere = encheres;
+        enchere_t * last_enchere = NULL;
+        while(enchere != NULL && strcmp(username, enchere->name)!=0) {
+            last_enchere = enchere;
+            enchere = enchere->next;
+            i++;
+        }
+        //Ici, soit enchere est NULL, soit on a trouvé la meilleure enchère actuelle du joueur
+        if(enchere==NULL) return -1;
+        if(betSolution>=enchere->nbCoups) return -2;
+        //Ici, on sait que notre enchère est correcte, on peut l'insérer
+        return 0;
+    }
+    return -3;
+}

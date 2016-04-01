@@ -26,15 +26,13 @@ pthread_cond_t  cond_got_task = PTHREAD_COND_INITIALIZER;
 
 
 int nbSecondsTimer;
-int etat_reso=0;
 int isShutingDown=0;
-int AWAITING = 0;
-int NEXT_ENIGMA = 1;
-int NEXT_BET = 2;
-int FINRESO = 3;
 
 pthread_t ptimer;
 pthread_t  p_threads[NB_MAX_THREADS];       /* thread's structures   */
+
+int ticTac;
+int timer;
 
 
 
@@ -51,16 +49,15 @@ pthread_t  p_threads[NB_MAX_THREADS];       /* thread's structures   */
 void handle_request(task_t * task, int thread_id) {
     if (task) {
         /* parse la commande */
-        char * pch = (char*)calloc(strlen(task->command)+1, sizeof(char)); // TOKEN
+        char * pch = (char*)calloc(strlen(task->command)+1, sizeof(char));
         char* username = NULL;
         //printf ("(Server:serveur.c:handle_request) : Splitting string \"%s\" into tokens:\n",task->command);
         pch = strtok (task->command,"/");
 
-        if(pch==NULL) //Should never happen.
+        if(pch==NULL) //Should never happen ? Maybe too rude to close the socket, so we return.
         {
             printf("(Server:serveur.c:handle_request) : ERROR : received something NULL : %s.\n", task->command);
-            perror("(Server:serveur.c:handle_request) : ERROR : close socket.\n");
-            close(task->socket);
+            return;
         }
 
         
@@ -96,61 +93,74 @@ void handle_request(task_t * task, int thread_id) {
 
         else if(strcmp(pch,"SOLUTION")==0) //C -> S : SOLUTION/user/...
         {
+            //0. Récupération des paramètres
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(username, pch, strlen(pch));
-            if(phase == REFLEXION) //C -> S : SOLUTION/user/coups/
+            pch = strtok(NULL, "/");
+            int solution = atoi(pch);
+            //1 Vérification des paramètres (int est bien int, non vide, etc...)
+            //TODO
+            //2. Verification tricherie
+            pthread_mutex_lock(&client_mutex);
+            client_t * client = findClient(username);
+            pthread_mutex_unlock(&client_mutex);
+            if((client->socket != task->socket) //Un joueur essaie d'enchérir pour un autre (Usurpation du nom)
+             ||(phase != REFLEXION))                                   //Mauvaise phase
             {
-                phase = ENCHERE;
-                pch = strtok(NULL, "/");
-                int solution = atoi(pch);
-                tuAsTrouve(task->socket);
-                ilATrouve(username, solution, task->socket);
-                addEnchere(task->socket, username, solution, &enchere_mutex);
-                fprintf(stderr, "(Server:serveur.c:handle_request) : Solution trouvée par %s\n", username);
+                puts("Quelqu'un a essayé de tricher !\n");
+                return;
             }
-            else if(phase == RESOLUTION) //C -> S : SOLUTION/user/deplacements/
-            { 
-                
-            }
-            else {
-                puts("ERROR !\n");
-            }
+
+            tuAsTrouve(task->socket);
+            ilATrouve(username, solution, task->socket);
+            addEnchere(task->socket, username, solution, &enchere_mutex);
+            fprintf(stderr, "Solution trouvée par %s\n", username);
+            phase = ENCHERE;
         }
 
 
-        
+         /***************
+         *   ENCHERE    *
+        ****************/
         else if(strcmp(pch,"ENCHERE")==0) //C -> S : ENCHERE/user/coups/
         {
-            if(pthread_mutex_lock(&enchere_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
-
+            pthread_mutex_lock(&enchere_mutex);
+            //0. Récupération des paramètres
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(username, pch, strlen(pch));
-            
-            // TEST DE L'ENCHERE
-            if(phase == ENCHERE){                
-                pch = strtok(NULL, "/");
-                int betSolution = atoi(pch);
-                if(betSolution >= encheres->nbCoups) {
-                    fprintf(stderr, "(Server:serveur.c:handle_request) : Enchère reçue de la part de %s refusee.\n", username);
-                    send_echec(username, task->socket);
-                }
-                else {
-                    fprintf(stderr, "(Server:serveur.c:handle_request) : Enchère reçue de la part de %s acceptee.\n", username);
-                    send_validation(task->socket);
-                    send_nouvelleEnchere(username, betSolution);
-                    addEnchere(task->socket, username, betSolution, &enchere_mutex);
-                }
-
+            pch = strtok(NULL, "/");
+            int betSolution = atoi(pch);
+            //1 Vérification des paramètres (int est bien int, non vide, etc...)
+            //TODO
+            //2. Verification tricherie
+            pthread_mutex_lock(&client_mutex);
+            client_t * client = findClient(username);
+            pthread_mutex_unlock(&client_mutex);
+            if((client->socket != task->socket) //Un joueur essaie d'enchérir pour un autre (Usurpation du nom)
+             ||(phase != ENCHERE))                                   //Mauvaise phase
+            {
+                puts("Quelqu'un a essayé de tricher !\n");
+                return;
             }
-            else { //Si on n'est pas dans la phase d'enchere : un client hack pourrait provoquer ça. Ou bien une tâche qui arrive trop tard.
-                fprintf(stderr, "(Server:serveur.c:handle_request) : ERROR, reçue enchère phase resolution\n");
+            //3. Verification validité de l'enchère (différente de celle des autres joueurs, inf. à celle qu'il a proposé auparavant)
+            if(/*checkEnchere(username, betSolution)!=0){*/betSolution >= encheres->nbCoups) {
+                fprintf(stderr, "Enchère reçue de la part de %s refusee.\n", username);
+                send_echec(username, task->socket);
             }
-            if(pthread_mutex_unlock(&enchere_mutex) != 0) perror("(Server:serveur.c:handle_request) : error mutex");
+            else {
+                fprintf(stderr, "Enchère reçue de la part de %s acceptee.\n", username);
+                send_validation(task->socket);
+                send_nouvelleEnchere(username, betSolution);
+                addEnchere(task->socket, username, betSolution, &enchere_mutex);
+            }
+            pthread_mutex_unlock(&enchere_mutex);
         }
-        // erreur dans le protocole, à redéfinir mais correspond à l'envoi de la solution
-        // proposée par le joueur actif lors de la phase de résolution
+        
+        /***************
+        *ENVOISOLUTION *
+        ****************/
         else if(strcmp(pch,"ENVOISOLUTION")==0) {
             //0. Récupération des paramètres
             pch = strtok (NULL, "/");
@@ -175,23 +185,29 @@ void handle_request(task_t * task, int thread_id) {
                 return;
             }
             //2. Présentation de la solution aux clients
-            solutionActive(username, deplacements, task->socket);
+            solutionActive(username, deplacements);
             //3. Verification validité de la solution
             //pthread_mutex_lock(&etat_reso_mutex);
             printf("Le joueur %s propose la solution %s.", username, deplacements);
             enchere_t * enchere = getEnchere(&enchere_mutex);
             if(isValideSolution(deplacements, enchere->nbCoups) == 0) { //correcte
                 send_bonneSolution();
-                etat_reso = NEXT_ENIGMA;
+                pthread_mutex_lock(&ticTac_mutex);
+                ticTac=timer+1;
+                pthread_mutex_unlock(&ticTac_mutex);
                 puts("La solution est acceptée !\n");
             } else if(encheres!=NULL) { //Erronée et quelqu'un d'autre peut proposer une solution
                 send_mauvaiseSolution(enchere->name);
-                etat_reso = NEXT_BET;
+                pthread_mutex_lock(&ticTac_mutex);
+                ticTac = 0;
+                pthread_mutex_unlock(&ticTac_mutex);
                 puts("La solution est refusée !\n");
             } else {
                 send_finReso();
-                etat_reso = FINRESO;
-                puts("La solution est refusée !\n");
+                pthread_mutex_lock(&ticTac_mutex);
+                ticTac=timer+1;
+                pthread_mutex_unlock(&ticTac_mutex);
+                puts("La solution est refusée ! Plus aucune enchère.\n");
             }
             //pthread_mutex_unlock(&etat_reso_mutex);
             free(enchere);
@@ -240,7 +256,7 @@ void * handle_tasks_loop(void* data) {
     int thread_id = *((int*)data);
     printf("(Server:serveur.c:handle_task_loop) : Thread %d created and ready\n", thread_id);
     /* lock the mutex, to access the tasks list exclusively. */
-    if(pthread_mutex_lock(&task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : error mutex\n");
+    pthread_mutex_lock(&task_mutex);
 
     while (1) {
         if (nbTasks > 0) { /* a request is pending */
@@ -254,14 +270,14 @@ void * handle_tasks_loop(void* data) {
         }
         else {
             //printf("(Server:serveur.c:handle_tasks_loop) : Thread %d is waiting some task.\n", thread_id);
-            if(pthread_cond_wait(&cond_got_task, &task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : err condition wait \n");
+            pthread_cond_wait(&cond_got_task, &task_mutex);
             if(isShutingDown==1) {
                 break;
             }
         }
     }
     //Unreachable code bellow
-    if(pthread_mutex_unlock(&task_mutex) != 0) perror("(Server:serveur.c:handle_tasks_loop) : error mutex\n");
+    pthread_mutex_unlock(&task_mutex);
     //puts("(Server:serveur.c:handle_tasks_loop) :  ended\n");
     return NULL;
 }
@@ -272,8 +288,7 @@ void * handle_tasks_loop(void* data) {
 void * session_loop(void* nbToursSession) {
     int cptTours = 1;
     int cptSessions = 1;
-    int i;
-    int timer;
+
     while(1) {
         /******************
         *  DEBUT SESSION  *
@@ -282,19 +297,21 @@ void * session_loop(void* nbToursSession) {
         /********************
         *  ATTENTE JOEUURS  *
         ********************/
-        if(pthread_mutex_lock(&client_mutex) != 0) { perror("(Server:client.c:addClient) : on addClient, cannot lock the first p_mutex\n"); }
+        pthread_mutex_lock(&client_mutex);
         //Si pas assez de client, on attend le feu vert, sinon on continue
         while(nbClientsConnecte<2) {
             puts("We need at least two players in order to start a game.\n");
-            if(pthread_cond_wait(&cond_at_least_2_players, &client_mutex) != 0) { perror("(Server:serveur.c:handle_tasks_loop) : err condition wait \n");}
+            pthread_cond_wait(&cond_at_least_2_players, &client_mutex);
         }
-        if(pthread_mutex_unlock(&client_mutex) != 0) { perror("(Server:client.c:addClient) : on addClient, cannot unlock the p_mutex when an already connected client asks for a new connection\n");}
+        pthread_mutex_unlock(&client_mutex);
 
         /***************************
         *  INITIALISATION SESSION  *
         ***************************/
         cptTours = 0;
-        i=0;
+        pthread_mutex_lock(&ticTac_mutex);
+        ticTac=0;
+        pthread_mutex_unlock(&ticTac_mutex);
         timer=0;
         while(nbClientsConnecte>=2 && cptTours<=*((int*)nbToursSession))
         {
@@ -303,22 +320,23 @@ void * session_loop(void* nbToursSession) {
             /********************
             *  ATTENTE JOUEURS  *
             ********************/
-            i=0;
+            pthread_mutex_lock(&ticTac_mutex);
+            ticTac=0;
+            pthread_mutex_unlock(&ticTac_mutex);
             timer=10;
-            while(i < timer) {
+            while(ticTac < timer) {
                 if(isShutingDown==1) return NULL; //Serveur veut s'arrêter.
                 sleep(1);
-                i++;
-                printf("Waiting players... : %d sec.\n", i);
+                pthread_mutex_lock(&ticTac_mutex);
+                ticTac++;
+                pthread_mutex_unlock(&ticTac_mutex);
+                printf("Waiting players... : %d sec.\n", ticTac);
             }
 
             /************************
             *  INITIALISATION TOUR  *
             ************************/
             rmEncheres(&enchere_mutex); //On vide les enchères du tour précédent.
-            pthread_mutex_lock(&etat_reso_mutex);
-            etat_reso=AWAITING; //Personne n'a encore trouvé de solution
-            pthread_mutex_unlock(&etat_reso_mutex);
             phase=REFLEXION;
             //S -> C : TOUR/enigme/
             setEnigma();
@@ -332,15 +350,19 @@ void * session_loop(void* nbToursSession) {
             if(phase==REFLEXION && nbClientsConnecte>=2)
             {
                 puts("DEBUT REFLEXION\n");
-                i=0;
+                pthread_mutex_lock(&ticTac_mutex);
+                ticTac=0;
+                pthread_mutex_unlock(&ticTac_mutex);
                 timer=5*60; //5minutes
-                while(i < timer && phase==REFLEXION && nbClientsConnecte>=2) {
+                while(ticTac < timer && phase==REFLEXION && nbClientsConnecte>=2) {
                     if(isShutingDown==1) return NULL; //Serveur veut s'arrêter.
                     sleep(1);
-                    i++;
-                    printf("REFLEXION : %d sec.\n", i);
+                    pthread_mutex_lock(&ticTac_mutex);
+                    ticTac++;
+                    pthread_mutex_unlock(&ticTac_mutex);
+                    printf("REFLEXION : %d sec.\n", ticTac);
                 }
-                if(i==timer) { //Délai écoulé
+                if(ticTac==timer) { //Délai écoulé
                     puts("REFLEXION : DELAI ECOULE\n");
                     send_finReflexion();
                 }
@@ -353,13 +375,17 @@ void * session_loop(void* nbToursSession) {
             if(phase==ENCHERE && nbClientsConnecte>=2)
             {
                 puts("DEBUT ENCHERE\n");
-                i=0;
+                pthread_mutex_lock(&ticTac_mutex);
+                ticTac=0;
+                pthread_mutex_unlock(&ticTac_mutex);
                 timer=30; //30 seconds
-                while(i < timer && nbClientsConnecte>=2) {
+                while(ticTac < timer && nbClientsConnecte>=2) {
                     if(isShutingDown==1) return NULL; //Serveur veut s'arrêter.
                     sleep(1);
-                    i++;
-                    printf("ENCHERE : %d sec.\n", i);
+                    pthread_mutex_lock(&ticTac_mutex);
+                    ticTac++;
+                    pthread_mutex_unlock(&ticTac_mutex);
+                    printf("ENCHERE : %d sec.\n", ticTac);
                 }
                 phase=RESOLUTION;
                 pthread_mutex_lock(&enchere_mutex);
@@ -373,24 +399,19 @@ void * session_loop(void* nbToursSession) {
             if(phase==RESOLUTION && nbClientsConnecte>=2 && encheres != NULL)
             {
                 printf("DEBUT RESOLUTION\n");
-                i=0;
+                pthread_mutex_lock(&ticTac_mutex);
+                ticTac=0;
+                pthread_mutex_unlock(&ticTac_mutex);
                 timer=60;//1 minute
-                while(i < timer && nbClientsConnecte>=2) {
+                while(ticTac < timer && nbClientsConnecte>=2) {
                     if(isShutingDown==1) return NULL; //Serveur veut s'arrêter.
-                    pthread_mutex_lock(&etat_reso_mutex);
-                    if(etat_reso==FINRESO) //Plus personne n'a d'enchère à proposer
-                        break;
-                    if(etat_reso==NEXT_ENIGMA)//Solution trouvée. Nouveau tour, énigme !
-                        break;
-                    if(etat_reso==NEXT_BET) {//Solution erronée, relance du compte à rebours si il reste quelqu'un
-                        i = 0;
-                        etat_reso = AWAITING;
-                    }
-                    pthread_mutex_unlock(&etat_reso_mutex);
 
-                    i++;
+                    pthread_mutex_lock(&ticTac_mutex);
+                    ticTac++;
+                    pthread_mutex_unlock(&ticTac_mutex);
 
-                    if(i==timer) { //l'utilisateur a mis trop de temps à répondre !
+                    
+                    if(ticTac==timer) { //l'utilisateur a mis trop de temps à répondre !
                         pthread_mutex_lock(&enchere_mutex);
                         free(getEnchere(&enchere_mutex)); //Enlève l'enchère du joueur.
                         if(encheres!=NULL) { //Si ilreste quelqu'un avec une solution possible
@@ -400,12 +421,14 @@ void * session_loop(void* nbToursSession) {
                             break;
                         }
                         pthread_mutex_unlock(&enchere_mutex);
-                        i = 0;
+                        pthread_mutex_lock(&ticTac_mutex);
+                        ticTac = 0;
+                        pthread_mutex_unlock(&ticTac_mutex);
                     }
                     
                     sleep(1);
 
-                    printf("RESOLUTION : %d sec.\n", i);
+                    printf("RESOLUTION : %d sec.\n", ticTac);
                 }
             }
             /****************
@@ -535,7 +558,7 @@ int main(int argc, char* argv[]) {
 
         while( (select_result = select(FD_SETSIZE, &testfds, (fd_set *)0, (fd_set *)0, (struct timeval *) 0)) < 1) {
             fprintf(stderr, "(Server:serveur.c:main) : error select : Fenêtre fermee brutalement cote client ?\nselect val : %d (%d)\n", select_result, errno);
-            if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
+            pthread_mutex_lock(&client_mutex);
             printf("(Server:serveur.c:main) : Etat de la liste des clients : \n");
             if(clients==NULL) {
                 printf("(Server:serveur.c:main) : Aucun client. Erreur dans le select non geree...\n");
@@ -560,7 +583,7 @@ int main(int argc, char* argv[]) {
                 }
                 continue;
             }
-            if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
+            pthread_mutex_unlock(&client_mutex);
         }
         
         for(file_descr = 0; file_descr < FD_SETSIZE; file_descr++) {
@@ -586,7 +609,7 @@ int main(int argc, char* argv[]) {
                         FD_CLR(file_descr, &readfds);
                         FD_CLR(file_descr, &testfds);
                         FD_SET(STDIN_FILENO, &readfds); //Onrajoute l'entrée clavier quand même !
-                        if(pthread_mutex_lock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
+                        pthread_mutex_lock(&client_mutex);
                         client_t *client = clients;
                         while(client != NULL){
                             if(client->socket == file_descr) {
@@ -596,7 +619,7 @@ int main(int argc, char* argv[]) {
                             client = client->next;
                         }
                         if(client==NULL) printf("(Server:serveur.c:main) : error : client null\n");
-                        if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
+                        pthread_mutex_unlock(&client_mutex);
                         puts("Received empty message !\n");
                         sprintf(buffer, "SORT/%s/", client->name);
                         addTask(file_descr, buffer, &task_mutex, &cond_got_task);

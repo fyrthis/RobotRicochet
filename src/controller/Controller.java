@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
 
+import players.Players.LocalPlayer;
 import utils.Tools;
 import communication.Client;
 import communication.ProtocolException;
@@ -41,7 +42,6 @@ public class Controller implements Observer {
 		Client.getInstance().connect();
 		System.out.println("(Client:"+Debug.curName+")(Controller:connect) sent : CONNEXION/"+name+"/");
 		Client.getInstance().sendMessage("CONNEXION/"+name+"/");
-		model.getPlayers().getlocalPlayer().setName(name);
 	}
 	
 	public void disconnect(String name) {
@@ -62,26 +62,30 @@ public class Controller implements Observer {
 		System.out.println("(Client:"+Debug.curName+")(Controller:sendSolution) sent : SOLUTION/"+name+"/"+solution+"/");
 		try {
 			Client.getInstance().sendMessage("SOLUTION/"+name+"/"+solution+"/");
+			// On va enregistrer le contexte de l'état courant du jeu au moment où un joueur envoie une solution
+			// durant la phase de reflexion
+			LocalPlayer.getInstance().setNbCoups(solutionInt);
+			model.getGameState().setActiveSolution(solutionInt);
+			model.getGameState().setActivePlayer(name);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// On va enregistrer le contexte de l'état courant du jeu au moment où un joueur envoie une solution
-		// durant la phase de reflexion
-		model.getGameState().setCurrentSolution(solutionInt);
 	}
 	
 	//ENCHERE/user/coups/
 	//(C -> S) Enchère d'une solution trouvée par 'user' en 'coups' déplacements.
-	public void sendBet(String name, int solutionInt){
+	public void sendEnchere(String name, int solutionInt){
 		String solution = String.valueOf(solutionInt);
-		System.out.println("(Client:"+Debug.curName+")(Controller:sendBet) sent : ENCHERE/"+name+"/"+solution+"/");
+		System.out.println("(Client:"+Debug.curName+")(Controller:sendBet) sent : ENCHERE/"+name+"/"+solution+"/"+ " - LocalPlayer's best score : "+LocalPlayer.getInstance().getCoups());
 		try {
-			if(solutionInt >= model.getGameState().getCurrentSolution()){
+			if(LocalPlayer.getInstance().getCoups() > -1 && solutionInt >= LocalPlayer.getInstance().getCoups()){
 				System.err.println("(Client:"+Debug.curName+")(Controller:sendBet) cannot send : ENCHERE/"+name+"/"+solution+"/ because the new solution is not better than the current one !");
 			}
-			else
+			else {
 				Client.getInstance().sendMessage("ENCHERE/"+name+"/"+solution+"/");
+				LocalPlayer.getInstance().setNbCoups(solutionInt);
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -89,7 +93,7 @@ public class Controller implements Observer {
 	}
 	
 	// On considère que le client qui envoie le deplacement est forcément le joueur actif
-	public void sendMoves(String name, String moves){
+	public void sendDeplacements(String name, String moves){
 		System.out.println("(Client:"+Debug.curName+")(Controller:sendMoves) sent : ENVOISOLUTION/"+name+"/"+moves+"/");
 		try {
 			Client.getInstance().sendMessage("ENVOISOLUTION/"+name+"/"+moves+"/");
@@ -107,7 +111,7 @@ public class Controller implements Observer {
 	// On envoie le temps que va mettre l'animation de la bonne réponse au serveur pour qu'il attende de son côté
 	// la fin de l'animation
 	// C -> S : ENVOISOLUTION/user/deplacements/animationTime
-	public void sendMovesWithAnimationTime(String name, String moves){
+	public void sendDeplacementsWithAnimationTime(String name, String moves){
 		// On va calculer le temps que va mettre les deplacements pour l'animation
 		int animationTime = Tools.computeAnimationTime(moves);
 		System.out.println("(Client:"+Debug.curName+")(Controller:sendMoves) sent : ENVOISOLUTION/"+name+"/"+moves+"/"+animationTime+"/");

@@ -57,7 +57,12 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 		// plus tard peut etre faire une sorte de chargement/initialisation de la map avant de passer
 		// a la phase de reflexion
 		if(phase == Phase.INITIALISATION){
-	        
+			if(model.getGameState().getTour() > 1){
+				this.remove(movesLabel);
+				this.remove(movesEntry);
+				this.remove(resolveButton);	
+			}
+
 	        setSolutionLabel = new JLabel("Annoncez votre solution : ");
 			solutionEntry = new JTextField(5);
 			sendSolutionButton = new JButton("Send Solution");

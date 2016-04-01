@@ -4,6 +4,7 @@ import utils.Phase;
 
 import java.util.Observable;
 
+import players.Players.LocalPlayer;
 import launcher.Debug;
 import model.Model;
 
@@ -44,9 +45,13 @@ class Reflexion extends Observable {
 		// jour
 		// => normalement la solution courante à cet instant précis est toujours à -1
 		int activePlayerSolution = Integer.valueOf(coups);
-		model.getGameState().setCurrentSolution(activePlayerSolution);
-		System.out.println("(Client:"+Debug.curName+")(Reflexion:ilATrouve)sending notifyObserver in ilATrouve function...");
+		model.getGameState().setActiveSolution(activePlayerSolution);
+		model.getGameState().setActivePlayer(user);
+		
+		// il faut aussi initialiser ses propres valeurs d'enchères
+		LocalPlayer.getInstance().setNbCoups(-1);
 		model.getGameState().setPhase(Phase.ENCHERE);
+		System.out.println("(Client:"+Debug.curName+")(Reflexion:ilATrouve)sending notifyObserver in ilATrouve function...");
 	}
 	
 	//FINREFLEXION/

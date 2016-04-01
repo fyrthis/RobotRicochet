@@ -15,7 +15,7 @@ class DeconnexionConnexion extends Observable {
 	//BIENVENUE/user/
 	//(S -> C) Validation de la connexion 'user'
 	void bienvenue(String user) {
-		
+		model.getPlayers().getlocalPlayer().setName(user);
 	}
 	
 	//CONNECTE/user/

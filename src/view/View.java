@@ -45,7 +45,7 @@ public class View extends JFrame {
 
 		gamePane = new GamePanel(model);
 		model.getGameState().setTour(1);
-		model.getGameState().setCurrentSolution(-1);
+		model.getGameState().setActiveSolution(-1);
 
 		add(gamePane);
 		gamePane.setVisible(false);
@@ -111,15 +111,15 @@ public class View extends JFrame {
 	}
 	
 	public void betSignal(int stroke) {
-		controller.sendBet(model.getPlayers().getlocalPlayer().getName(), stroke);
+		controller.sendEnchere(model.getPlayers().getlocalPlayer().getName(), stroke);
 	}
 	
 	public void resolveMovesSignal(String moves) {
 		boolean withAnimation = true;
 		if(withAnimation)
-			controller.sendMovesWithAnimationTime(model.getPlayers().getlocalPlayer().getName(), moves);
+			controller.sendDeplacementsWithAnimationTime(model.getPlayers().getlocalPlayer().getName(), moves);
 		else
-			controller.sendMoves(model.getPlayers().getlocalPlayer().getName(), moves);
+			controller.sendDeplacements(model.getPlayers().getlocalPlayer().getName(), moves);
 	}
 	
 	public void sendMessageSignal(String messages) {

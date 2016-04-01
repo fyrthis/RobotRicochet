@@ -179,12 +179,13 @@ void handle_request(task_t * task, int thread_id) {
             //3. Verification validité de la solution
             //pthread_mutex_lock(&etat_reso_mutex);
             printf("Le joueur %s propose la solution %s.", username, deplacements);
-            if(isValideSolution(deplacements, encheres->nbCoups) == 0) { //correcte
+            enchere_t * enchere = getEnchere(&enchere_mutex);
+            if(isValideSolution(deplacements, enchere->nbCoups) == 0) { //correcte
                 send_bonneSolution();
                 etat_reso = NEXT_ENIGMA;
                 puts("La solution est acceptée !\n");
             } else if(encheres!=NULL) { //Erronée et quelqu'un d'autre peut proposer une solution
-                send_mauvaiseSolution(encheres->name);
+                send_mauvaiseSolution(enchere->name);
                 etat_reso = NEXT_BET;
                 puts("La solution est refusée !\n");
             } else {
@@ -193,7 +194,9 @@ void handle_request(task_t * task, int thread_id) {
                 puts("La solution est refusée !\n");
             }
             //pthread_mutex_unlock(&etat_reso_mutex);
-            free(getEnchere(&enchere_mutex));
+            free(enchere);
+            free(username);
+            free(deplacements);
             //pthread_mutex_unlock(&enchere_mutex);
             
         }
@@ -392,6 +395,9 @@ void * session_loop(void* nbToursSession) {
                         free(getEnchere(&enchere_mutex)); //Enlève l'enchère du joueur.
                         if(encheres!=NULL) { //Si ilreste quelqu'un avec une solution possible
                             send_tropLong(encheres->name);
+                        }else {
+                            pthread_mutex_unlock(&enchere_mutex);
+                            break;
                         }
                         pthread_mutex_unlock(&enchere_mutex);
                         i = 0;
@@ -591,6 +597,7 @@ int main(int argc, char* argv[]) {
                         }
                         if(client==NULL) printf("(Server:serveur.c:main) : error : client null\n");
                         if(pthread_mutex_unlock(&client_mutex) != 0) perror("(Server:serveur.c:main) : error mutex");
+                        puts("Received empty message !\n");
                         sprintf(buffer, "SORT/%s/", client->name);
                         addTask(file_descr, buffer, &task_mutex, &cond_got_task);
                         break;

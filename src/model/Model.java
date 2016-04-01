@@ -38,7 +38,7 @@ public class Model {
 	public ChatModel getChatModel() { return chatModel; }
 
 	public void playerConnected(String name) {
-		players.add(name);	
+		players.add(name);
 	}
 
 	public void playerLeaved(String name) {
@@ -164,10 +164,9 @@ public class Model {
 			String[] playerTokens = tokenizer.nextToken().split(",");
 			playerName = playerTokens[0];
 			scorePlayer = Integer.parseInt(playerTokens[1]);
-			for(AbstractPlayer p : players.getPlayers()){
-				if(p.getName().equals(playerName))
-					p.setScore(scorePlayer);
-			}
+			
+			// Il faut mettre à jour la liste des joueurs qui participent a la partie courante
+			players.updatePlayersList(playerName, scorePlayer);			
 		}
 	}
 }

@@ -10,29 +10,26 @@ public class Robot {
 	int y;
 	String moves;
 	
-	ArrayList<Point> points;
-	ArrayList<Line2D> path;
+	ArrayList<Point> path;
 	
 	public Robot(int x, int y){
 		this.x = x;
 		this.y = y;
-		path = new ArrayList<Line2D>();
-		points = new ArrayList<Point>();
+		path = new ArrayList<Point>();
+		addPointToPath(x,y);
 	}
 	
-	public void setXY(int x, int y){
-		addPath(new Line2D.Double(new Point(this.x, this.y), new Point(x, y)));
-		this.x = x;
-		this.y = y; 
-	}
 	public void setMoves(String moves) { this.moves = moves; }
-	public void addPath(Line2D line) { this.path.add(line); }
-	public void addPoint(Point p) { this.points.add(p); }
-	
+	public void addPointToPath(int x, int y) { this.path.add(new Point(x, y)); }
+	public void setX(int x){ this.x = x; }
+	public void setY(int y){ this.y = y; }
+
 	public int getX(){ return this.x; }
 	public int getY(){ return this.y; }
 	public String getMoves(){ return this.moves; }
-	public ArrayList<Line2D> getPath(){ return this.path; }
-	public ArrayList<Point> getPoints(){ return this.points; }
+	public ArrayList<Point> getPath(){ return this.path; }
 
+	public Robot clone(){
+		return new Robot(this.x, this.y);
+	}
 }

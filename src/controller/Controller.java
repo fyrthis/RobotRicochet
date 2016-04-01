@@ -6,11 +6,11 @@ import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
 
+import utils.Tools;
 import communication.Client;
 import communication.ProtocolException;
 import launcher.Debug;
 import model.Model;
-import utils.Phase;
 
 public class Controller implements Observer {
 	//FIELDS
@@ -42,7 +42,6 @@ public class Controller implements Observer {
 		System.out.println("(Client:"+Debug.curName+")(Controller:connect) sent : CONNEXION/"+name+"/");
 		Client.getInstance().sendMessage("CONNEXION/"+name+"/");
 		model.getPlayers().getlocalPlayer().setName(name);
-		model.getPlayers().add(name);
 	}
 	
 	public void disconnect(String name) {
@@ -101,6 +100,25 @@ public class Controller implements Observer {
 		model.getGameState().setSolutionMoves(moves);
 	}
 	
+	/***************
+	 *  EXTENSION  *
+	 ***************/
+	
+	// On envoie le temps que va mettre l'animation de la bonne réponse au serveur pour qu'il attende de son côté
+	// la fin de l'animation
+	// C -> S : ENVOISOLUTION/user/deplacements/animationTime
+	public void sendMovesWithAnimationTime(String name, String moves){
+		// On va calculer le temps que va mettre les deplacements pour l'animation
+		int animationTime = Tools.computeAnimationTime(moves);
+		System.out.println("(Client:"+Debug.curName+")(Controller:sendMoves) sent : ENVOISOLUTION/"+name+"/"+moves+"/"+animationTime+"/");
+		try {
+			Client.getInstance().sendMessage("ENVOISOLUTION/"+name+"/"+moves+"/"+animationTime+"/");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		model.getGameState().setSolutionMoves(moves);
+	}
 
 	public void sendMessages(String name, String message) {
 		System.out.println("(Client:"+Debug.curName+")(Controller:sendMessages) sent : MESSAGE/"+name+"/"+message+"/");

@@ -1,9 +1,10 @@
 package model;
 
-import java.awt.Point;
 import java.util.Observable;
 
 public class Grid extends Observable {
+	
+	final int DELAY = 80;
 
 	Integer[][][] grid;
 	char target;
@@ -75,6 +76,20 @@ public class Grid extends Observable {
 		}
 	}
 
+	public Integer[][][] clone(){
+		Integer[][][] clone = new Integer[2][grid[0].length][grid[0][0].length];
+		for(int j = 0; j < grid[0][0].length; j++){
+			for(int i = 0; i < grid[0].length; i++){
+				clone[0][i][j] = grid[0][i][j];
+			}
+		}
+		for(int j = 0; j < grid[1][0].length; j++){
+			for(int i = 0; i < grid[1].length; i++){
+				clone[0][i][j] = grid[1][i][j];
+			}
+		}
+		return clone;
+	}
 
 	public Integer[][][] getGrid(){ return this.grid; }
 	public int getSizeX(){ return this.grid[0].length; }
@@ -113,7 +128,7 @@ public class Grid extends Observable {
 			break;
 		}
 		
-		robot.addPoint(new Point(robot.x, robot.y));
+		robot.addPointToPath(robot.x, robot.y);
 		switch(direction) {
 		case 'H':
 			// 1, 3, 5, 7, 9, 11, 13, 15 sont les valeurs des cases où il y a déjà un mur en haut
@@ -156,7 +171,7 @@ public class Grid extends Observable {
 					grid[1][robot.x][robot.y] = val+1;
 				}
 				for(int i_update = 0; i_update < 4; i_update++){
-					Thread.sleep(80);
+					Thread.sleep(DELAY);
 					update();
 				}
 			}
@@ -204,7 +219,7 @@ public class Grid extends Observable {
 					grid[1][robot.x][robot.y] = val+5;
 				}
 				for(int i_update = 0; i_update < 4; i_update++){
-					Thread.sleep(80);
+					Thread.sleep(DELAY);
 					update();	
 				}
 			} 
@@ -252,7 +267,7 @@ public class Grid extends Observable {
 					grid[1][robot.x][robot.y] = val+7;
 				}
 				for(int i_update = 0; i_update < 4; i_update++){
-					Thread.sleep(80);
+					Thread.sleep(DELAY);
 					update();	
 				}
 			} 
@@ -300,7 +315,7 @@ public class Grid extends Observable {
 					grid[1][robot.x][robot.y] = val+3;
 				}
 				for(int i_update = 0; i_update < 4; i_update++){
-					Thread.sleep(80);
+					Thread.sleep(DELAY);
 					update();	
 				}
 			}

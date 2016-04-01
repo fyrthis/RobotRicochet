@@ -127,5 +127,17 @@ public class Players extends Observable {
 		notifyObservers();
 	}
 	
+	// Mise a jour de la liste des joueurs et de leur score
+	public void updatePlayersList(String name, int score){
+		AbstractPlayer p;
+		if((p = get(name)) != null) {
+			p.setScore(p.getScore()+score);
+		} else {
+			p = new Player(name);
+			players.add(p);
+		}
+		this.setChanged();
+		this.notifyObservers(players);
+	}
 
 }

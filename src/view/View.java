@@ -115,7 +115,11 @@ public class View extends JFrame {
 	}
 	
 	public void resolveMovesSignal(String moves) {
-		controller.sendMoves(model.getPlayers().getlocalPlayer().getName(), moves);
+		boolean withAnimation = true;
+		if(withAnimation)
+			controller.sendMovesWithAnimationTime(model.getPlayers().getlocalPlayer().getName(), moves);
+		else
+			controller.sendMoves(model.getPlayers().getlocalPlayer().getName(), moves);
 	}
 	
 	public void sendMessageSignal(String messages) {

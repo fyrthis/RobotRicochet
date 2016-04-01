@@ -17,6 +17,7 @@ public class GameState extends Observable implements Observer {
 	static int currentSolution;
 	static String solutionMoves;
 	static Phase phase;
+	static double animationTime;
 	
 	public GameState(){
 		setPhase(Phase.INITIALISATION);
@@ -26,10 +27,12 @@ public class GameState extends Observable implements Observer {
 	public int getTour(){ return tour; }
 	public String getSolutionMoves(){ return solutionMoves; }
 	public Phase getPhase(){ return phase; }
+	public double getAnimationTime(){ return animationTime; }
 
 	public void setTour(int t){ GameState.tour = t; }
 	public void setCurrentSolution(int s){ GameState.currentSolution = s; }
 	public void setSolutionMoves(String s){ GameState.solutionMoves =s; }
+	public void setAnimationTime(double time){ GameState.animationTime = time; }
 	
 	public void setPhase(Phase p){
 		System.out.println("(Client:"+Debug.curName+")(GameState:setPhase) setting phase to : "+p);
@@ -63,7 +66,7 @@ public class GameState extends Observable implements Observer {
 		}
 		if(time == 0 && phase == Phase.RESOLUTION){
 			Timer.getInstance().setTime(0);
-			setPhase(Phase.RESOLUTION);
+			setPhase(Phase.INITIALISATION);
 		}
 	}
 

@@ -4,8 +4,11 @@ import java.util.Observable;
 
 import model.Model;
 import utils.Phase;
+import utils.Tools;
 
 class Resolution extends Observable  {
+	
+	final double DELAY = 80;
 
 	private Model model;
 	
@@ -28,6 +31,7 @@ class Resolution extends Observable  {
 	void bonne() {
 		//Update le score : Comme on est dans la phase finale, on sait que quelqu'un a trouvé la solution
 		String moves = model.getGameState().getSolutionMoves();
+		
 		for(int i = 0; i < moves.length(); i+=2){
 			char color = moves.charAt(i);
 			char direction = moves.charAt(i+1);
@@ -74,4 +78,5 @@ class Resolution extends Observable  {
 	void tropLong(String user) {
 		//idem que mauvaise
 	}
+	
 }

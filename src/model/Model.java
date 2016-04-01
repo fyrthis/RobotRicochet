@@ -126,7 +126,7 @@ public class Model {
 				this.grid.setSymbol(x, y, getSymbolValue(robotColor));
 			
 			else
-				this.grid.setRobot(robotColor, x, y);
+				this.grid.initializeRobot(robotColor, x, y);
 			System.out.println(robotColor+"["+x+","+y+"]" );
 		}
 		System.out.println("Target: "+tokens[tokens.length-1].charAt(0));

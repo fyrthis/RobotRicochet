@@ -169,6 +169,8 @@ void handle_request(task_t * task, int thread_id) {
             pch = strtok (NULL, "/");
             char *deplacements = (char*)calloc(strlen(pch)+1, sizeof(char));
             strncpy(deplacements, pch, strlen(pch));
+            pch = strtok (NULL, "/");
+            animationTime = (atoi(pch)/1000)+1;
             //1 Vérification des paramètres (int est bien int, non vide, etc...)
             //TODO
             //2. Verification tricherie
@@ -323,7 +325,7 @@ void * session_loop(void* nbToursSession) {
             pthread_mutex_lock(&ticTac_mutex);
             ticTac=0;
             pthread_mutex_unlock(&ticTac_mutex);
-            timer=10;
+            timer=10+animationTime;
             while(ticTac < timer) {
                 if(isShutingDown==1) return NULL; //Serveur veut s'arrêter.
                 sleep(1);

@@ -43,7 +43,6 @@ class Resolution extends Observable  {
 				e.printStackTrace();
 			}
 		}
-		model.getGrid().update();
 	}
 	
 	//MAUVAISE/user/

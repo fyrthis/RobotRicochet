@@ -9,11 +9,6 @@ public class Grid extends Observable {
 	Integer[][][] grid;
 	char target;
 
-	int x_r, y_r;
-	int x_b, y_b;
-	int x_j, y_j;
-	int x_v, y_v;
-	
 	Robot rouge;
 	Robot bleu;
 	Robot jaune;
@@ -22,72 +17,66 @@ public class Grid extends Observable {
 	public Grid(){
 		this.grid = new Integer[2][][];
 		this.target = 'n';
-		x_r = y_r = x_b = y_b = x_j = y_j = x_v = y_v = -1;
 	}
 
 	public void setGrid(Integer[][] grid){ this.grid[0] = grid; }
 	public void setSymbolGrid(Integer[][] symbolGrid){ this.grid[1] = symbolGrid; }
 	public void setSymbol(int x, int y, int s){ this.grid[1][x][y] = s; }
 	public void setTarget(char c){ this.target = c; }
-	public void setRobot(char color, int x, int y){
-		if(!(x_r == -1 || y_r == -1 || x_b == -1 || y_b == -1 || x_j == -1 || y_j == -1 || x_v == -1 || y_v == -1)){
-			switch(color){
-			case 'r':
-				grid[1][x_r][y_r] = 0;
-				break;
-			case 'b':
-				grid[1][x_b][y_b] = 0;
-				break;
-			case 'j':
-				grid[1][x_j][y_j] = 0;
-				break;
-			case 'v':
-				grid[1][x_v][y_v] = 0;
-				break;
-			default:;
-			}
-		}
+	public void setRobot(Robot r){
+		if(r.getColor() == 2)
+			this.rouge = r.clone();
+		if(r.getColor() == 3)
+			this.bleu = r.clone();
+		if(r.getColor() == 4)
+			this.vert = r;
+		if(r.getColor() == 5)
+			this.jaune = r;
+	}
+	public void initializeRobot(char color, int x, int y){
 		switch(color){
 		case 'r':
-			x_r = x;
-			y_r = y;
-			rouge = new Robot(x_r, y_r);
-			grid[1][x_r][y_r] = 21;
+			rouge = new Robot(x, y, 2);
+			grid[1][x][y] = 21;
 			break;
 		case 'b':
-			x_b = x;
-			y_b = y;
-			bleu = new Robot(x_b, y_b);
-			grid[1][x_b][y_b] = 31;
+			bleu = new Robot(x, y, 3);
+			grid[1][x][y] = 31;
 			break;
 		case 'j':
-			x_j = x;
-			y_j = y;
-			jaune = new Robot(x_j, y_j);
-			grid[1][x_j][y_j] = 51;
+			jaune = new Robot(x, y, 5);
+			grid[1][x][y] = 51;
 			break;
 		case 'v':
-			x_v = x;
-			y_v = y;
-			vert = new Robot(x_v, y_v);
-			grid[1][x_v][y_v] = 41;
+			vert = new Robot(x, y, 4);
+			grid[1][x][y] = 41;
 			break;
 		default:;
 		}
 	}
 
-	public Integer[][][] clone(){
-		Integer[][][] clone = new Integer[2][grid[0].length][grid[0][0].length];
+	public Grid clone(){
+		Grid clone = new Grid();
+		Integer[][][] matrixClone = new Integer[2][grid[0].length][grid[0][0].length];
+		
 		for(int j = 0; j < grid[0][0].length; j++){
 			for(int i = 0; i < grid[0].length; i++){
-				clone[0][i][j] = grid[0][i][j];
+				matrixClone[0][i][j] = new Integer(grid[0][i][j]);
 			}
 		}
 		for(int j = 0; j < grid[1][0].length; j++){
 			for(int i = 0; i < grid[1].length; i++){
-				clone[0][i][j] = grid[1][i][j];
+				matrixClone[1][i][j] = new Integer(grid[1][i][j]);
 			}
-		}
+		}// 4 3 5 1 2 3 3
+		clone.setGrid(matrixClone[0]);
+		clone.setSymbolGrid(matrixClone[1]);
+		clone.setTarget(this.target);
+		clone.initializeRobot('r', new Integer(rouge.x), new Integer(rouge.y));
+		clone.initializeRobot('b', new Integer(bleu.x), new Integer(bleu.y));
+		clone.initializeRobot('j', new Integer(jaune.x), new Integer(jaune.y));
+		clone.initializeRobot('v', new Integer(vert.x), new Integer(vert.y));
+		
 		return clone;
 	}
 

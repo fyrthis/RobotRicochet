@@ -9,12 +9,14 @@ public class Robot {
 	int x;
 	int y;
 	String moves;
+	int color;
 	
 	ArrayList<Point> path;
 	
-	public Robot(int x, int y){
+	public Robot(int x, int y, int color){
 		this.x = x;
 		this.y = y;
+		this.color = color;
 		path = new ArrayList<Point>();
 		addPointToPath(x,y);
 	}
@@ -26,10 +28,11 @@ public class Robot {
 
 	public int getX(){ return this.x; }
 	public int getY(){ return this.y; }
+	public int getColor(){ return this.color; }
 	public String getMoves(){ return this.moves; }
 	public ArrayList<Point> getPath(){ return this.path; }
 
 	public Robot clone(){
-		return new Robot(this.x, this.y);
+		return new Robot(this.x, this.y, this.color);
 	}
 }

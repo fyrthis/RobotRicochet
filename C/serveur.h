@@ -65,6 +65,7 @@ extern pthread_cond_t  cond_got_task;//   = PTHREAD_COND_INITIALIZER;
 
 
 int phase = REFLEXION;
+int animationTime = 0;
 
 // Variable qui permet de savoir si le client qui se connecte
 // est le premier ou pas

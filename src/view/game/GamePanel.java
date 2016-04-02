@@ -61,7 +61,7 @@ public class GamePanel extends AbstractGamePanel {
 		score = new ScoreBoardPanel(model);
 		score.setPreferredSize(new Dimension(0, 0));
 		interaction = new InteractionPanel(model);
-		interaction.setPanelByPhase(Phase.INITIALISATION);
+		interaction.setPanelByPhase(Phase.NOGAME);
 		interaction.setPreferredSize(new Dimension(0, 0));
 		chat = new ChatPanel(model.getChatModel());
 		

@@ -147,23 +147,73 @@ void printEncheresState(pthread_mutex_t* p_mutex) {
     
 }
 
-int checkEnchere(char *username, int betSolution, pthread_mutex_t* p_mutex) {
-    if(encheres==NULL) {
-        printf("Aucune enchere.\n");
-    } else {
-        int i = 0;
-        enchere_t * enchere = encheres;
-        enchere_t * last_enchere = NULL;
-        while(enchere != NULL && strcmp(username, enchere->name)!=0) {
-            last_enchere = enchere;
-            enchere = enchere->next;
-            i++;
-        }
-        //Ici, soit enchere est NULL, soit on a trouvé la meilleure enchère actuelle du joueur
-        if(enchere==NULL) return -1;
-        if(betSolution>=enchere->nbCoups) return -2;
-        //Ici, on sait que notre enchère est correcte, on peut l'insérer
-        return 0;
+int checkEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p_mutex) {
+    if(pthread_mutex_lock(p_mutex) != 0) {
+        perror("(Server:enchere.c:addEnchere) : on addEnchere, cannot lock the first p_mutex\n");
     }
-    return -3;
+    enchere_t * enchere = encheres;
+    enchere_t * previous_enchere = NULL;
+    while(enchere != NULL && strcmp(username, enchere->name)!=0) {
+        previous_enchere = enchere;
+        enchere = enchere->next;
+    }
+    // si la nouvelle solution n'améliore pas celle de son enchère précédente, alors il ne faut pas ajouter sa nouvelle solution
+    if(enchere != NULL && enchere->nbCoups <= betSolution){
+        if(pthread_mutex_unlock(p_mutex) != 0) {
+            perror("(Server:enchere.c:addEnchere) : cannot unlock the final p_mutex, in the end of the instanciation of the new enchere\n");
+        }
+        return -1;
+    }
+    else {
+        //  si enchere != NULL && enchere->nbCoup > betSolution : il faut supprimer l'ancienne enchere qui devient obsolète
+        if(enchere != NULL && enchere->nbCoups > betSolution){
+            previous_enchere->next = enchere->next;
+            free(enchere);
+        }
+        
+        // A partir de cet endroit, on est sûr que la liste d'enchère ne contient pas d'enchère du même joueur:
+        //      - soit on l'a supprimée car elle n'améliore pas le score;
+        //      - soit on l'a gardée car la nouvelle solution n'est pas meilleure que celle de l'enchère,
+        //   auquel cas on est déjà sorti de la fonction
+        // donc dans tous les cas, il ne nous reste plus qu'à ajouter la nouvelle enchère à la liste
+        enchere = encheres;
+        previous_enchere = NULL;
+
+        /*nouvelle enchère*/
+        enchere_t * new_enchere = (enchere_t*)malloc(sizeof(enchere_t));
+        if (!new_enchere) {
+            fprintf(stderr, "(Server:enchere.c:addEnchere) : out of memory.\n");
+            exit(1);
+        }
+        new_enchere->socket = socket;
+        new_enchere->name = username;
+        new_enchere->nbCoups = betSolution;
+        new_enchere->next = NULL;
+        nbEncheres++;
+
+        while(enchere != NULL && enchere->nbCoups < betSolution) {
+            previous_enchere = enchere;
+            enchere = enchere->next;
+        }
+        if(previous_enchere == NULL)
+            addEnchere(socket, username, betSolution, p_mutex);
+        else {
+            // Si il y a déjà une enchère avec le nombre de coups, on accepte pas la solution
+            if(enchere->nbCoups == betSolution){
+                if(pthread_mutex_unlock(p_mutex) != 0) {
+                    perror("(Server:enchere.c:addEnchere) : cannot unlock the final p_mutex, in the end of the instanciation of the new enchere\n");
+                }
+                return -1;
+            }
+            else {
+                previous_enchere->next = new_enchere;
+                new_enchere->next = enchere;    
+            }
+        }
+    }
+
+    if(pthread_mutex_unlock(p_mutex) != 0) {
+        perror("(Server:enchere.c:addEnchere) : cannot unlock the final p_mutex, in the end of the instanciation of the new enchere\n");
+    }
+    return 0;
 }

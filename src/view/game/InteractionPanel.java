@@ -7,12 +7,13 @@ import java.util.Observer;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import launcher.Debug;
-import model.GameState;
 import model.Model;
 import utils.Phase;
 import view.View;
@@ -56,7 +57,10 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 		// pour le moment aucune distinction entre la phase d'initialisation et la phase de reflexion
 		// plus tard peut etre faire une sorte de chargement/initialisation de la map avant de passer
 		// a la phase de reflexion
-		if(phase == Phase.INITIALISATION){
+		if(phase == Phase.NOGAME){
+			JOptionPane.showMessageDialog(this, "Démarrage de la partie... ");
+		}
+		else if(phase == Phase.INITIALISATION){
 			if(model.getGameState().getTour() > 1){
 				this.remove(movesLabel);
 				this.remove(movesEntry);
@@ -118,7 +122,7 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 		
 			betButton.addActionListener(this);
 		}
-		else if(phase == Phase.RESOLUTION){
+		else if(phase == Phase.RESOLUTION_ACTIVE || phase == Phase.RESOLUTION_PASSIVE){
 			this.remove(betLabel);
 			this.remove(betEntry);
 			this.remove(betButton);
@@ -145,8 +149,13 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 							.addComponent(resolveButton)
 							.addComponent(backButton)));
 		
-			System.out.println("======== PHASE DE RESOLUTION ========");
 			resolveButton.addActionListener(this);
+			
+			if(phase == Phase.RESOLUTION_PASSIVE){
+				movesLabel.setEnabled(false);
+				movesEntry.setEnabled(false);
+				resolveButton.setEnabled(false);
+			}
 		}
 	}
 	

@@ -43,14 +43,18 @@ public class StatePanel extends JPanel implements Observer {
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		Phase phase = (Phase) arg;
-		if(phase == Phase.INITIALISATION)
+		if(phase == Phase.NOGAME)
+			txt = "En attente de joueurs...";
+		else if(phase == Phase.INITIALISATION)
 			txt = "Phase d'initialisation";
 		else if(phase == Phase.REFLEXION)
 			txt = "Phase de reflexion";
 		else if(phase == Phase.ENCHERE)
 			txt = "Phase d'enchère";
-		else if(phase == Phase.RESOLUTION)
-			txt = "Phase de résolution";
+		else if(phase == Phase.RESOLUTION_ACTIVE)
+			txt = "Phase de résolution - C'est à vous de jouer !";
+		else if(phase == Phase.RESOLUTION_PASSIVE)
+			txt = "Phase de résolution - ...attendez votre tour !";
 		stateTitle.setText(txt);
 	}
 }

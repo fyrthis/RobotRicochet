@@ -45,8 +45,7 @@ public class View extends JFrame {
 
 		gamePane = new GamePanel(model);
 		model.getGameState().setTour(1);
-		model.getGameState().setActiveSolution(-1);
-
+		
 		add(gamePane);
 		gamePane.setVisible(false);
 		try {

@@ -61,12 +61,10 @@ public class Controller implements Observer {
 		String solution = String.valueOf(solutionInt);
 		System.out.println("(Client:"+Debug.curName+")(Controller:sendSolution) sent : SOLUTION/"+name+"/"+solution+"/");
 		try {
-			Client.getInstance().sendMessage("SOLUTION/"+name+"/"+solution+"/");
 			// On va enregistrer le contexte de l'état courant du jeu au moment où un joueur envoie une solution
 			// durant la phase de reflexion
 			LocalPlayer.getInstance().setNbCoups(solutionInt);
-			model.getGameState().setActiveSolution(solutionInt);
-			model.getGameState().setActivePlayer(name);
+			Client.getInstance().sendMessage("SOLUTION/"+name+"/"+solution+"/");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,8 +81,8 @@ public class Controller implements Observer {
 				System.err.println("(Client:"+Debug.curName+")(Controller:sendBet) cannot send : ENCHERE/"+name+"/"+solution+"/ because the new solution is not better than the current one !");
 			}
 			else {
-				Client.getInstance().sendMessage("ENCHERE/"+name+"/"+solution+"/");
 				LocalPlayer.getInstance().setNbCoups(solutionInt);
+				Client.getInstance().sendMessage("ENCHERE/"+name+"/"+solution+"/");
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

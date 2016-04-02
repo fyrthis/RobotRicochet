@@ -2,6 +2,7 @@ package controller;
 
 import java.util.Observable;
 
+import players.Players.LocalPlayer;
 import model.Model;
 import utils.Phase;
 import utils.Tools;
@@ -19,11 +20,7 @@ class Resolution extends Observable  {
 	//SASOLUTION/user/deplacements/
 	//(S -> C) Signalement aux clients de la solution proposée
 	void saSolution(String user, String deplacements) {
-		model.getPlayers().get(user);
 		model.getGameState().setSolutionMoves(deplacements);
-		//TODO : Lancer l'animation des robots des cas déplacements.
-		setChanged();
-		notifyObservers(deplacements);
 	}
 	
 	//BONNE/
@@ -48,21 +45,11 @@ class Resolution extends Observable  {
 	//MAUVAISE/user/
 	//(S -> C) Solution refusée (à tous les clients), nouvelle phase de résolution, 'user' joueur actif.
 	void mauvaise(String user) {
-		//Update le score : Comme on est dans la phase finale, on sait que quelqu'un a trouvé la solution
-		String moves = model.getGameState().getSolutionMoves();
-		for(int i = 0; i < moves.length(); i+=2){
-			char color = moves.charAt(i);
-			char direction = moves.charAt(i+1);
-
-			try {
-				model.getGrid().moveRobot(color, direction);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		model.getGrid().update();
-		model.getPlayers().get(user);
+		// Le client est le joueur actif : il est autorisé à envoyer sa réponse
+		if(LocalPlayer.getInstance().getName().equals(user))
+			model.getGameState().setPhase(Phase.RESOLUTION_ACTIVE);
+		else
+			model.getGameState().setPhase(Phase.RESOLUTION_PASSIVE);
 	}
 	
 	//FINRESO/
@@ -76,6 +63,7 @@ class Resolution extends Observable  {
 	//(S -> C) Temps dépassé, nouvelle phase de résolution, 'user' joueur actif.
 	void tropLong(String user) {
 		//idem que mauvaise
+		mauvaise(user);
 	}
 	
 }

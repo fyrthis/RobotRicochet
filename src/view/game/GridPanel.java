@@ -261,7 +261,8 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 		/**********
 		 *  PATH  *
 		 **********/
-		if(model.getGameState().getPhase() == Phase.RESOLUTION){
+		if(model.getGameState().getPhase() == Phase.RESOLUTION_ACTIVE 
+		|| model.getGameState().getPhase() == Phase.RESOLUTION_PASSIVE){
 			paintRedPath(g2);
 			paintBluePath(g2);
 			paintYellowPath(g2);

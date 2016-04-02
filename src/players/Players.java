@@ -37,7 +37,13 @@ public class Players extends Observable {
 	 */
 	public static class LocalPlayer extends AbstractPlayer {
 		
-		private LocalPlayer(){ super(); }
+		private boolean isActive;
+		
+		private LocalPlayer()
+		{
+			super();
+			isActive = false;
+		}
 		private static class LocalPlayerHolder
 		{		
 			private final static LocalPlayer instance = new LocalPlayer(); 

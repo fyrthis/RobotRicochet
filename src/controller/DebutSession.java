@@ -2,6 +2,7 @@ package controller;
 
 import java.util.Observable;
 
+import utils.Phase;
 import model.Model;
 
 class DebutSession extends Observable {
@@ -21,6 +22,7 @@ class DebutSession extends Observable {
 	void session(String plateau, int sizeX, int sizeY) {
 		model.getGrid().setGrid(model.getGridFromBuffer(sizeX, sizeY, plateau));
 		model.getGrid().update();
+		model.getGameState().setPhase(Phase.INITIALISATION);
 	}
 	
 	//VAINQUEUR/bilan/

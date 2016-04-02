@@ -145,7 +145,7 @@ void handle_request(task_t * task, int thread_id) {
                 return;
             }
             //3. Verification validité de l'enchère (différente de celle des autres joueurs, inf. à celle qu'il a proposé auparavant)
-            if(/*checkEnchere(username, betSolution)!=0){*/betSolution >= encheres->nbCoups) {
+            if(checkEnchere(client->socket, username, betSolution, &enchere_mutex)!=0){
                 fprintf(stderr, "Enchère reçue de la part de %s refusee.\n", username);
                 send_echec(username, task->socket);
             }
@@ -254,7 +254,7 @@ void handle_request(task_t * task, int thread_id) {
 void * handle_tasks_loop(void* data) {
 
     //puts("(Server:serveur.c:handle_tasks_loop) : handle_task_loop began");
-    task_t * taskWeDo;
+     task_t * taskWeDo;
     int thread_id = *((int*)data);
     printf("(Server:serveur.c:handle_task_loop) : Thread %d created and ready\n", thread_id);
     /* lock the mutex, to access the tasks list exclusively. */

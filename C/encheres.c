@@ -187,6 +187,9 @@ int checkEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p
         /*nouvelle enchère*/
         enchere_t * new_enchere = (enchere_t*)malloc(sizeof(enchere_t));
         if (!new_enchere) {
+            if(pthread_mutex_unlock(p_mutex) != 0) {
+                perror("(Server:enchere.c:addEnchere) : cannot unlock the final p_mutex, in the end of the instanciation of the new enchere\n");
+            }  
             fprintf(stderr, "(Server:enchere.c:addEnchere) : out of memory.\n");
             exit(1);
         }

@@ -151,14 +151,18 @@ int checkEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p
     if(pthread_mutex_lock(p_mutex) != 0) {
         perror("(Server:enchere.c:addEnchere) : on addEnchere, cannot lock the first p_mutex\n");
     }
+    fprintf(stderr, "\t======> debug 1\n");
     enchere_t * enchere = encheres;
     enchere_t * previous_enchere = NULL;
+    fprintf(stderr, "\t======> debug 2\n");
     while(enchere != NULL && strcmp(username, enchere->name)!=0) {
         previous_enchere = enchere;
         enchere = enchere->next;
     }
+    fprintf(stderr, "\t======> debug 3\n");
     // si la nouvelle solution n'améliore pas celle de son enchère précédente, alors il ne faut pas ajouter sa nouvelle solution
     if(enchere != NULL && enchere->nbCoups <= betSolution){
+        fprintf(stderr, "\t======> debug 3.1\n");
         if(pthread_mutex_unlock(p_mutex) != 0) {
             perror("(Server:enchere.c:addEnchere) : cannot unlock the final p_mutex, in the end of the instanciation of the new enchere\n");
         }
@@ -171,6 +175,7 @@ int checkEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p
             free(enchere);
         }
         
+        fprintf(stderr, "\t======> debug 3.2\n");
         // A partir de cet endroit, on est sûr que la liste d'enchère ne contient pas d'enchère du même joueur:
         //      - soit on l'a supprimée car elle n'améliore pas le score;
         //      - soit on l'a gardée car la nouvelle solution n'est pas meilleure que celle de l'enchère,
@@ -191,21 +196,29 @@ int checkEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p
         new_enchere->next = NULL;
         nbEncheres++;
 
-        while(enchere != NULL && enchere->nbCoups < betSolution) {
+        fprintf(stderr, "\t======> debug 6\n");
+        while(enchere != NULL && enchere->nbCoups < new_enchere->nbCoups) {
             previous_enchere = enchere;
             enchere = enchere->next;
         }
-        if(previous_enchere == NULL)
+        
+        fprintf(stderr, "\t======> debug 7\n");
+        if(previous_enchere == NULL){
             addEnchere(socket, username, betSolution, p_mutex);
+            fprintf(stderr, "\t======> debug 7.1\n");
+        }
         else {
             // Si il y a déjà une enchère avec le nombre de coups, on accepte pas la solution
-            if(enchere->nbCoups == betSolution){
+            fprintf(stderr, "\t======> debug 7.2\n");
+            if(previous_enchere->nbCoups == new_enchere->nbCoups){
+                fprintf(stderr, "\t======> debug 7.2.1\n");
                 if(pthread_mutex_unlock(p_mutex) != 0) {
                     perror("(Server:enchere.c:addEnchere) : cannot unlock the final p_mutex, in the end of the instanciation of the new enchere\n");
                 }
                 return -1;
             }
             else {
+                fprintf(stderr, "\t======> debug 7.2.2\n");
                 previous_enchere->next = new_enchere;
                 new_enchere->next = enchere;    
             }
@@ -215,5 +228,6 @@ int checkEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p
     if(pthread_mutex_unlock(p_mutex) != 0) {
         perror("(Server:enchere.c:addEnchere) : cannot unlock the final p_mutex, in the end of the instanciation of the new enchere\n");
     }
+    fprintf(stderr, "\t======> debug end\n");
     return 0;
 }

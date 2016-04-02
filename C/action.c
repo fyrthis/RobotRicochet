@@ -87,7 +87,7 @@ int send_bienvenue(char *username, int socket) {
         perror("(Server:action.c:bienvenue) :  cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "(Server:action.c:bienvenue) : Message send to %s : %s\n", username, msg);
+        fprintf(stderr, "(Server:action.c:bienvenue) : %s to %s\n",msg, username);
     }
 
     return 0;
@@ -124,7 +124,6 @@ int send_deconnexion(char *username, int socket) {
 
 // S -> C : SESSION/plateau/
 int sendGrid(char *gridStr, int socket) {
-    fprintf(stderr, "(Server:action.c:sendGrid) : Sending the Grid:\n");
    /*Here is the mistake : do not put a char** into a strcat !!*/
     char *msg = (char*)calloc(4096, sizeof(char));
     
@@ -150,7 +149,7 @@ int sendGrid(char *gridStr, int socket) {
 
 // S -> C : TOUR/enigme/bilan
 int sendEnigmaBilan(char *enigma, char *bilan) {
-    fprintf(stderr, "(Server:action.c:sendEnigmaBilan) : Sending the Enigma:\n");
+    fprintf(stderr, "(Server:action.c:sendEnigmaBilan) : Enigma send!\n");
     char *msg = (char*)calloc(strlen(enigma)+strlen(bilan)+9, sizeof(char));
     
     sprintf(msg, "TOUR/%s/%s/\n", enigma, bilan);
@@ -171,7 +170,7 @@ int tuAsTrouve(int socket) {
     	perror("(Server:action.c:tuAsTrouve) : Erreur in tuAsTrouve, cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "(Server:action.c:tuAsTrouve) : Message send to activePlayer : %s\n", msgActivePlayer);
+        fprintf(stderr, "(Server:action.c:tuAsTrouve) : %s\n", msgActivePlayer);
     }
     return 0;
 }
@@ -209,7 +208,7 @@ int send_validation(int socket) {
         perror("(Server:action.c:validation) : Erreur in validation(), cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "(Server:action.c:validation) : Message send to the bet sender : %s\n", msg);
+        fprintf(stderr, "(Server:action.c:validation) : %s\n", msg);
     }
     return 0;
 }
@@ -223,7 +222,7 @@ int send_echec(char *username, int socket) {
         perror("(Server:action.c:echec) : Erreur in echec(), cannot write on socket\n");
     }
     else {
-        fprintf(stderr, "(Server:action.c:echec) : Message send to the bet sender : %s\n", msg);
+        fprintf(stderr, "(Server:action.c:echec) : %s\n", msg);
     }
     return 0;
 }

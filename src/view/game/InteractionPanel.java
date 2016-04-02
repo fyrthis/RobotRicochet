@@ -126,8 +126,12 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			this.remove(betLabel);
 			this.remove(betEntry);
 			this.remove(betButton);
+			
+			this.remove(movesLabel);
+			this.remove(movesEntry);
+			this.remove(resolveButton);
 
-	        movesLabel = new JLabel("Veuillez envoyer votre solution décrivant les déplacements des robots : ");
+	        movesLabel = new JLabel("Veuillez envoyer vos déplacements : ");
 			movesEntry = new JTextField(50);
 			resolveButton = new JButton("Send your moves");
 			

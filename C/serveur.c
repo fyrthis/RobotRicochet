@@ -145,15 +145,15 @@ void handle_request(task_t * task, int thread_id) {
                 return;
             }
             //3. Verification validité de l'enchère (différente de celle des autres joueurs, inf. à celle qu'il a proposé auparavant)
-            if(checkEnchere(client->socket, username, betSolution, &enchere_mutex)!=0){
-                fprintf(stderr, "Enchère reçue de la part de %s refusee.\n", username);
-                send_echec(username, task->socket);
-            }
-            else {
+            if(checkEnchere(client->socket, username, betSolution, &enchere_mutex)==0){
                 fprintf(stderr, "Enchère reçue de la part de %s acceptee.\n", username);
                 send_validation(task->socket);
                 send_nouvelleEnchere(username, betSolution);
-                addEnchere(task->socket, username, betSolution, &enchere_mutex);
+                //addEnchere(task->socket, username, betSolution, &enchere_mutex);
+            }
+            else {
+                fprintf(stderr, "Enchère reçue de la part de %s refusee.\n", username);
+                send_echec(username, task->socket);
             }
             pthread_mutex_unlock(&enchere_mutex);
         }

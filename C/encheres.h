@@ -25,6 +25,7 @@ extern int nbEncheres;
 void addEnchere(int socket, char *name, int solution, pthread_mutex_t* p_mutex);
 enchere_t * getEnchere(pthread_mutex_t* p_mutex);
 void rmEncheres(pthread_mutex_t* p_mutex);
+int alreadyExist(enchere_t* new_enchere, pthread_mutex_t* p_mutex);
 void printEncheresState(pthread_mutex_t* p_mutex);
 int checkEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p_mutex);
 

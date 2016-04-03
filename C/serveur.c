@@ -199,7 +199,7 @@ void handle_request(task_t * task, int thread_id) {
                 pthread_mutex_unlock(&ticTac_mutex);
                 puts("La solution est acceptée !\n");
             } else if(encheres!=NULL) { //Erronée et quelqu'un d'autre peut proposer une solution
-                send_mauvaiseSolution(enchere->name);
+                send_mauvaiseSolution(enchere->next->name);
                 pthread_mutex_lock(&ticTac_mutex);
                 ticTac = 0;
                 pthread_mutex_unlock(&ticTac_mutex);

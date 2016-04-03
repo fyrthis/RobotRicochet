@@ -39,6 +39,7 @@ class Enchere extends Observable {
 	void finEnchere(String user, String coups) {
 		if(LocalPlayer.getInstance().getName().equals(user))
 			model.getGameState().setPhase(Phase.RESOLUTION_ACTIVE);
-		model.getGameState().setPhase(Phase.RESOLUTION_PASSIVE);
+		else
+			model.getGameState().setPhase(Phase.RESOLUTION_PASSIVE);
 	}
 }

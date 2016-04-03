@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import players.Players.LocalPlayer;
 import launcher.Debug;
 import model.Model;
 import utils.Phase;
@@ -127,9 +128,12 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			this.remove(betEntry);
 			this.remove(betButton);
 			
-			this.remove(movesLabel);
-			this.remove(movesEntry);
-			this.remove(resolveButton);
+			if(movesLabel != null)
+				this.remove(movesLabel);
+			if(movesEntry != null)
+				this.remove(movesEntry);
+			if(resolveButton != null)
+				this.remove(resolveButton);
 
 	        movesLabel = new JLabel("Veuillez envoyer vos déplacements : ");
 			movesEntry = new JTextField(50);
@@ -159,6 +163,10 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 				movesLabel.setEnabled(false);
 				movesEntry.setEnabled(false);
 				resolveButton.setEnabled(false);
+				
+				if(LocalPlayer.getInstance().hasAlreadyProposed()){
+					JOptionPane.showMessageDialog(this, "Votre solution est mauvaise...\nVous êtes mauvais...\nVous êtes exclu du tour parce que vous êtes mauvais...\n");
+				}
 			}
 		}
 	}

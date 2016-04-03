@@ -140,30 +140,31 @@ int isValideSolution(char *deplacements, int nbCoupsAnnonce) {
         index+=2;
     }
 
-    fprintf(stderr, "La cible se trouve en [%d,%d]\n", x_cible, y_cible);
+    fprintf(stderr, "La cible se trouve en [%d,%d] - %c - \n", x_cible, y_cible, lettreCible);
     fprintf(stderr, "r[%d,%d] - b[%d,%d] - j[%d,%d] - v[%d,%d]\n", x_r,y_r,x_b,y_b,x_j,y_j,x_v,y_v);
 
-    switch(lettreCible){
-        case 'R':
-            if(x_r != x_cible || y_r != y_cible)
-                return -1;
-            break;
-        case 'B':
-            if(x_b != x_cible || y_b != y_cible)
-                return -1;
-            break;
-        case 'J':
-            if(x_j != x_cible || y_j != y_cible)
-                return -1;
-            break;
-        case 'V':
-            if(x_v != x_cible || y_v != y_cible)
-                return -1;
-            break;
-        default:;
-    }
     fprintf(stderr, "Le nombre de coups de la solution : %d\n", nbCoups);
-    if(nbCoupsAnnonce-nbCoups>=0) return 0;
+    if(nbCoupsAnnonce-nbCoups>=0){
+        switch(lettreCible){
+            case 'R':
+                if(x_r == x_cible && y_r == y_cible)
+                    return 0;
+                break;
+            case 'B':
+                if(x_b == x_cible || y_b == y_cible)
+                    return 0;
+                break;
+            case 'J':
+                if(x_j == x_cible || y_j == y_cible)
+                    return 0;
+                break;
+            case 'V':
+                if(x_v == x_cible || y_v == y_cible)
+                    return 0;
+                break;
+            default:;
+        }
+    }
     return -1;
 }
 

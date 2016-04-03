@@ -46,8 +46,10 @@ class Resolution extends Observable  {
 	//(S -> C) Solution refusée (à tous les clients), nouvelle phase de résolution, 'user' joueur actif.
 	void mauvaise(String user) {
 		// Le client est le joueur actif : il est autorisé à envoyer sa réponse
-		if(LocalPlayer.getInstance().getName().equals(user))
+		if(LocalPlayer.getInstance().getName().equals(user)){
+			LocalPlayer.getInstance().isProposing();
 			model.getGameState().setPhase(Phase.RESOLUTION_ACTIVE);
+		}
 		else
 			model.getGameState().setPhase(Phase.RESOLUTION_PASSIVE);
 	}

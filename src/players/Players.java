@@ -37,12 +37,12 @@ public class Players extends Observable {
 	 */
 	public static class LocalPlayer extends AbstractPlayer {
 		
-		private boolean isActive;
+		private boolean hasAlreadyProposed;
 		
 		private LocalPlayer()
 		{
 			super();
-			isActive = false;
+			hasAlreadyProposed = false;
 		}
 		private static class LocalPlayerHolder
 		{		
@@ -58,6 +58,9 @@ public class Players extends Observable {
 			setChanged();
 			notifyObservers();
 		}
+		
+		public void isProposing(){ this.hasAlreadyProposed = true; }
+		public boolean hasAlreadyProposed(){ return this.hasAlreadyProposed; }
 		
 		@Override public boolean isConnected() { return true;	}
 		@Override public void setConnected(boolean b) { System.err.println("(Client:"+Debug.curName+")(Players.LocalPlayer:setConnected)Cannot change local player connection state"); }

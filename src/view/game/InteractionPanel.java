@@ -62,11 +62,22 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			JOptionPane.showMessageDialog(this, "Démarrage de la partie... ");
 		}
 		else if(phase == Phase.INITIALISATION){
-			if(model.getGameState().getTour() > 1){
-				this.remove(movesLabel);
-				this.remove(movesEntry);
-				this.remove(resolveButton);	
-			}
+			backButton = null;
+			
+			// Phase de reflexion
+			sendSolutionButton = null;
+			solutionEntry = null;
+			setSolutionLabel = null;
+			
+			// Phase d'enchere
+			betButton = null;
+			betEntry = null;
+			betLabel = null;
+			
+			// Phase de resolution
+			resolveButton = null;
+			movesEntry = null;
+			movesLabel = null;
 
 	        setSolutionLabel = new JLabel("Annoncez votre solution : ");
 			solutionEntry = new JTextField(5);

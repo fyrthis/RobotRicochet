@@ -128,12 +128,30 @@ int isValideSolution(char *deplacements, int nbCoupsAnnonce) {
     char color = ' ';
     char direction = ' ';
 
+    // Il faut stocker les coordonnées initiales des robots pour les replacer si la solution est mauvaise
+    int initial_x_r = x_r;
+    int initial_y_r = y_r;
+    int initial_x_b = x_b;
+    int initial_y_b = y_b;
+    int initial_x_j = x_j;
+    int initial_y_j = y_j;
+    int initial_x_v = x_v;
+    int initial_y_v = y_v;
+
     while(index < strlen(deplacements)){
         color = deplacements[index];
         direction = deplacements[index+1];
         fprintf(stderr, "r[%d,%d] - b[%d,%d] - j[%d,%d] - v[%d,%d] \t - \tcolor : %c, direction : %c\n",x_r,y_r,x_b,y_b,x_j,y_j,x_v,y_v, color, direction);
         if(moveRobot(color, direction) != 0) {
             perror("error in calling moveRobot function - wrong move");
+            x_r = initial_x_r;
+            y_r = initial_y_r;
+            x_b = initial_x_b;
+            y_b = initial_y_b;
+            x_j = initial_x_j;
+            y_j = initial_y_j;
+            x_v = initial_x_v;
+            y_v = initial_y_v;
             return -2;
         }
         nbCoups++;
@@ -144,27 +162,37 @@ int isValideSolution(char *deplacements, int nbCoupsAnnonce) {
     fprintf(stderr, "r[%d,%d] - b[%d,%d] - j[%d,%d] - v[%d,%d]\n", x_r,y_r,x_b,y_b,x_j,y_j,x_v,y_v);
 
     fprintf(stderr, "Le nombre de coups de la solution : %d\n", nbCoups);
-    if(nbCoupsAnnonce-nbCoups>=0){
+    fprintf(stderr, "Le nombre de coups de proposée lors de l'enchère : %d\n", nbCoupsAnnonce);
+    if((nbCoupsAnnonce-nbCoups)>=0){
         switch(lettreCible){
-            case 'R':
+            case 'r':
                 if(x_r == x_cible && y_r == y_cible)
                     return 0;
                 break;
-            case 'B':
-                if(x_b == x_cible || y_b == y_cible)
+            case 'b':
+                if(x_b == x_cible && y_b == y_cible)
                     return 0;
                 break;
-            case 'J':
-                if(x_j == x_cible || y_j == y_cible)
+            case 'j':
+                if(x_j == x_cible && y_j == y_cible)
                     return 0;
                 break;
-            case 'V':
-                if(x_v == x_cible || y_v == y_cible)
+            case 'v':
+                if(x_v == x_cible && y_v == y_cible)
                     return 0;
                 break;
             default:;
         }
     }
+    x_r = initial_x_r;
+    y_r = initial_y_r;
+    x_b = initial_x_b;
+    y_b = initial_y_b;
+    x_j = initial_x_j;
+    y_j = initial_y_j;
+    x_v = initial_x_v;
+    y_v = initial_y_v;
+    fprintf(stderr, "La solution n'est pas valide...\n");
     return -1;
 }
 

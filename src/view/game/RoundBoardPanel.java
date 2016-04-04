@@ -11,9 +11,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 
 import model.Model;
 import players.AbstractPlayer;
+import players.Players.LocalPlayer;
 
 public class RoundBoardPanel extends JPanel implements Observer {
 	private static final long serialVersionUID = 6809209443540036320L;
@@ -71,29 +76,34 @@ public class RoundBoardPanel extends JPanel implements Observer {
 			}
 		}
 		//On trie les joueurs.
-		sortByScore(sortConnectedPlayers);
+		sortByCoups(sortConnectedPlayers);
 
 		//On remplit le JTable
 		Object[][] data = new Object[sortConnectedPlayers.size()][3];
 		int i=0;
+		int index_localPlayer = 0;
 		for(AbstractPlayer p : players) {
+			if(p.getName().equals(LocalPlayer.getInstance().getName()))
+				index_localPlayer = i;
 			data[i][0] = (i+1)+".";
 			data[i][1] = p.getName();
 			data[i][2] = p.getCoups();
 			i++;
 		}
 
-		//On enlèvve l'ancien
+		//On enlève l'ancien
 		JViewport viewport = scrollPane.getViewport(); 
 		viewport.remove(table);
 
 		//On ajoute le nouveau
 		table = new JTable(data, columnNames);
+		
+		//table.prepareRenderer(table.getCellRenderer(index_localPlayer, 1), index_localPlayer, 1).setBackground(Color.GRAY);
 		table.setFillsViewportHeight(true);
 		viewport.add(table);
 	}
 
-	private void sortByScore(ArrayList<AbstractPlayer> list) {
+	private void sortByCoups(ArrayList<AbstractPlayer> list) {
 		int n = list.size();
 		for(int i = 2; i<n; i++)
 			for (int k = i; k > 1 && list.get(k).getCoups() < list.get(k-1).getCoups(); k--) 

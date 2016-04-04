@@ -55,15 +55,17 @@ public class Players extends Observable {
 		
 		public void setName(String n) {
 			name = n;
-			setChanged();
-			notifyObservers();
+			//setChanged();
+			//notifyObservers();
 		}
 		
 		public void isProposing(){ this.hasAlreadyProposed = true; }
+		public void notProposedYet() { this.hasAlreadyProposed = false; }
 		public boolean hasAlreadyProposed(){ return this.hasAlreadyProposed; }
 		
 		@Override public boolean isConnected() { return true;	}
 		@Override public void setConnected(boolean b) { System.err.println("(Client:"+Debug.curName+")(Players.LocalPlayer:setConnected)Cannot change local player connection state"); }
+
 	}
 
 	ArrayList<AbstractPlayer> players;
@@ -81,7 +83,11 @@ public class Players extends Observable {
 	}
 	
 	public ArrayList<AbstractPlayer> getPlayersAndLocal() {
-		ArrayList<AbstractPlayer> a = new ArrayList<>(players);
+		ArrayList<AbstractPlayer> a = new ArrayList<>();
+		for(AbstractPlayer p : players){
+			if(!LocalPlayer.getInstance().getName().equals(p.getName()))
+				a.add(p);
+		}
 		a.add(LocalPlayer.getInstance());
 		return a;
 	}
@@ -103,7 +109,7 @@ public class Players extends Observable {
 	
 	public AbstractPlayer get(String name) {
 		for(AbstractPlayer p : players) {
-			if(p.name == name)
+			if(p.name.equals(name))
 				return p;
 		}
 		return null;
@@ -137,10 +143,23 @@ public class Players extends Observable {
 	}
 	
 	// Mise a jour de la liste des joueurs et de leur score
-	public void updatePlayersList(String name, int score){
-		AbstractPlayer p;
-		if((p = get(name)) != null) {
+	public void updatePlayersScore(String name, int score){
+		AbstractPlayer p = get(name);
+		if(p != null) {
 			p.setScore(p.getScore()+score);
+		} else {
+			p = new Player(name);
+			players.add(p);
+		}
+		this.setChanged();
+		this.notifyObservers(players);
+	}
+	
+	// Mise a jour de la liste des joueurs et de leur score
+	public void updatePlayersNbCoups(String name, int nbCoups){
+		AbstractPlayer p = get(name);
+		if(p != null) {
+			p.setNbCoups(nbCoups);
 		} else {
 			p = new Player(name);
 			players.add(p);

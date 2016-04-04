@@ -49,7 +49,7 @@ public class ScoreBoardPanel extends JPanel implements Observer {
         
 
 		Object[][] data = {
-				{"1.", "Smith", new Integer(28)}
+				{"", "", new Integer(28)}
 		};
 		
 		table = new JTable(data, columnNames);

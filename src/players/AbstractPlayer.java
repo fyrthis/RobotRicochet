@@ -16,5 +16,8 @@ public abstract class AbstractPlayer extends Observable {
 	public void setScore(int score) { this.score = score; }
 	public void setNbCoups(int nbCoups) { this.nbCoups = nbCoups; }
 
+	public String toString(){
+		return "\t" + name + " | score : " + score + " | nbCoups : " + nbCoups;
+	}
 
 }

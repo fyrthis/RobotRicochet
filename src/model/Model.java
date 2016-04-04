@@ -2,7 +2,6 @@ package model;
 
 import java.util.StringTokenizer;
 
-import players.AbstractPlayer;
 import players.Players;
 
 public class Model {
@@ -166,7 +165,7 @@ public class Model {
 			scorePlayer = Integer.parseInt(playerTokens[1]);
 			
 			// Il faut mettre à jour la liste des joueurs qui participent a la partie courante
-			players.updatePlayersList(playerName, scorePlayer);			
+			players.updatePlayersScore(playerName, scorePlayer);
 		}
 	}
 }

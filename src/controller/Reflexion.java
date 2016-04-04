@@ -1,12 +1,11 @@
 package controller;
 
-import utils.Phase;
-
 import java.util.Observable;
 
-import players.Players.LocalPlayer;
 import launcher.Debug;
 import model.Model;
+import players.Players.LocalPlayer;
+import utils.Phase;
 
 class Reflexion extends Observable {
 
@@ -19,6 +18,7 @@ class Reflexion extends Observable {
 	//TOUR/enigme/bilan/
 	//(S -> C) Bilan de la session, description de l'énigme courante et initialisation de la phase de réflexion
 	void tour(String enigme, String bilan) {
+		LocalPlayer.getInstance().notProposedYet();
 		model.getGameState().setPhase(Phase.REFLEXION);
 		model.setRobotsFromBuffer(enigme);
 		if(bilan != null && bilan.length()>0)
@@ -30,6 +30,7 @@ class Reflexion extends Observable {
 	//(S -> C) Validation de l'annonce par le serveur, fin de la phase de réflexion
 	void tuAsTrouve() {
 		model.getGameState().addEnchere(LocalPlayer.getInstance().getName(), LocalPlayer.getInstance().getCoups());
+		model.getPlayers().updatePlayersNbCoups(LocalPlayer.getInstance().getName(), LocalPlayer.getInstance().getCoups());
 		model.getGameState().setPhase(Phase.ENCHERE);
 		System.out.println("(Client:"+Debug.curName+")(Reflexion:tuAsTrouve) sending notifyObserver in tuAsTrouve function...");
 	}
@@ -40,6 +41,7 @@ class Reflexion extends Observable {
 		// il faut aussi initialiser ses propres valeurs d'enchères
 		LocalPlayer.getInstance().setNbCoups(-1);
 		model.getGameState().addEnchere(user, Integer.valueOf(coups));
+		model.getPlayers().updatePlayersNbCoups(user, Integer.valueOf(coups));
 		model.getGameState().setPhase(Phase.ENCHERE);
 		System.out.println("(Client:"+Debug.curName+")(Reflexion:ilATrouve)sending notifyObserver in ilATrouve function...");
 	}

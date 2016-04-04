@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import model.Model;
-import model.Timer;
+//import model.Timer;
 
 public class TimerPanel extends JPanel implements Observer {
 	private static final long serialVersionUID = -650268772194032577L;

@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import utils.Phase;
-import model.GameState;
 import model.Model;
 
 public class StatePanel extends JPanel implements Observer {

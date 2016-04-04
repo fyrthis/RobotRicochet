@@ -11,11 +11,8 @@ import javax.swing.JPanel;
 import launcher.Debug;
 import model.Model;
 import utils.AskNameDialog;
-import utils.Phase;
-import utils.WaitNextGameDialog;
 import view.game.AbstractGamePanel;
 import view.game.GamePanel;
-import view.game.NonGamerPanel;
 import view.welcome.HomePagePanel;
 import controller.Controller;
 

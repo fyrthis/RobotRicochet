@@ -5,7 +5,6 @@ import java.util.Observable;
 import players.Players.LocalPlayer;
 import model.Model;
 import utils.Phase;
-import utils.Tools;
 
 class Resolution extends Observable  {
 	

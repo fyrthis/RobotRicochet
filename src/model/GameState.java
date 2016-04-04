@@ -3,7 +3,6 @@ package model;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Observable;
-import java.util.Observer;
 
 import launcher.Debug;
 import utils.Phase;

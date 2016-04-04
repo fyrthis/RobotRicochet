@@ -19,7 +19,9 @@ class Enchere extends Observable {
 	//(S -> C) Validation de l'enchère
 	void validation() {
 		model.getGameState().addEnchere(LocalPlayer.getInstance().getName(), LocalPlayer.getInstance().getCoups());
-		System.out.println("LocalPLayer instance changed : " + LocalPlayer.getInstance().getName()+" - "+ LocalPlayer.getInstance().getCoups());
+		model.getPlayers().updatePlayersScore(LocalPlayer.getInstance().getName(), LocalPlayer.getInstance().getCoups());
+		model.getPlayers().updatePlayersNbCoups(LocalPlayer.getInstance().getName(), LocalPlayer.getInstance().getCoups());
+		System.out.println("LocalPLayer's new nbCoups solution : " + LocalPlayer.getInstance().getName()+" - "+ LocalPlayer.getInstance().getCoups());
 	}
 	
 	//ECHEC/user/
@@ -32,6 +34,8 @@ class Enchere extends Observable {
 	//(S ->C) Signalement à un client d'une enchère.
 	void nouvelleEnchere(String user, String coups) {
 		model.getGameState().addEnchere(user, Integer.valueOf(coups));
+		model.getPlayers().updatePlayersNbCoups(user, Integer.valueOf(coups));
+		System.out.println("Nouvelle enchere reçue de : " + user + " - " + coups);
 	}
 	
 	//FINENCHERE/user/coups/

@@ -449,7 +449,8 @@ void * session_loop(void* nbToursSession) {
         /**********************
         *  FIN D'UNE SESSION  *
         **********************/
-        send_vainqueur();
+        if(cptTours == nbTours)
+            send_vainqueur();
         cptSessions++;
     }
     //Unreachable code bellow

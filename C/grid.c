@@ -226,7 +226,7 @@ int moveRobot(char color, char direction) {
                     if(grid[x_r][y_r] == 1 || grid[x_r][y_r] ==  3 || grid[x_r][y_r] == 5 || grid[x_r][y_r] == 7
                         || grid[x_r][y_r] == 9 || grid[x_r][y_r] == 11 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 15){
                         fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_x = x_r;
                     // on teste toutes les cases à partir de la case au dessus du robot
@@ -248,7 +248,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_r][y_r] == 12 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
-                        return -1;   
+                        return 0;   
                     }                    
                     tmp_x = x_r;
                     // on teste toutes les cases à partir de la case en dessous du robot
@@ -269,7 +269,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_r][y_r] == 12 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_y = y_r;
                     // on teste toutes les cases à partir de la case à gauche du robot
@@ -291,7 +291,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_r][y_r] == 10 || grid[x_r][y_r] == 11 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_y = y_r;
                     // on teste toutes les cases à partir de la case à droite du robot
@@ -318,7 +318,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_b][y_b] == 9 || grid[x_b][y_b] == 11 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_x = x_b;
                     // on teste toutes les cases à partir de la case au dessus du robot
@@ -340,7 +340,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_b][y_b] == 12 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_x = x_b;
                     // on teste toutes les cases à partir de la case en dessous du robot
@@ -362,7 +362,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_b][y_b] == 12 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_y = y_b;
                     // on teste toutes les cases à partir de la case à gauche du robot
@@ -383,7 +383,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_b][y_b] == 10 || grid[x_b][y_b] == 11 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_y = y_b;
                     // on teste toutes les cases à partir de la case à droite du robot
@@ -410,7 +410,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_j][y_j] == 9 || grid[x_j][y_j] == 11 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_x = x_j;
                     // on teste toutes les cases à partir de la case au dessus du robot
@@ -432,7 +432,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_j][y_j] == 12 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_x = x_j;
                     // on teste toutes les cases à partir de la case en dessous du robot
@@ -454,7 +454,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_j][y_j] == 12 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_y = y_j;
                     // on teste toutes les cases à partir de la case à gauche du robot
@@ -476,7 +476,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_j][y_j] == 10 || grid[x_j][y_j] == 11 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_y = y_j;
                     // on teste toutes les cases à partir de la case à droite du robot
@@ -503,7 +503,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_v][y_v] == 9 || grid[x_v][y_v] == 11 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_x = x_v;
                     // on teste toutes les cases à partir de la case au dessus du robot
@@ -525,7 +525,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_v][y_v] == 12 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_x = x_v;
                     // on teste toutes les cases à partir de la case en dessous du robot
@@ -547,7 +547,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_v][y_v] == 12 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_y = y_v;
                     // on teste toutes les cases à partir de la case à gauche du robot
@@ -569,7 +569,7 @@ int moveRobot(char color, char direction) {
                         || grid[x_v][y_v] == 10 || grid[x_v][y_v] == 11 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
                     {
                         fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
-                        return -1;   
+                        return 0;   
                     }
                     tmp_y = y_v;
                     // on teste toutes les cases à partir de la case à droite du robot

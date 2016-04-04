@@ -22,8 +22,8 @@ public class Players extends Observable {
 		Player(String name) {
 			super();
 			this.name=name;
-			score = -1;
-			nbCoups = -1;
+			score = 0;
+			nbCoups = 0;
 			isConnected = true;
 		}
 		@Override public boolean isConnected() { return isConnected; }

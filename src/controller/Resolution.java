@@ -39,6 +39,7 @@ class Resolution extends Observable  {
 				e.printStackTrace();
 			}
 		}
+		model.getGameState().setPhase(Phase.INITIALISATION);
 	}
 	
 	//MAUVAISE/user/

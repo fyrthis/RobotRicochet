@@ -73,6 +73,9 @@ void handle_request(task_t * task, int thread_id) {
             
             //S -> C : SESSION/plateau/
             sendGrid(gridStr, task->socket);
+            if(bilan != NULL)
+                send_vainqueur();
+            resetNbCoups();
         }
 
 
@@ -198,6 +201,8 @@ void handle_request(task_t * task, int thread_id) {
                 ticTac=timer+1;
                 pthread_mutex_unlock(&ticTac_mutex);
                 puts("La solution est acceptée !\n");
+                updateBilan(enchere);
+                setBilanCurrentSession();
             } else if(encheres!=NULL) { //Erronée et quelqu'un d'autre peut proposer une solution
                 send_mauvaiseSolution(enchere->next->name);
                 pthread_mutex_lock(&ticTac_mutex);
@@ -288,7 +293,7 @@ void * handle_tasks_loop(void* data) {
 
 
 void * session_loop(void* nbToursSession) {
-    int cptTours = 1;
+    cptTours = 1;
     int cptSessions = 1;
 
     while(1) {
@@ -310,7 +315,7 @@ void * session_loop(void* nbToursSession) {
         /***************************
         *  INITIALISATION SESSION  *
         ***************************/
-        cptTours = 0;
+        cptTours = 1;
         pthread_mutex_lock(&ticTac_mutex);
         ticTac=0;
         pthread_mutex_unlock(&ticTac_mutex);
@@ -342,8 +347,10 @@ void * session_loop(void* nbToursSession) {
             phase=REFLEXION;
             //S -> C : TOUR/enigme/
             setEnigma();
+            resetNbCoups();
             setBilanCurrentSession();
             sendEnigmaBilan(enigma, bilan);
+
 
 
             /********************
@@ -419,6 +426,7 @@ void * session_loop(void* nbToursSession) {
                         if(encheres!=NULL) { //Si ilreste quelqu'un avec une solution possible
                             send_tropLong(encheres->name);
                         }else {
+                            send_finReso();
                             pthread_mutex_unlock(&enchere_mutex);
                             break;
                         }
@@ -441,6 +449,7 @@ void * session_loop(void* nbToursSession) {
         /**********************
         *  FIN D'UNE SESSION  *
         **********************/
+        send_vainqueur();
         cptSessions++;
     }
     //Unreachable code bellow
@@ -573,7 +582,6 @@ int main(int argc, char* argv[]) {
                         printf("(Server:serveur.c:main) : error on socket %d\n", client->socket); //The client with the corrupted file descriptor socket.
                         printClientsState(&client_mutex);
                         client->isConnected = 1;
-                        nbClientsConnecte--;
                         //We must kick it from the fd_set structure (named readfds ? or testfds ? both ?)
                         FD_CLR(client->socket, &readfds);
                         FD_CLR(client->socket, &testfds);
@@ -583,6 +591,7 @@ int main(int argc, char* argv[]) {
                     client = client->next;
                     i++;
                 }
+                pthread_mutex_unlock(&client_mutex);
                 continue;
             }
             pthread_mutex_unlock(&client_mutex);

@@ -25,7 +25,7 @@ public class RoundBoardPanel extends JPanel implements Observer {
 	JTextField title;
 	String[] columnNames = {"Pos.",
 			"Player",
-	"Score"};
+	"Nombre de Coups"};
 	GridBagConstraints c = new GridBagConstraints();
 	JTable table;;
 	JScrollPane scrollPane;
@@ -82,7 +82,7 @@ public class RoundBoardPanel extends JPanel implements Observer {
 		Object[][] data = new Object[sortConnectedPlayers.size()][3];
 		int i=0;
 		int index_localPlayer = 0;
-		for(AbstractPlayer p : players) {
+		for(AbstractPlayer p : sortConnectedPlayers) {
 			if(p.getName().equals(LocalPlayer.getInstance().getName()))
 				index_localPlayer = i;
 			data[i][0] = (i+1)+".";

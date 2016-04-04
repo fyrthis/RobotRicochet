@@ -28,7 +28,7 @@ class DebutSession extends Observable {
 	//VAINQUEUR/bilan/
 	//(S -> C) Fin de la session courante, scores finaux de la session
 	void vainqueur(String bilan) {
-		
+		model.setBilanCurrentSession(bilan);
 	}
 
 }

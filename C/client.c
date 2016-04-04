@@ -171,6 +171,28 @@ client_t *findClient(char * name) {
     return NULL;
 }
 
+/******************************************
+*                                         *
+*   Permet de mettre à jour le bilan de   *
+*   la partie en cours et de remettre le  *
+*   compteur du nombre de coups à 0       *
+*                                         *
+******************************************/
+
+void updateBilan(enchere_t *best_enchere) {
+    client_t *winner = findClient(best_enchere->name);
+    winner->score++;
+}
+
+void resetNbCoups() {
+    client_t *client = clients;
+    while(client != NULL){
+        client->nbCoups = 0;
+        client = client->next;
+    }
+}
+
+
 
 void printClientsState(pthread_mutex_t* p_mutex) {
     if(pthread_mutex_lock(p_mutex) != 0) {

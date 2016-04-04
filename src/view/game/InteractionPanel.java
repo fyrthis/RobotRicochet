@@ -61,22 +61,32 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			JOptionPane.showMessageDialog(this, "Démarrage de la partie... ");
 		}
 		else if(phase == Phase.INITIALISATION){
-			backButton = null;
+			if(backButton != null)
+				remove(backButton);
 			
 			// Phase de reflexion
-			sendSolutionButton = null;
-			solutionEntry = null;
-			setSolutionLabel = null;
+			if(sendSolutionButton != null)
+				remove(sendSolutionButton);
+			if(solutionEntry != null)
+				remove(solutionEntry);
+			if(setSolutionLabel != null)
+				remove(setSolutionLabel);
 			
 			// Phase d'enchere
-			betButton = null;
-			betEntry = null;
-			betLabel = null;
+			if(betButton != null)
+				remove(betButton);
+			if(betEntry != null)
+				remove(betEntry);
+			if(betLabel != null)
+				remove(betLabel);
 			
 			// Phase de resolution
-			resolveButton = null;
-			movesEntry = null;
-			movesLabel = null;
+			if(resolveButton != null)
+				remove(resolveButton);
+			if(movesEntry != null)
+				remove(movesEntry);
+			if(movesLabel != null)
+				remove(movesLabel);
 
 	        setSolutionLabel = new JLabel("Annoncez votre solution : ");
 			solutionEntry = new JTextField(5);
@@ -226,6 +236,9 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			System.out.println("\tresolveButton pushed");
 			View window = (View) this.getParent().getParent().getParent().getParent().getParent();
 			String movesStr = movesEntry.getText();
+			if(movesStr == null){
+				System.err.println("(Client:"+Debug.curName+")(InteractionPanel:actionPerformed) Erreur: vous tentez d'envoyer une solution vide !");
+			}
 			System.out.println("\tMOVE : " + movesStr);
 			if(movesStr == null){
 				System.err.println("(Client:"+Debug.curName+")(InteractionPanel:actionPerformed)Erreur: vous n'avez rien déplacé !");

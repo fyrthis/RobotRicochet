@@ -32,6 +32,8 @@ int send_deconnexion(char *username, int socket);
 
 // Grid Part
 int sendGrid(char *gridStr, int socket);
+int send_vainqueur();
+
 // Enigma + Bilan Parts
 int sendEnigmaBilan(char *enigma, char *bilan);
 int tuAsTrouve(int socket);

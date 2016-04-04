@@ -14,6 +14,7 @@ client_t *activePlayer;
 char *enigma;
 char *bilan;
 extern int nbTours;
+extern int cptTours;
 //char *activePlayer;
 int setEnigma();
 int setBilanCurrentSession();

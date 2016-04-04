@@ -23,16 +23,7 @@ public class Grid extends Observable {
 	public void setSymbolGrid(Integer[][] symbolGrid){ this.grid[1] = symbolGrid; }
 	public void setSymbol(int x, int y, int s){ this.grid[1][x][y] = s; }
 	public void setTarget(char c){ this.target = c; }
-	public void setRobot(Robot r){
-		if(r.getColor() == 2)
-			this.rouge = r.clone();
-		if(r.getColor() == 3)
-			this.bleu = r.clone();
-		if(r.getColor() == 4)
-			this.vert = r;
-		if(r.getColor() == 5)
-			this.jaune = r;
-	}
+
 	public void initializeRobot(char color, int x, int y){
 		switch(color){
 		case 'r':
@@ -51,10 +42,11 @@ public class Grid extends Observable {
 			vert = new Robot(x, y, 4);
 			grid[1][x][y] = 41;
 			break;
-		default:;
+		default: System.out.println("probleme instantiation robot null initializeRobot");
 		}
 	}
 
+	@Override
 	public Grid clone(){
 		Grid clone = new Grid();
 		Integer[][][] matrixClone = new Integer[2][grid[0].length][grid[0][0].length];
@@ -115,6 +107,7 @@ public class Grid extends Observable {
 			robot = vert;
 			val = 41;
 			break;
+		default: System.out.println("probleme instantiation robot null moveRobot");
 		}
 		
 		robot.addPointToPath(robot.x, robot.y);

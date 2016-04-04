@@ -59,6 +59,8 @@ public class GameState extends Observable {
 			Timer.getInstance().setTime(TIME_ENCHERE);
 		if(phase == Phase.RESOLUTION_ACTIVE || phase == Phase.RESOLUTION_PASSIVE)
 			Timer.getInstance().setTime(TIME_RESOLUTION);
+		
+		System.out.println(" ======== " + p.toString() + " ======== ");
 
 		this.setChanged();
 		this.notifyObservers(GameState.phase);

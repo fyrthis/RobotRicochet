@@ -9,7 +9,7 @@
 #include <pthread.h>     /* pthread functions and data structures     */
 
 #include "utils.h"
-
+#include "encheres.h"
 
 extern pthread_mutex_t client_mutex;
 
@@ -35,6 +35,8 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex);
 void rmClient(int socket, pthread_mutex_t* p_mutex);
 void disconnectClient(char *username, pthread_mutex_t* p_mutex);
 client_t *findClient(char * name);
+void updateBilan(enchere_t *best_enchere);
+void resetNbCoups();
 void printClientsState(pthread_mutex_t* p_mutex);
 int checkIdPlayer(client_t *client, int socket, pthread_mutex_t* p_mutex);
 

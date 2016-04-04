@@ -21,7 +21,10 @@ public class Robot {
 	}
 	
 	public void setMoves(String moves) { this.moves = moves; }
-	public void addPointToPath(int x, int y) { this.path.add(new Point(x, y)); }
+	public void addPointToPath(int x, int y) {
+		System.out.println("["+x+","+y+"]");
+		this.path.add(new Point(x, y)); 
+	}
 	public void setX(int x){ this.x = x; }
 	public void setY(int y){ this.y = y; }
 
@@ -31,6 +34,7 @@ public class Robot {
 	public String getMoves(){ return this.moves; }
 	public ArrayList<Point> getPath(){ return this.path; }
 
+	@Override
 	public Robot clone(){
 		return new Robot(this.x, this.y, this.color);
 	}

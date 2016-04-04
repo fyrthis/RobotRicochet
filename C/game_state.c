@@ -18,7 +18,8 @@ int y_cible = -1;
 
 char lettreCible = ' ';
 
-int nbTours = 10;
+int nbTours = 3;
+int cptTours = 0;
 
 /*********************************************
 *                                            *
@@ -130,7 +131,7 @@ int setBilanCurrentSession(){
 
     client_t* first_client = clients;
 
-    int nbTourLength = getIntLength(nbTours);
+    int nbTourLength = getIntLength(cptTours);
     int sizeAll = nbTourLength;
     while(clients != NULL){
         int scoreLength = getIntLength(clients->score);
@@ -140,26 +141,21 @@ int setBilanCurrentSession(){
 
     clients = first_client;
     bilan = (char *) malloc(sizeAll+1);
-    sprintf(bilan, "%d", nbTours);    
+    sprintf(bilan, "%d", cptTours);    
     fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : %s", bilan);
-    fprintf(stderr, "SizeAll : %d\n", sizeAll);
-    fprintf(stderr, "toto1\n");
     while(clients != NULL){
         int scoreLength = getIntLength(clients->score);
-        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : scoreLength : %d\tclientNameLength : %zu\n", scoreLength, strlen(clients->name));
-        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : name : %s\n", clients->name);
+        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : name : %s\tscoreLength : %d\tclientNameLength : %zu\n", clients->name, scoreLength, strlen(clients->name));
         char *user = (char *)calloc(sizeof(char), strlen(clients->name)+scoreLength+4);
         sprintf(user, "(%s,%d)", clients->name, clients->score);
-        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : userBuffer : %s\n", user);
-        
+        fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : userBuffer : %s\n", user);       
         sprintf(bilan,"%s%s", bilan, user);
         clients = clients->next;
     }
 
     clients = first_client;
 
-    fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : Bilan : %s\n", bilan);
-    fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : Bilan current session set!\n");
+    fprintf(stderr, "(Server:serveur.c:setBilanCurrentSession) : Bilan current session set : %s\n", bilan);
 
     return 0;
 }

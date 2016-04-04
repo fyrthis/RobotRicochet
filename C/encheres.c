@@ -169,12 +169,19 @@ void printEncheresState(pthread_mutex_t* p_mutex) {
 
 int checkEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p_mutex) {
     if(pthread_mutex_lock(p_mutex) != 0) {
-        perror("(Server:enchere.c:addEnchere) : on addEnchere, cannot lock the first p_mutex\n");
+        perror("(Server:enchere.c:addEnchere) : on checkEnchere, cannot lock the first p_mutex\n");
     }
-    fprintf(stderr, "\t======> debug 1\n");
+
+    if(betSolution <= 0){
+        if(pthread_mutex_unlock(p_mutex) != 0) {
+            perror("(Server:enchere.c:addEnchere) : on checkEnchere, cannot unlock the first p_mutex\n");
+        }
+        fprintf(stderr, "(Server:enchere.c:addEnchere) : on checkEnchere, the solution is negative...\n");
+        return -1;
+    }
+    fprintf(stderr, "\t======> DEBUG START\n");
     enchere_t * enchere = encheres;
     enchere_t * previous_enchere = NULL;
-    fprintf(stderr, "\t======> debug 2\n");
     while(enchere != NULL && strcmp(username, enchere->name)!=0) {
         previous_enchere = enchere;
         enchere = enchere->next;
@@ -190,7 +197,7 @@ int checkEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p
     }
     else {
         // Si le joueur essaye d'enchérir une valeur déjà existante, alors on le lui interdit
-        if(enchere != NULL && alreadyExist(betSolution, p_mutex) == 0){
+        if(alreadyExist(betSolution, p_mutex) == 0){
             if(pthread_mutex_unlock(p_mutex) != 0) {
                 perror("(Server:enchere.c:addEnchere) : cannot unlock the final p_mutex, in the end of the instanciation of the new enchere\n");
             }

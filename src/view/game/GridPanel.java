@@ -534,7 +534,7 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 				Point p2 = redPath.get(i_point+1);
 				g2.setColor(Color.RED);
 				g2.drawLine((int)((p1.x+0.5)*spriteLength), (int)((p1.y+0.5)*spriteLength),
-						(int)((p2.x+0.5)*spriteLength), (int)((p1.y+0.5)*spriteLength));
+						(int)((p2.x+0.5)*spriteLength), (int)((p2.y+0.5)*spriteLength));
 			}
 		}
 		if(redPath.size() != 0)

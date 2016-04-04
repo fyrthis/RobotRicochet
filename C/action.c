@@ -7,10 +7,11 @@
 
 
 int sendMessageAll(char *msg, pthread_mutex_t* p_mutex) {
+    puts("debug 1\n");
     if(pthread_mutex_lock(p_mutex) != 0){
     	perror("(Server:action.c:sendMessageAll) : Error on sendMessageAll, cannot lock the p_mutex\n");
     }
-    
+    puts("si ce debug echoue, :'(\n");
     if(clients==NULL) {
         printf("(Server:action.c:sendMessageAll) : Aucun client. Should never happened\n");
     //} else if(clients) { TODO : Si qu'un client
@@ -136,6 +137,15 @@ int sendGrid(char *gridStr, int socket) {
         fprintf(stderr, "(Server:action.c:sendGrid) : Grid send!\n");
     }
 
+    return 0;
+}
+
+// S -> C : VAINQUEUR/bilan/
+int send_vainqueur(){
+    char *msg = (char*)calloc(strlen(bilan)+13, sizeof(char));
+    sprintf(msg, "VAINQUEUR/%s/\n", bilan);
+    printf("bilan : %s", msg);
+    sendMessageAll(msg, &client_mutex);
     return 0;
 }
 

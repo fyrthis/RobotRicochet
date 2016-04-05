@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -16,12 +17,7 @@ public class TimerPanel extends JPanel implements Observer {
 	//private JTextField timerField;
 	Model model;
 
-
-	/**
-	 * 
-	 */
-
-	private JTextField title = new JTextField("Timer : ");;
+	private JLabel title = new JLabel("Timer : ");
 	private JTextField time;
 
 	public TimerPanel(Model model){
@@ -29,7 +25,7 @@ public class TimerPanel extends JPanel implements Observer {
 		this.model = model;
 		
 		setBackground(Color.blue);
-
+		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;

@@ -35,9 +35,10 @@ public class ChatPanel extends JPanel implements ActionListener, Observer {
 		
 		this.chatModel = chatModel;
 		
-		msgArea = new JTextArea(5, 20);
+		msgArea = new JTextArea(3, 20);
 		msgArea.setEditable(false);
 		scrollPane = new JScrollPane(msgArea);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		msgEntry = new JTextField();
 		sendMsgButton = new JButton("Envoyer un message");
 		
@@ -46,14 +47,30 @@ public class ChatPanel extends JPanel implements ActionListener, Observer {
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		
 		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 1.0;
-		c.weighty = 1.0;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 100;
+		c.weighty = 20;
+		c.gridwidth = 100;
+		c.gridheight = 20;
 		add(scrollPane, c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 21;
+		c.weightx = 90;
+		c.weighty = 7;
+		c.gridwidth = 90;
+		c.gridheight = 7;
 		add(msgEntry, c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 91;
+		c.gridy = 21;
+		c.weightx = 9;
+		c.weighty = 7;
+		c.gridwidth = 9;
+		c.gridheight = 7;
 		add(sendMsgButton, c);
 		
 		setBackground(Color.red);

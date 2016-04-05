@@ -31,7 +31,7 @@ public class View extends JFrame {
 		connectionWindow = new HomePagePanel(controller);
 		this.add(connectionWindow);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(800, 600);
+		setSize(1000, 750);
 		setVisible(true);
 	}
 

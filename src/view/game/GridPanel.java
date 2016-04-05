@@ -24,6 +24,9 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	
 	
 	private static final long serialVersionUID = 1L;
+	
+	private int marginTop;
+	private int marginLeft;
 
 	private Tile[][] grid;
 	private Tile[][] symbolsGrid;

@@ -1,5 +1,6 @@
 package utils;
 
+import java.awt.Color;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -45,13 +46,13 @@ public class Tools {
 		for(int i = 0; i < matrixClone[1].length; i++){
 			for(int j = 0; j < matrixClone[1][0].length; j++){
 				if(matrixClone[1][i][j] == 21)
-					rouge = new Robot(i,j,2);
+					rouge = new Robot(i,j,Color.red);
 				if(matrixClone[1][i][j] == 31)
-					bleu = new Robot(i,j,3);
+					bleu = new Robot(i,j,Color.blue);
 				if(matrixClone[1][i][j] == 41)
-					vert = new Robot(i,j,4);
+					vert = new Robot(i,j,Color.green);
 				if(matrixClone[1][i][j] == 51)
-					jaune = new Robot(i,j,5);
+					jaune = new Robot(i,j,Color.yellow);
 			}
 		}
 		

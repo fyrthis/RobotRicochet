@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import model.Model;
+import model.Robot;
 import utils.Phase;
 import view.game.map.Tile;
 
@@ -266,10 +267,10 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 		 **********/
 		if(model.getGameState().getPhase() == Phase.RESOLUTION_ACTIVE 
 		|| model.getGameState().getPhase() == Phase.RESOLUTION_PASSIVE){
-			paintRedPath(g2);
-			paintBluePath(g2);
-			paintYellowPath(g2);
-			paintGreenPath(g2);
+			paintPath(g2, model.getGrid().getRedRobot());
+			paintPath(g2, model.getGrid().getBlueRobot());
+			paintPath(g2, model.getGrid().getGreenRobot());
+			paintPath(g2, model.getGrid().getYellowRobot());
 		}
 		
 		/******************
@@ -529,69 +530,20 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 		}
 	}
 	
-	public void paintRedPath(Graphics2D g2){
-		ArrayList<Point> redPath = model.getGrid().getRedRobot().getPath();
-		if(redPath.size() > 1){
-			for(int i_point = 0; i_point < redPath.size()-1; i_point++){
-				Point p1 = redPath.get(i_point);
-				Point p2 = redPath.get(i_point+1);
-				g2.setColor(Color.RED);
+	public void paintPath(Graphics2D g2, Robot robot) {
+		ArrayList<Point> path = robot.getPath();
+		if(path.size() > 1){
+			for(int i_point = 0; i_point < path.size()-1; i_point++){
+				Point p1 = path.get(i_point);
+				Point p2 = path.get(i_point+1);
+				g2.setColor(robot.getColor());
 				g2.drawLine((int)((p1.x+0.5)*spriteLength), (int)((p1.y+0.5)*spriteLength),
 						(int)((p2.x+0.5)*spriteLength), (int)((p2.y+0.5)*spriteLength));
 			}
 		}
-		if(redPath.size() != 0)
-			g2.drawLine((int)((redPath.get(redPath.size()-1).x+0.5)*spriteLength), (int)((redPath.get(redPath.size()-1).y+0.5)*spriteLength),
-					(int)((model.getGrid().getRedRobot().getX()+0.5)*spriteLength), (int)((model.getGrid().getRedRobot().getY()+0.5)*spriteLength));
-	}
-	
-	public void paintBluePath(Graphics2D g2){
-		ArrayList<Point> bluePath = model.getGrid().getBlueRobot().getPath();
-		if(bluePath.size() > 1){
-			for(int i_point = 0; i_point < bluePath.size()-1; i_point++){
-				Point p1 = bluePath.get(i_point);
-				Point p2 = bluePath.get(i_point+1);
-				g2.setColor(Color.BLUE);
-				g2.drawLine((int)((p1.x+0.5)*spriteLength), (int)((p1.y+0.5)*spriteLength),
-						(int)((p2.x+0.5)*spriteLength), (int)((p2.y+0.5)*spriteLength));
-			}
-		}
-		if(bluePath.size() != 0)
-			g2.drawLine((int)((bluePath.get(bluePath.size()-1).x+0.5)*spriteLength), (int)((bluePath.get(bluePath.size()-1).y+0.5)*spriteLength),
-					(int)((model.getGrid().getBlueRobot().getX()+0.5)*spriteLength), (int)((model.getGrid().getBlueRobot().getY()+0.5)*spriteLength));
-
-	}
-	
-	public void paintYellowPath(Graphics2D g2){
-		ArrayList<Point> yellowPath = model.getGrid().getYellowRobot().getPath();
-		if(yellowPath.size() > 1){
-			for(int i_point = 0; i_point < yellowPath.size()-1; i_point++){
-				Point p1 = yellowPath.get(i_point);
-				Point p2 = yellowPath.get(i_point+1);
-				g2.setColor(Color.YELLOW);
-				g2.drawLine((int)((p1.x+0.5)*spriteLength), (int)((p1.y+0.5)*spriteLength),
-						(int)((p2.x+0.5)*spriteLength), (int)((p2.y+0.5)*spriteLength));
-			}
-		}
-		if(yellowPath.size() != 0)
-			g2.drawLine((int)((yellowPath.get(yellowPath.size()-1).x+0.5)*spriteLength), (int)((yellowPath.get(yellowPath.size()-1).y+0.5)*spriteLength),
-					(int)((model.getGrid().getYellowRobot().getX()+0.5)*spriteLength), (int)((model.getGrid().getYellowRobot().getY()+0.5)*spriteLength));
-	}
-	
-	public void paintGreenPath(Graphics2D g2){
-		ArrayList<Point> greenPath = model.getGrid().getGreenRobot().getPath();
-		if(greenPath.size() > 1){
-			for(int i_point = 0; i_point < greenPath.size()-1; i_point++){
-				Point p1 = greenPath.get(i_point);
-				Point p2 = greenPath.get(i_point+1);
-				g2.setColor(Color.GREEN);
-				g2.drawLine((int)((p1.x+0.5)*spriteLength), (int)((p1.y+0.5)*spriteLength),
-						(int)((p2.x+0.5)*spriteLength), (int)((p2.y+0.5)*spriteLength));
-			}
-		}
-		if(greenPath.size() != 0)
-			g2.drawLine((int)((greenPath.get(greenPath.size()-1).x+0.5)*spriteLength), (int)((greenPath.get(greenPath.size()-1).y+0.5)*spriteLength),
-					(int)((model.getGrid().getGreenRobot().getX()+0.5)*spriteLength), (int)((model.getGrid().getGreenRobot().getY()+0.5)*spriteLength));
+		if(path.size() != 0)
+			g2.drawLine((int)((path.get(path.size()-1).x+0.5)*spriteLength), (int)((path.get(path.size()-1).y+0.5)*spriteLength),
+					(int)((robot.getX()+0.5)*spriteLength), (int)((robot.getY()+0.5)*spriteLength));
 	}
 	
 	public String toString(){

@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -8,11 +9,11 @@ public class Robot {
 	int x;
 	int y;
 	String moves;
-	int color;
+	Color color;
 	
 	ArrayList<Point> path;
 	
-	public Robot(int x, int y, int color){
+	public Robot(int x, int y, Color color){
 		this.x = x;
 		this.y = y;
 		this.color = color;
@@ -30,7 +31,7 @@ public class Robot {
 
 	public int getX(){ return this.x; }
 	public int getY(){ return this.y; }
-	public int getColor(){ return this.color; }
+	public Color getColor(){ return this.color; }
 	public String getMoves(){ return this.moves; }
 	public ArrayList<Point> getPath(){ return this.path; }
 

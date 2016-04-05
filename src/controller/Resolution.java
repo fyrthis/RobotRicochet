@@ -39,7 +39,8 @@ class Resolution extends Observable  {
 				e.printStackTrace();
 			}
 		}
-		model.getPlayers().updatePlayersScore(model.getGameState().getActivePlayer(), model.getPlayers().get(model.getGameState().getActivePlayer()).getScore()+1);
+		String winner = model.getGameState().getActivePlayer();
+		model.getPlayers().updatePlayersScore(winner, model.getPlayers().get(winner).getScore()+1);
 		model.getGameState().setPhase(Phase.INITIALISATION);
 	}
 	

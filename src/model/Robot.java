@@ -23,7 +23,6 @@ public class Robot {
 	
 	public void setMoves(String moves) { this.moves = moves; }
 	public void addPointToPath(int x, int y) {
-		System.out.println("["+x+","+y+"]");
 		this.path.add(new Point(x, y)); 
 	}
 	public void setX(int x){ this.x = x; }

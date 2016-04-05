@@ -32,7 +32,6 @@ class Reflexion extends Observable {
 		model.getGameState().addEnchere(LocalPlayer.getInstance().getName(), LocalPlayer.getInstance().getCoups());
 		model.getPlayers().updatePlayersNbCoups(LocalPlayer.getInstance().getName(), LocalPlayer.getInstance().getCoups());
 		model.getGameState().setPhase(Phase.ENCHERE);
-		System.out.println("(Client:"+Debug.curName+")(Reflexion:tuAsTrouve) sending notifyObserver in tuAsTrouve function...");
 	}
 	
 	//ILATROUVE/user/coups/
@@ -43,7 +42,6 @@ class Reflexion extends Observable {
 		model.getGameState().addEnchere(user, Integer.valueOf(coups));
 		model.getPlayers().updatePlayersNbCoups(user, Integer.valueOf(coups));
 		model.getGameState().setPhase(Phase.ENCHERE);
-		System.out.println("(Client:"+Debug.curName+")(Reflexion:ilATrouve)sending notifyObserver in ilATrouve function...");
 	}
 	
 	//FINREFLEXION/

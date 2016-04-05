@@ -28,7 +28,6 @@ public class Tools {
 			char direction = moves.charAt(i+1);
 
 			int nbMoves = simulateMove(color, direction, matrixClone);
-			System.out.println("Simulation : " + nbMoves);
 			moveTime += 4*DELAY*nbMoves;
 		}
 		return moveTime;
@@ -75,8 +74,6 @@ public class Tools {
 			break;
 		}
 
-		System.out.println("debut simulation moves : - "+color+" - ["+robot.getX()+","+robot.getY()+"]");
-		
 		switch(direction) {
 		case 'H':
 			// 1, 3, 5, 7, 9, 11, 13, 15 sont les valeurs des cases où il y a déjà un mur en haut
@@ -85,7 +82,6 @@ public class Tools {
 			{
 				matrixClone[1][robot.getX()][robot.getY()] = 0;
 				if(robot.getY() > 0) {
-					System.out.println("\t- "+color+" - ["+robot.getX()+","+robot.getY()+"]");
 					switch(color){
 					case 'R':
 						if((robot.getX() == bleu.getX() && robot.getY()-1 == bleu.getY()) || (robot.getX() == jaune.getX() && robot.getY()-1 == jaune.getY()) || (robot.getX() == vert.getX() && robot.getY()-1 == vert.getY())) {
@@ -117,7 +113,6 @@ public class Tools {
 					matrixClone[1][robot.getX()][robot.getY()] = val;
 				}
 			}
-			//System.out.println("... Mur bloquant : - r - grid["+robot.getX()+"]["+robot.getY()+"] = "+grid[robot.getX()][robot.getY()]+"\n");
 			break;
 		case 'B':
 			// 4, 5, 6, 7, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur en bas
@@ -157,7 +152,6 @@ public class Tools {
 					matrixClone[1][robot.getX()][robot.getY()] = val;
 				}
 			} 
-			//System.out.println("... Mur bloquant : - " + val + " - grid["+x_r+"]["+y_r+"] = "+grid[robot.getX()][robot.getY()]+"\n");
 			break;
 		case 'G':
 			// 8, 9, 10, 11, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur à gauche
@@ -239,7 +233,6 @@ public class Tools {
 			break;
 		default:;
 		}
-		System.out.println("====> nbMoves : "+nbMoves);
 		return nbMoves;
 	}
 	

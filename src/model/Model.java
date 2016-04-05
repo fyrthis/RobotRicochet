@@ -126,9 +126,7 @@ public class Model {
 			
 			else
 				this.grid.initializeRobot(robotColor, x, y);
-			System.out.println(robotColor+"["+x+","+y+"]" );
 		}
-		System.out.println("Target: "+tokens[tokens.length-1].charAt(0));
 	}
 	
 	private int getSymbolValue(char r){
@@ -156,7 +154,6 @@ public class Model {
 		int tour = Integer.parseInt(buffer.substring(0, 1));
 		this.gameState.setTour(tour);
 		buffer = buffer.substring(2, buffer.length()-1);
-		System.out.println(buffer);
 		
 		StringTokenizer tokenizer = new StringTokenizer(buffer, ")(");
 		while(tokenizer.hasMoreElements()){

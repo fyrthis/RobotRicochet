@@ -40,12 +40,10 @@ public class Controller implements Observer {
 		//TODO : Classe de connexion (avec name etc..)
 		Client.getInstance().addObserver(this);
 		Client.getInstance().connect();
-		//System.out.println("(Client:"+Debug.curName+")(Controller:connect) sent : CONNEXION/"+name+"/");
 		Client.getInstance().sendMessage("CONNEXION/"+name+"/");
 	}
 	
 	public void disconnect(String name) {
-		//System.out.println("(Client:"+Debug.curName+")(Controller:disconnect) sent : SORT/"+name+"/");
 		try {
 			Client.getInstance().sendMessage("SORT/"+name+"/");
 		} catch (IOException e) {
@@ -59,7 +57,6 @@ public class Controller implements Observer {
 	//(C -> S) Annonce d'une solution trouvée par 'user' en 'coups' déplacements
 	public void sendSolution(String name, int solutionInt){
 		String solution = String.valueOf(solutionInt);
-		//System.out.println("(Client:"+Debug.curName+")(Controller:sendSolution) sent : SOLUTION/"+name+"/"+solution+"/");
 		try {
 			// On va enregistrer le contexte de l'état courant du jeu au moment où un joueur envoie une solution
 			// durant la phase de reflexion
@@ -75,7 +72,6 @@ public class Controller implements Observer {
 	//(C -> S) Enchère d'une solution trouvée par 'user' en 'coups' déplacements.
 	public void sendEnchere(String name, int solutionInt){
 		String solution = String.valueOf(solutionInt);
-		//System.out.println("(Client:"+Debug.curName+")(Controller:sendBet) sent : ENCHERE/"+name+"/"+solution+"/"+ " - LocalPlayer's best score : "+LocalPlayer.getInstance().getCoups());
 		try {
 			if(LocalPlayer.getInstance().getCoups() > -1 && solutionInt >= LocalPlayer.getInstance().getCoups()){
 				System.err.println("(Client:"+Debug.curName+")(Controller:sendBet) cannot send : ENCHERE/"+name+"/"+solution+"/ because the new solution is not better than the current one !");
@@ -92,8 +88,8 @@ public class Controller implements Observer {
 	
 	// On considère que le client qui envoie le deplacement est forcément le joueur actif
 	public void sendDeplacements(String name, String moves){
-		//System.out.println("(Client:"+Debug.curName+")(Controller:sendMoves) sent : ENVOISOLUTION/"+name+"/"+moves+"/");
 		try {
+			model.getGameState().setActivePlayer(name);
 			Client.getInstance().sendMessage("ENVOISOLUTION/"+name+"/"+moves+"/");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -112,8 +108,8 @@ public class Controller implements Observer {
 	public void sendDeplacementsWithAnimationTime(String name, String moves){
 		// On va calculer le temps que va mettre les deplacements pour l'animation
 		int animationTime = Tools.computeAnimationTime(moves);
-		//System.out.println("(Client:"+Debug.curName+")(Controller:sendMoves) sent : ENVOISOLUTION/"+name+"/"+moves+"/"+animationTime+"/");
 		try {
+			model.getGameState().setActivePlayer(name);
 			Client.getInstance().sendMessage("ENVOISOLUTION/"+name+"/"+moves+"/"+animationTime+"/");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -123,7 +119,6 @@ public class Controller implements Observer {
 	}
 
 	public void sendMessages(String name, String message) {
-		//System.out.println("(Client:"+Debug.curName+")(Controller:sendMessages) sent : MESSAGE/"+name+"/"+message+"/");
 		try {
 			Client.getInstance().sendMessage("MESSAGE/"+name+"/"+message+"/");
 		} catch (IOException e) {
@@ -136,7 +131,6 @@ public class Controller implements Observer {
 	public void update(Observable o, Object arg) {
 		String message = (String) arg;
 		String[] tokens = message.split("/");
-		// System.out.println("(Client:"+Debug.curName+")(Controller:update) received : "+message);
 
 		//S->C : BIENVENUE/user/
 		if (tokens.length>1 && tokens[0].compareTo("BIENVENUE")==0) {

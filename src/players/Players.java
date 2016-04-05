@@ -145,9 +145,10 @@ public class Players extends Observable {
 	
 	// Mise a jour de la liste des joueurs et de leur score
 	public void updatePlayersScore(String name, int score){
+		System.out.println("##################################### UDPATE SCORE PLAYER FUNCTION CALL FOR PLAYER " + name + " : " + score);
 		AbstractPlayer p = get(name);
 		if(p != null) {
-			p.setScore(p.getScore()+score);
+			p.setScore(score);
 		} else {
 			p = new Player(name);
 			players.add(p);

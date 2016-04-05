@@ -42,7 +42,6 @@ public class GamePanel extends AbstractGamePanel {
 		model.getGameState().addObserver(state);
 		Timer.getInstance().addObserver(timer);
 		model.getChatModel().addObserver(chat);
-		System.out.println("(Client:"+Debug.curName+")(GamePanel:initializeObservers) initializeObservers Done");
 	}
 
 
@@ -116,7 +115,6 @@ public class GamePanel extends AbstractGamePanel {
 		c.gridwidth = 60;
 		c.gridheight = 80;
 		this.add(grid, c);
-		//System.out.println(grid.getSize());
 		
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 87;

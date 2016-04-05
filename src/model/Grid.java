@@ -159,7 +159,6 @@ public class Grid extends Observable {
 				}
 			}
 			grid[1][robot.x][robot.y] = val+2;
-			//System.out.println("... Mur bloquant : - r - grid["+robot.x+"]["+robot.y+"] = "+grid[robot.x][robot.y]+"\n");
 			break;
 		case 'B':
 			// 4, 5, 6, 7, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur en bas
@@ -207,7 +206,6 @@ public class Grid extends Observable {
 				}
 			} 
 			grid[1][robot.x][robot.y] = val+6;
-			//System.out.println("... Mur bloquant : - " + val + " - grid["+x_r+"]["+y_r+"] = "+grid[robot.x][robot.y]+"\n");
 			break;
 		case 'G':
 			// 8, 9, 10, 11, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur à gauche
@@ -255,7 +253,6 @@ public class Grid extends Observable {
 				}
 			} 
 			grid[1][robot.x][robot.y] = val+8;
-			//System.out.println("... Mur bloquant : - " + val + " - grid["+x_r+"]["+y_r+"] = "+grid[robot.x][robot.y]+"\n");
 			break;
 		case 'D':
 			// 2, 3, 6, 7, 10, 11, 14, 15 son les valeurs des cases où il y a déjà un mur à droite
@@ -303,7 +300,6 @@ public class Grid extends Observable {
 				}
 			}
 			grid[1][robot.x][robot.y] = val+4;
-			//System.out.println("... Mur bloquant : - " + val + " - grid["+x_r+"]["+y_r+"] = "+grid[robot.x][robot.y]+"\n");
 			break;
 		default:;
 		}

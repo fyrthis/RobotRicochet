@@ -72,7 +72,6 @@ public class View extends JFrame {
 	}
 
 	public void homeSignal() {
-		System.out.println("(Client:"+Debug.curName+")(View:homeSignal)home signal");
 		for(Component c : getContentPane().getComponents()) {
 			if(c!=connectionWindow)
 				remove(c);

@@ -196,7 +196,6 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==backButton) {
 			View window = (View) this.getParent().getParent().getParent().getParent().getParent();
-			//System.out.println(this.getParent().getParent().getParent().getParent().getParent());
 			window.homeSignal();
 		}
 		else if(e.getSource() == sendSolutionButton) {
@@ -233,13 +232,11 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			}
 		}
 		else if(e.getSource() == resolveButton) {
-			System.out.println("\tresolveButton pushed");
 			View window = (View) this.getParent().getParent().getParent().getParent().getParent();
 			String movesStr = movesEntry.getText();
 			if(movesStr == null){
 				System.err.println("(Client:"+Debug.curName+")(InteractionPanel:actionPerformed) Erreur: vous tentez d'envoyer une solution vide !");
 			}
-			System.out.println("\tMOVE : " + movesStr);
 			if(movesStr == null){
 				System.err.println("(Client:"+Debug.curName+")(InteractionPanel:actionPerformed)Erreur: vous n'avez rien déplacé !");
 			}
@@ -261,6 +258,5 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 		// TODO Auto-generated method stub
 		Phase phase = (Phase) arg;
 		this.setPanelByPhase(phase);
-		System.out.println("(Client:"+Debug.curName+")(InteractionPanel:update)receive notifyObserver from the GameState...");
 	}
 }

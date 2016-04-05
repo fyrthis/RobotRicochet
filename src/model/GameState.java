@@ -54,7 +54,6 @@ public class GameState extends Observable {
 	}
 	
 	public void setPhase(Phase p){
-		System.out.println("(Client:"+Debug.curName+")(GameState:setPhase) setting phase to : "+p);
 		GameState.phase = p;
 		if(phase == Phase.INITIALISATION)
 			Model.getInstance().getPlayers().resetRound();

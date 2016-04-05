@@ -84,9 +84,6 @@ public class ChatPanel extends JPanel implements ActionListener, Observer {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==sendMsgButton) {
 			View window = (View) this.getParent().getParent().getParent().getParent().getParent();
-			System.out.println("sending message: " + msgEntry.getText()  + " from " + username);
-			//chatModel.addMessageFrom(username, msgEntry.getText());
-			
 			window.sendMessageSignal(msgEntry.getText());
 			chatModel.addMessageFrom("Me", msgEntry.getText());
 		}
@@ -102,6 +99,5 @@ public class ChatPanel extends JPanel implements ActionListener, Observer {
 			message += "\n" + msg;
 		}
 		msgArea.setText(message);
-		System.out.println("(Client:"+Debug.curName+")(InteractionPanel:update)receive notifyObserver from the GameState...");
 	}
 }

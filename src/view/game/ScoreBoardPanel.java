@@ -61,7 +61,6 @@ public class ScoreBoardPanel extends JPanel implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		
 		ArrayList<AbstractPlayer> players = model.getPlayers().getPlayersAndLocal();
 		ArrayList<AbstractPlayer> sortConnectedPlayers = new ArrayList<>();
 		

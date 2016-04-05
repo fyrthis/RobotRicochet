@@ -225,7 +225,6 @@ int moveRobot(char color, char direction) {
                     // 1, 3, 5, 7, 9, 11, 13, 15 sont les valeurs des cases où il y a déjà un mur en haut
                     if(grid[x_r][y_r] == 1 || grid[x_r][y_r] ==  3 || grid[x_r][y_r] == 5 || grid[x_r][y_r] == 7
                         || grid[x_r][y_r] == 9 || grid[x_r][y_r] == 11 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 15){
-                        fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
                         return 0;   
                     }
                     tmp_x = x_r;
@@ -247,7 +246,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_r][y_r] == 4 || grid[x_r][y_r] ==  5 || grid[x_r][y_r] == 6 || grid[x_r][y_r] == 7
                         || grid[x_r][y_r] == 12 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
                         return 0;   
                     }                    
                     tmp_x = x_r;
@@ -255,6 +253,7 @@ int moveRobot(char color, char direction) {
                     for(tmp_y = y_r+1; tmp_y < size_y; tmp_y++) {
                         if((tmp_x == x_b && tmp_y == y_b) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
                             y_r = tmp_y-1;
+                            break;
                         }
                         else if(grid[tmp_x][tmp_y] == 4 || grid[tmp_x][tmp_y] == 5 || grid[tmp_x][tmp_y] == 6 || grid[tmp_x][tmp_y] == 7
                             || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
@@ -268,7 +267,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_r][y_r] == 8 || grid[x_r][y_r] ==  9 || grid[x_r][y_r] == 10 || grid[x_r][y_r] == 11
                         || grid[x_r][y_r] == 12 || grid[x_r][y_r] == 13 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
                         return 0;   
                     }
                     tmp_y = y_r;
@@ -290,7 +288,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_r][y_r] == 2 || grid[x_r][y_r] ==  3 || grid[x_r][y_r] == 6 || grid[x_r][y_r] == 7
                         || grid[x_r][y_r] == 10 || grid[x_r][y_r] == 11 || grid[x_r][y_r] == 14 || grid[x_r][y_r] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - r - grid[%d][%d] = %d\n", x_r, y_r, grid[x_r][y_r]);
                         return 0;   
                     }
                     tmp_y = y_r;
@@ -317,7 +314,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_b][y_b] == 1 || grid[x_b][y_b] ==  3 || grid[x_b][y_b] == 5 || grid[x_b][y_b] == 7
                         || grid[x_b][y_b] == 9 || grid[x_b][y_b] == 11 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
                         return 0;   
                     }
                     tmp_x = x_b;
@@ -339,7 +335,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_b][y_b] == 4 || grid[x_b][y_b] ==  5 || grid[x_b][y_b] == 6 || grid[x_b][y_b] == 7
                         || grid[x_b][y_b] == 12 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
                         return 0;   
                     }
                     tmp_x = x_b;
@@ -361,7 +356,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_b][y_b] == 8 || grid[x_b][y_b] ==  9 || grid[x_b][y_b] == 10 || grid[x_b][y_b] == 11
                         || grid[x_b][y_b] == 12 || grid[x_b][y_b] == 13 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
                         return 0;   
                     }
                     tmp_y = y_b;
@@ -369,6 +363,7 @@ int moveRobot(char color, char direction) {
                     for(tmp_x = x_b-1; tmp_x >= 0; tmp_x--) {
                         if((tmp_x == x_r && tmp_y == y_r) || (tmp_x == x_j && tmp_y == y_j) || (tmp_x == x_v && tmp_y == y_v)) {
                             x_b = tmp_x+1;
+                            break;
                         }
                         else if(grid[tmp_x][tmp_y] == 8 || grid[tmp_x][tmp_y] == 9 || grid[tmp_x][tmp_y] == 10 || grid[tmp_x][tmp_y] == 11
                             || grid[tmp_x][tmp_y] == 12 || grid[tmp_x][tmp_y] == 13 || grid[tmp_x][tmp_y] == 14 || grid[tmp_x][tmp_y] == 15) {
@@ -382,7 +377,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_b][y_b] == 2 || grid[x_b][y_b] ==  3 || grid[x_b][y_b] == 6 || grid[x_b][y_b] == 7
                         || grid[x_b][y_b] == 10 || grid[x_b][y_b] == 11 || grid[x_b][y_b] == 14 || grid[x_b][y_b] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - b - grid[%d][%d] = %d\n", x_b, y_b, grid[x_b][y_b]);
                         return 0;   
                     }
                     tmp_y = y_b;
@@ -409,7 +403,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_j][y_j] == 1 || grid[x_j][y_j] ==  3 || grid[x_j][y_j] == 5 || grid[x_j][y_j] == 7
                         || grid[x_j][y_j] == 9 || grid[x_j][y_j] == 11 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
                         return 0;   
                     }
                     tmp_x = x_j;
@@ -431,7 +424,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_j][y_j] == 4 || grid[x_j][y_j] ==  5 || grid[x_j][y_j] == 6 || grid[x_j][y_j] == 7
                         || grid[x_j][y_j] == 12 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
                         return 0;   
                     }
                     tmp_x = x_j;
@@ -453,7 +445,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_j][y_j] == 8 || grid[x_j][y_j] ==  9 || grid[x_j][y_j] == 10 || grid[x_j][y_j] == 11
                         || grid[x_j][y_j] == 12 || grid[x_j][y_j] == 13 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
                         return 0;   
                     }
                     tmp_y = y_j;
@@ -475,7 +466,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_j][y_j] == 2 || grid[x_j][y_j] ==  3 || grid[x_j][y_j] == 6 || grid[x_j][y_j] == 7
                         || grid[x_j][y_j] == 10 || grid[x_j][y_j] == 11 || grid[x_j][y_j] == 14 || grid[x_j][y_j] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - j - grid[%d][%d] = %d\n", x_j, y_j, grid[x_j][y_j]);
                         return 0;   
                     }
                     tmp_y = y_j;
@@ -502,7 +492,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_v][y_v] == 1 || grid[x_v][y_v] ==  3 || grid[x_v][y_v] == 5 || grid[x_v][y_v] == 7
                         || grid[x_v][y_v] == 9 || grid[x_v][y_v] == 11 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
                         return 0;   
                     }
                     tmp_x = x_v;
@@ -524,7 +513,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_v][y_v] == 4 || grid[x_v][y_v] ==  5 || grid[x_v][y_v] == 6 || grid[x_v][y_v] == 7
                         || grid[x_v][y_v] == 12 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
                         return 0;   
                     }
                     tmp_x = x_v;
@@ -546,7 +534,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_v][y_v] == 8 || grid[x_v][y_v] ==  9 || grid[x_v][y_v] == 10 || grid[x_v][y_v] == 11
                         || grid[x_v][y_v] == 12 || grid[x_v][y_v] == 13 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
                         return 0;   
                     }
                     tmp_y = y_v;
@@ -568,7 +555,6 @@ int moveRobot(char color, char direction) {
                     if(grid[x_v][y_v] == 2 || grid[x_v][y_v] ==  3 || grid[x_v][y_v] == 6 || grid[x_v][y_v] == 7
                         || grid[x_v][y_v] == 10 || grid[x_v][y_v] == 11 || grid[x_v][y_v] == 14 || grid[x_v][y_v] == 15)
                     {
-                        fprintf(stderr, "\tCase interdite : - v - grid[%d][%d] = %d\n", x_v, y_v, grid[x_v][y_v]);
                         return 0;   
                     }
                     tmp_y = y_v;

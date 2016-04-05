@@ -62,7 +62,7 @@ public class Timer extends Observable {
 
 	public void updateTime(){
 		time--;
-		if(time >= 0){
+		if(time > 0){
 			this.setChanged();
 			this.notifyObservers(Timer.time);
 		}

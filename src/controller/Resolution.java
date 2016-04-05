@@ -39,12 +39,14 @@ class Resolution extends Observable  {
 				e.printStackTrace();
 			}
 		}
+		model.getPlayers().updatePlayersScore(model.getGameState().getActivePlayer(), model.getPlayers().get(model.getGameState().getActivePlayer()).getScore()+1);
 		model.getGameState().setPhase(Phase.INITIALISATION);
 	}
 	
 	//MAUVAISE/user/
 	//(S -> C) Solution refusée (à tous les clients), nouvelle phase de résolution, 'user' joueur actif.
 	void mauvaise(String user) {
+		model.getGameState().setActivePlayer(user);
 		// Le client est le joueur actif : il est autorisé à envoyer sa réponse
 		if(LocalPlayer.getInstance().getName().equals(user)){
 			LocalPlayer.getInstance().isProposing();

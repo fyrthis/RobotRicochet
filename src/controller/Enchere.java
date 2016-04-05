@@ -41,6 +41,7 @@ class Enchere extends Observable {
 	//FINENCHERE/user/coups/
 	//(S -> C) Fin des enchères, le joueur actif est user.
 	void finEnchere(String user, String coups) {
+		model.getGameState().setActivePlayer(user);
 		if(LocalPlayer.getInstance().getName().equals(user)){
 			LocalPlayer.getInstance().isProposing();
 			model.getGameState().setPhase(Phase.RESOLUTION_ACTIVE);

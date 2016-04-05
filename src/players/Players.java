@@ -125,7 +125,8 @@ public class Players extends Observable {
 	//Nouveau round
 	public void resetRound() {
 		for(AbstractPlayer p : players)
-			p.nbCoups=Integer.MAX_VALUE;
+			p.setNbCoups(0);
+		LocalPlayer.getInstance().setNbCoups(0);
 		setChanged();
 		notifyObservers();
 	}

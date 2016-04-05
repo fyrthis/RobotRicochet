@@ -1,5 +1,4 @@
 package view.game;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -11,8 +10,6 @@ public class PlayerNamePanel extends JPanel {
 	JLabel playerName;
 
 	public PlayerNamePanel() {
-		setBackground(Color.blue);
-		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.RELATIVE;

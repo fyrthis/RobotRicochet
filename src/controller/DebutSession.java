@@ -30,17 +30,17 @@ class DebutSession extends Observable {
 	//(S -> C) Fin de la session courante, scores finaux de la session
 	void vainqueur(String bilan) {
 		model.setBilanCurrentSession(bilan);
-		
+		model.getPlayers().resetSession();
 		// On peut considérer que le vainqueur de la derniere partie est le vainqueur de la session
 		// puisqu'il faut atteindre un score objectif pour arrêter la session
 		String winner = model.getGameState().getActivePlayer();
 		if(winner.equals(LocalPlayer.getInstance().getName())){
 			// On peut afficher un JDialog au gagnant pour lui signifier sa victoire
-			
+			model.getGameState().setPhase(Phase.WIN);
 		}
 		else {
 			// On peut aussi afficher un JDialog aux perdants pour leur signier leur défaite
-			
+			model.getGameState().setPhase(Phase.LOSE);
 		}
 	}
 

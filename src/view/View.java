@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import launcher.Debug;
 import model.Model;
 import utils.AskNameDialog;
 import view.game.AbstractGamePanel;

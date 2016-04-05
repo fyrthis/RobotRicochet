@@ -44,6 +44,7 @@ int timer;
 // serveur.c
 void handle_request(task_t * task, int thread_id) {
     if (task) {
+        //TODO : Vérification que la socket appartient bien à un client
         /* parse la commande */
         char * pch = (char*)calloc(strlen(task->command)+1, sizeof(char));
         char* username = NULL;
@@ -438,6 +439,11 @@ void * session_loop(void* scoreCible) {
                     }
                 puts("FIN RESOLUTION\n");      
             }
+            //Cas où on est sorti des while lors de déconnexions pendant la partie.
+            pthread_mutex_lock(&client_mutex);
+            if(nbClientsConnecte<2)
+                send_finReso();
+            pthread_mutex_unlock(&client_mutex);
             /********************
             *  JOUEUR A GAGNE ? *
             *********************/

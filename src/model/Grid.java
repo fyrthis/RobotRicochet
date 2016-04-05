@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.Color;
 import java.util.Observable;
 
 public class Grid extends Observable {
@@ -27,19 +28,19 @@ public class Grid extends Observable {
 	public void initializeRobot(char color, int x, int y){
 		switch(color){
 		case 'r':
-			rouge = new Robot(x, y, 2);
+			rouge = new Robot(x, y, Color.red);
 			grid[1][x][y] = 21;
 			break;
 		case 'b':
-			bleu = new Robot(x, y, 3);
+			bleu = new Robot(x, y, Color.blue);
 			grid[1][x][y] = 31;
 			break;
 		case 'j':
-			jaune = new Robot(x, y, 5);
+			jaune = new Robot(x, y, Color.yellow);
 			grid[1][x][y] = 51;
 			break;
 		case 'v':
-			vert = new Robot(x, y, 4);
+			vert = new Robot(x, y, Color.green);
 			grid[1][x][y] = 41;
 			break;
 		default: System.out.println("probleme instantiation robot null initializeRobot");

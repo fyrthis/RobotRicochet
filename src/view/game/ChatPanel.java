@@ -40,7 +40,7 @@ public class ChatPanel extends JPanel implements ActionListener, Observer {
 		scrollPane = new JScrollPane(msgArea);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		msgEntry = new JTextField();
-		sendMsgButton = new JButton("Envoyer un message");
+		sendMsgButton = new JButton("Envoyer");
 		
 		//Add Components to this panel
 		GridBagConstraints c = new GridBagConstraints();

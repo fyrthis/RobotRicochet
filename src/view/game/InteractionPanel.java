@@ -96,18 +96,18 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			layout.setVerticalGroup(
 					layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-							.addComponent(setSolutionLabel))
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-							.addComponent(solutionEntry))
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(setSolutionLabel)
+							.addComponent(solutionEntry)
 							.addComponent(sendSolutionButton))
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 							.addComponent(backButton)));
 			layout.setHorizontalGroup(
 					layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-							.addComponent(setSolutionLabel)
-							.addComponent(solutionEntry)
+							.addComponent(setSolutionLabel))
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+							.addComponent(solutionEntry))
+							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 							.addComponent(sendSolutionButton)
 							.addComponent(backButton)));
 		
@@ -126,18 +126,18 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			layout.setVerticalGroup(
 					layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-							.addComponent(betLabel))
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-							.addComponent(betEntry))
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(betLabel)
+							.addComponent(betEntry)
 							.addComponent(betButton))
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 							.addComponent(backButton)));
 			layout.setHorizontalGroup(
 					layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-							.addComponent(betLabel)
-							.addComponent(betEntry)
+							.addComponent(betLabel))
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+							.addComponent(betEntry))
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 							.addComponent(betButton)
 							.addComponent(backButton)));
 		
@@ -162,18 +162,18 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 			layout.setVerticalGroup(
 					layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-							.addComponent(movesLabel))
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-							.addComponent(movesEntry))
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(movesLabel)
+							.addComponent(movesEntry)
 							.addComponent(resolveButton))
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 							.addComponent(backButton)));
 			layout.setHorizontalGroup(
 					layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-							.addComponent(movesLabel)
-							.addComponent(movesEntry)
+							.addComponent(movesLabel))
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+							.addComponent(movesEntry))
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 							.addComponent(resolveButton)
 							.addComponent(backButton)));
 		

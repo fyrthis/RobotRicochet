@@ -46,7 +46,17 @@ public class TimerPanel extends JPanel implements Observer {
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		int timeCpt = (int) arg;
-		this.time.setText(Integer.toString(timeCpt));
+		if(timeCpt<=0) {
+			this.time.setText("Time out !");
+		} else {
+			if(timeCpt<60)
+				this.time.setText(Integer.toString(timeCpt)+"sec");
+			else
+				if(timeCpt%60!=0)
+					this.time.setText(Integer.toString(timeCpt/60)+"min "+Integer.toString(timeCpt%60)+"sec");
+				else
+					this.time.setText(Integer.toString(timeCpt/60)+"min");
+		}
 	}
 
 }

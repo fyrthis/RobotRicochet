@@ -398,48 +398,55 @@ void * session_loop(void* nbToursSession) {
                 }
                 phase=RESOLUTION;
                 pthread_mutex_lock(&enchere_mutex);
-                send_finEnchere(encheres->name, encheres->nbCoups);
+                if(encheres!=NULL)
+                    send_finEnchere(encheres->name, encheres->nbCoups);
                 pthread_mutex_unlock(&enchere_mutex);
                 puts("FIN ENCHERE\n");
             }
             /*********************
             *  PHASE RESOLUTION  *
             *********************/
-            if(phase==RESOLUTION && nbClientsConnecte>=2 && encheres != NULL)
+            if(phase==RESOLUTION && nbClientsConnecte>=2)
             {
                 printf("DEBUT RESOLUTION\n");
                 pthread_mutex_lock(&ticTac_mutex);
                 ticTac=0;
                 pthread_mutex_unlock(&ticTac_mutex);
                 timer=60;//1 minute
-                while(ticTac < timer && nbClientsConnecte>=2) {
-                    if(isShutingDown==1) return NULL; //Serveur veut s'arrêter.
-
-                    pthread_mutex_lock(&ticTac_mutex);
-                    ticTac++;
-                    pthread_mutex_unlock(&ticTac_mutex);
-
-                    
-                    if(ticTac==timer) { //l'utilisateur a mis trop de temps à répondre !
-                        pthread_mutex_lock(&enchere_mutex);
-                        free(getEnchere(&enchere_mutex)); //Enlève l'enchère du joueur.
-                        if(encheres!=NULL) { //Si ilreste quelqu'un avec une solution possible
-                            send_tropLong(encheres->name);
-                        }else {
-                            send_finReso();
-                            pthread_mutex_unlock(&enchere_mutex);
-                            break;
-                        }
-                        pthread_mutex_unlock(&enchere_mutex);
-                        pthread_mutex_lock(&ticTac_mutex);
-                        ticTac = 0;
-                        pthread_mutex_unlock(&ticTac_mutex);
-                    }
-                    
-                    sleep(1);
-
-                    printf("RESOLUTION : %d sec.\n", ticTac);
+                if(encheres==NULL) {
+                    send_finReso();
+                    puts("fin Reso sent");
                 }
+                else
+                    while(ticTac < timer && nbClientsConnecte>=2) {
+                        if(isShutingDown==1) return NULL; //Serveur veut s'arrêter.
+
+                        pthread_mutex_lock(&ticTac_mutex);
+                        ticTac++;
+                        pthread_mutex_unlock(&ticTac_mutex);
+
+                        
+                        if(ticTac==timer) { //l'utilisateur a mis trop de temps à répondre !
+                            pthread_mutex_lock(&enchere_mutex);
+                            if(encheres!=NULL)
+                                free(getEnchere(&enchere_mutex)); //Enlève l'enchère du joueur.
+                            if(encheres!=NULL) { //Si ilreste quelqu'un avec une solution possible
+                                send_tropLong(encheres->name);
+                            }else {
+                                send_finReso();
+                                pthread_mutex_unlock(&enchere_mutex);
+                                break;
+                            }
+                            pthread_mutex_unlock(&enchere_mutex);
+                            pthread_mutex_lock(&ticTac_mutex);
+                            ticTac = 0;
+                            pthread_mutex_unlock(&ticTac_mutex);
+                        }
+                        
+                        sleep(1);
+                        printf("RESOLUTION : %d sec.\n", ticTac);
+                    }
+                puts("FIN RESOLUTION\n");      
             }
             /****************
             *  FIN DU TOUR  *

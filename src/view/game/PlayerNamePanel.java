@@ -3,12 +3,12 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class PlayerNamePanel extends JPanel {
 	private static final long serialVersionUID = -3456497639330063809L;
-	JTextField playerName;
+	JLabel playerName;
 
 	public PlayerNamePanel() {
 		setBackground(Color.blue);
@@ -21,9 +21,8 @@ public class PlayerNamePanel extends JPanel {
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		
-		playerName = new JTextField();
-		playerName.setEditable(false);
-		playerName.setHorizontalAlignment(JTextField.CENTER);
+		playerName = new JLabel();
+		playerName.setHorizontalAlignment(JLabel.CENTER);
 		add(playerName, c);
 		
 	}

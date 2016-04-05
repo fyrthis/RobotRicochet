@@ -103,18 +103,18 @@ public class GamePanel extends AbstractGamePanel {
 		c.gridx = 0;
 		c.gridy = 11;
 		c.weightx=25;
-		c.weighty=60;
+		c.weighty=80;
 		c.gridwidth = 25;
-		c.gridheight = 60;
+		c.gridheight = 80;
 		this.add(round, c);
 		
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 26;
 		c.gridy = 11;
 		c.weightx=60;
-		c.weighty=60;
+		c.weighty=80;
 		c.gridwidth = 60;
-		c.gridheight = 60;
+		c.gridheight = 80;
 		this.add(grid, c);
 		//System.out.println(grid.getSize());
 		
@@ -122,25 +122,25 @@ public class GamePanel extends AbstractGamePanel {
 		c.gridx = 87;
 		c.gridy = 11;
 		c.weightx=25;
-		c.weighty=60;
+		c.weighty=80;
 		c.gridwidth = 25;
-		c.gridheight = 60;
+		c.gridheight = 80;
 
 		this.add(score, c);
 		
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 0;
-		c.gridy = 71;
+		c.gridy = 91;
 		c.weightx=112;
-		c.weighty=20;
+		c.weighty=11;
 		c.gridwidth = 112;
-		c.gridheight = 20;
+		c.gridheight = 11;
 
 		this.add(interaction, c);
 		
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 0;
-		c.gridy = 92;
+		c.gridy = 103;
 		c.weightx=112;
 		c.weighty=20;
 		c.gridwidth = 112;

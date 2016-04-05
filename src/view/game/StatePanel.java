@@ -5,18 +5,18 @@ import java.awt.GridBagLayout;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
-import utils.Phase;
 import model.Model;
+import utils.Phase;
 
 public class StatePanel extends JPanel implements Observer {
 	private static final long serialVersionUID = -5838924958575253423L;
 	private String txt = "Phase de réflexion";
 	//private String enchere = "Phase d'enchères";
 	//private String resolution = "Phase de résolution";
-	private JTextField stateTitle;
+	private JLabel stateTitle;
 	Model model;
 	
 	public StatePanel(Model model) {
@@ -32,9 +32,8 @@ public class StatePanel extends JPanel implements Observer {
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		
-		stateTitle = new JTextField(txt);
-		stateTitle.setEditable(false);
-		stateTitle.setHorizontalAlignment(JTextField.CENTER);
+		stateTitle = new JLabel(txt);
+		stateTitle.setHorizontalAlignment(JLabel.CENTER);
 		add(stateTitle, c);
 	}
 

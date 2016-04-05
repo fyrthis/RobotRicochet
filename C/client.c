@@ -43,8 +43,8 @@ pthread_cond_t cond_at_least_2_players = PTHREAD_COND_INITIALIZER;
 *******************************************/
 /*
 3 cas possibles :
-1) Le client est déjà connecté (son nom, OU sa socket est déjà en cours d'utilisation), dans ce cas on ne fait rien
-2) Le client n'est pas connecté, mais l'a été AU COURS DE LA SESSION COURANTE, on met simplement son tag isConnected à vrai.
+1) Le client est déjà connecté dans ce cas on ne fait rien
+2) Le client n'est pas connecté, mais l'a été AU COURS DE LA SESSION COURANTE, on met simplement son tag isConnected à vrai, et on update la socket.
 3) Le client n'est pas connecté et nest pas dans le cas (2), on crée un client qu'on met dans la liste
 */
 
@@ -144,9 +144,31 @@ void disconnectClient(char* name, pthread_mutex_t* p_mutex) {
 
 void rmClient(int socket, pthread_mutex_t* p_mutex) {
     if(pthread_mutex_lock(p_mutex) != 0) { perror("(Server:client.c:printClientsState) : cannot lock the first p_mutex\n"); }
-//TODO : Retirer un client de la liste.
-//TODO : ce n'est pas ici qu'on envoie le message et qu'on clore la socket !!
+    client_t * client = clients;
+    client_t * prev_client = NULL;
+    while(client != NULL) {
+        if(socket==client->socket) {
+            break;
+        }
+        prev_client = client;
+        client = client->next;
+    }
+    if(client==NULL) return; //Client non trouvé
+
+    if(client->next==NULL) { //Client en queue de liste
+        last_client = prev_client;
+    }
+
+    if(prev_client!=NULL) { //Client n'est pas en tête de liste
+        prev_client->next = client->next;
+    } else {
+        clients = client->next; //Client en tête de liste
+    }
+    free(client);
+    nbClients--;
+    nbClientsConnecte--;
     printClientsState(&client_mutex);
+    
     if(pthread_mutex_unlock(p_mutex) != 0) { perror("(Server:client.c:printClientsState) : cannot lock the first p_mutex\n"); }
 }
 

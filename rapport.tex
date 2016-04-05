@@ -1,0 +1,109 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[x11names]{xcolor}   % Accès à une table de 317 couleurs
+\usepackage{graphicx} %Pur utiliser la colorbox
+\usepackage{textcomp}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\title{\textbf{IHM \\}}
+\author{RETAIL Tanguy}
+\date{26/01/2016}
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+
+\section{Introduction, description du problème}
+\subsection{Prélude}
+Dans le cadre de notre projet PC2R, nous réalisons une application largement inspirée du jeu Rasende Roboter(Robot Ricochet). Les principaux objectifs sont la mise en place d'un modèle client-serveur, la manipulation des threads et des mutex, ainsi que la compréhension des enjeux de la programmation concurrente. D'autres objectifs, secondaires ici, sont la gestion intelligente des ressources, une architecture bien construite, ainsi que l'ajout d'extensions.
+\subsection{Robot Ricochet}
+Robot Ricochet est un jeu qui se déroule sur un plateau de 16x16. Le plateau est entouré de murs, et contient en son sein plusieurs murs. A chaque partie, une cible de couleur ajacente à deux murs est désignée. Quatre robots de couleur sont placés aléatoirement sur la plateau. Le but est alors de déplacer les robots, de sorte à amener le robot de même couleur que la cible sur celle-ci, et ce en un minimum de coups.\\
+Un robot peut se déplacer dans les quatre directions. Un mouvement (coup) s'arrête lorsque le robot se retrouve bloqué par un mur ou un autre robot.\\
+Il y a deux joueurs au minimum, et une infinité au maximum. A chaque tour de jeu (session), une nouvelle énigme est proposée. Lors d'un tour une première phase est la réflexion, qui s'interrompt dès qu'un joueur propose un nombre de coups, ou dès que le temps (5 minutes) est écoulé. La phase d'enchhères dure 30 secondes, pendant lesquelles les joueurs essaient d'enchérir un nombre de coups. Chaque enchère proposée doit être différente de celles proposées, et inférieure à celle qu'on a déjà proposée (une enchère par joueur). Une dernière phase, dite de résolution, permet à chaque joueur de présenter leur solution à tour de rôle, par ordre croissant de nombre de coups annoncé, tant qu'une réponse n'est pas acceptée. Une réponse est acceptée lorsqu'elle amène bien le robot de la bonne couleur sur le cible, en au maximum le nombre de coups annoncé.\\
+Une session dure un nombre déterminé de tours, chaque vainqueur de tour gagne un point. Le gagnant est celui qui a le maximum de points à l'issue d'une session.
+
+\section{Description du programme, des modules}
+\subsection{Fonctionnement général}
+Afin que les joueurs puissent jouer ensemble, ceux-ci doivent se connecter sur la machine du serveur au port 2016 et envoyer une demande de connexion. Si le serveur n'est pas en ligne, le client reçoit un message lui indiquant que le serveur n'est pas disponible. Si un autre problème quelqueconque survient, un message est également affiché.\\
+Le serveur est libre d'accepter ou de refuser un client. Le serveur refuse un client uniquement si il a atteint un quota N de joueurs fixé lors du lancement.\\
+Le serveur et les clients communiquent grâce à un protocole textuel fixe et un protocole erroné sera simplement ignoré. Afin de gérer les clients, le serveur maintient une liste de clients composé notamment de sa socket et de son état connecté ou non. Lors d'une requête client, le serveur ajoute une tâche correspondante qui sera prise en charge par un thread, en attente dans une thread pool. Si aucun thread n'est disponible, celle-ci sera prise en charge dès lors que l'un d'eux sera disponible.\\
+
+
+\subsection{Le serveur}
+\subsubsection{Gestion des clients}
+Le serveur maintient une liste chaînée de client protégée par mutex. En effet, plusieurs threads sont susceptibles d'accéder aux clients au même instants, ne serait-ce lors de deux demandes de connexion simultanées. Un type client est représenté par : 
+- une socket, permettant la communication.
+- un entier, permettant de fixer l'état à connecté ou déconnecté.
+- un nom, unique pour chaque client.
+- un entier score, représentant le score du joueur à la session courante.
+- un entier nbCoups, représentant l'enchère du joueur au tour courant.
+- un entier points, représentant le nombre de sessions gagnées. Si le serveur s'éteint, il n'y a pas de sauvegarde de celui-ci.
+- un pointeur, vers le prochain client.
+
+Les clients sont maintenus dans le fichier client.c qui possède les variables et fonctions suivants :
+variables :
+- pthread\_mutex sur les clients (client\_mutex)
+- pthread\_condition pour signaler lorsque au moins deux clients sont connectés.
+- la tête de liste clients sur la liste des clients.
+- la queue de liste last\_client sur la liste des clients.
+- un entier nbClients pour le nombre de clients dans la liste.
+- un entier nbClientsConnecte pour le nombre de clients connectés.
+fonctions :
+- addClient :
+Si le joueur a demandé une connexion, mais qu'il est déjà à l'état connecté, on ignore la requête.
+Si le joueur a demandé une connexion mais qu'il n'est pas à l'état connecté, alors celui-ci veut revenir dans la partie. On met alors son état à connecté, et on met à jour sa socket. On met à jour nbClientsConnecte.
+Si le joueur n'était pas présent dans la liste c'est un nouveau client qu'on crée de toute pièce, et qu'on insère en queue de liste. On met à jour nbClientsConnecte.
+- disconnectClient :
+Si le joueur existe, on met son état à déconnecté, et on décrémente le nombre de joueurs connectés.
+- rmClient : Enlève le joueur de la liste, et libère la mémoire. les variables nbClients et nbClientsConnecte sont mises à jour.
+- findClient :
+Retourne un client en fonction de son nom, si celui-ci existe.
+
+\subsubsection{Gestion de la partie}
+La partie est gérée par un thread côté serveur, qui effectue la fonction session\_loop. A chaque instant la présence d'au moins deux joueurs est requise, si ce n'est pas le cas la session s'arrête et une nouvelle session démarrera lorsque deux joueurs seront présents (signalement par le pthread\_condition de client.c).\\
+Au début de tour, il y a un temps d'attente qui permet à l'animation de la solution côté client de se terminer, et d'attendre 10 secondes que d'éventuels joueurs se connectent.\\
+Lors de chaque phase, un timer est lancé correspondant au temps maximal de chaque phase et peut être interrompu lorsqu'un évènement adéquat survient. C'est également ici qu'on envoie les énigmes, les débuts/fins de phase de jeu, et la vainqueur de session aux clients.
+\subsubsection{Gestion des tâches}
+Une tâche correspond à un message client, bien qu'il serait possible d'ajouter des tâches propres au serveur au besoin, en cas d'extension par exemple.\\
+Lorsqu'un client essaie de se connecter, ou envoie un quelconque message, une tâche est générée par le thread principal depuis la fonction main. La liste des tâches, protégée par un mutex, signale lorsqu'une tâche est ajoutée. Un thread disponible dans le pool thread vient alors récupérer (handle\_request\_loop, serveyr.c) puis s'occuper de la tâche dans la fonction handle\_request (serveur.c) en vérifiant que la requète est bien associée à un client connu.\\
+Une tâche est représentée par :
+- une socket, correspondant au client qui l'a envoyée
+- une chaîne de caractère qui correspond au protocole, à la tâche à effectuer
+- un pointeur vers la prochaine tâche
+\subsubsection{Gestion des actions}
+Une action correspond à un message vers un ou plusieurs clients.
+\subsubsection{Gestion de la communication serveur/client}
+Afin de communiquer vers les clients, le serveur dispose de plusieurs fonctionnalités dont :
+- une fonction de broadcast "one-to-all" à tous les clients (messageAll dans action.c)
+- une fonction de broadcast "one-to-all" à tous les clients sauf un (messageAllExceptOne dans action.c)
+- plusieurs fonctions de communication "one-to-one" (autres fonctions dans action.c)
+
+
+
+\subsection{Le client}
+\subsubsection{Gestion de la communication client/serveur}
+Typiquement, la classe Client
+\subsubsection{le contrôleur}
+\subsubsection{Le modèle}
+\subsubsection{La vue}
+
+\section{Manuel utilisateur}
+\subsection{Lancer une partie}
+\subsection{Jouer une partie}
+\subsection{Modifier des attributs (serveur)}
+\subsection{Jeux d'essai}
+
+\section{extensions}
+\subsection{Animations}
+\subsection{Attente de joueur avant de démarrer un tour}
+\subsection{Chat room}
+\subsection{Thread pool}
+\subsection{Arrêt propre côté serveur (en travaux)}
+\subsection{Anti-triche (en travaux)}
+
+\section{Annexes et références}
+\end{document}

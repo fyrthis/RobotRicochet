@@ -23,11 +23,11 @@ typedef struct client {
     struct client * next;
 }client_t;
 
-extern client_t * clients;// = NULL;
-extern client_t * last_client;// = NULL;
+extern client_t * clients;
+extern client_t * last_client;
 
-extern int nbClients;// = 0;
-extern int nbClientsConnecte;// = 0;
+extern int nbClients;
+extern int nbClientsConnecte;
 
 extern pthread_cond_t  cond_at_least_2_players;
 

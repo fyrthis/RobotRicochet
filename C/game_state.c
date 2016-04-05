@@ -18,7 +18,7 @@ int y_cible = -1;
 
 char lettreCible = ' ';
 
-int nbTours = 3;
+int scoreCible = 5;
 int cptTours = 0;
 
 /*********************************************

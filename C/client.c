@@ -84,6 +84,7 @@ void addClient(int socket, char *name, pthread_mutex_t* p_mutex) {
     client->isConnected = 0;
     client->score = 0;
     client->nbCoups=0;
+    client->points=0;
     client->next = NULL;
 
     

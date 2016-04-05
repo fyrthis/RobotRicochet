@@ -13,7 +13,7 @@
 client_t *activePlayer;
 char *enigma;
 char *bilan;
-extern int nbTours;
+extern int scoreCible;
 extern int cptTours;
 //char *activePlayer;
 int setEnigma();

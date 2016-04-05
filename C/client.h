@@ -19,6 +19,7 @@ typedef struct client {
     char *name;
     int score;
     int nbCoups;
+    int points;
     struct client * next;
 }client_t;
 

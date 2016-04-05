@@ -69,11 +69,8 @@ public class Client extends Observable implements Runnable {
 	public void sendMessage(String msg) throws IOException
 	{
 		if(connected) {
-			System.out.println("(Client:"+Debug.curName+")(Client:sendMessage) sent : "+msg);
 			out.println(msg+"\n");
 			out.flush();
-		} else {
-			throw new IOException("(Client:"+Debug.curName+")(Client:sendMessage)Not connected to server");
 		}
 	}
 

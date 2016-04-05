@@ -107,7 +107,7 @@ int sendGrid(char *gridStr, int socket) {
    /*Here is the mistake : do not put a char** into a strcat !!*/
     char *msg = (char*)calloc(4096, sizeof(char));
     
-    sprintf(msg, "SESSION/%s/\n", gridStr););
+    sprintf(msg, "SESSION/%s/\n", gridStr);
     if(write(socket,msg,strlen(msg)*sizeof(char)) < 0){
     	perror("(Server:action.c:sendGrid) : Erreur in sendGrid, cannot write on socket\n");
     }

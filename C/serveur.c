@@ -112,7 +112,10 @@ void handle_request(task_t * task, int thread_id) {
 
             tuAsTrouve(task->socket);
             ilATrouve(username, solution, task->socket);
-            addEnchere(task->socket, username, solution, &enchere_mutex);
+            if(checkAndAddEnchere(task->socket, username, solution, &enchere_mutex)!=0) {
+                printf("incohérence\n");
+                exit(1);
+            }
             fprintf(stderr, "Solution trouvée par %s\n", username);
             phase = ENCHERE;
         }
@@ -143,7 +146,7 @@ void handle_request(task_t * task, int thread_id) {
                 return;
             }
             //3. Verification validité de l'enchère (différente de celle des autres joueurs, inf. à celle qu'il a proposé auparavant)
-            if(checkEnchere(client->socket, username, betSolution, &enchere_mutex)==0){
+            if(checkAndAddEnchere(client->socket, username, betSolution, &enchere_mutex)==0){
                 fprintf(stderr, "Enchère reçue de la part de %s acceptee.\n", username);
                 send_validation(task->socket);
                 send_nouvelleEnchere(username, betSolution);

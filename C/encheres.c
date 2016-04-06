@@ -167,7 +167,7 @@ void printEncheresState(pthread_mutex_t* p_mutex) {
     
 }
 
-int checkEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p_mutex) {
+int checkAndAddEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p_mutex) {
     pthread_mutex_lock(p_mutex);
 
     if(betSolution <= 0){
@@ -201,6 +201,7 @@ int checkEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p
             if(previous_enchere != NULL) {
                 previous_enchere->next = enchere->next;
             }
+            nbEncheres--;
             free(enchere);
         }
     }

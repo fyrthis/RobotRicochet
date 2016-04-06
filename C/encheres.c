@@ -164,7 +164,9 @@ int rmEnchere(char *username) {
         nbEncheres--;
         free(enchere);
     }
+    return 0;
 }
+
 int checkAndAddEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p_mutex) {
     pthread_mutex_lock(p_mutex);
 

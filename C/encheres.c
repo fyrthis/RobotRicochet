@@ -122,28 +122,6 @@ void rmEncheres(pthread_mutex_t* p_mutex) {
     }
 }
 
-int alreadyExist(int betSolution, pthread_mutex_t* p_mutex) {
-    if(pthread_mutex_lock(p_mutex) != 0) {
-         perror("(Server:encheres.c:printEncheresState) : cannot lock the first p_mutex\n");
-    }
-    enchere_t * enchere = encheres;
-    while(enchere != NULL) {
-        if(betSolution == enchere->nbCoups){
-            if(pthread_mutex_unlock(p_mutex) != 0) {
-                perror("(Server:encheres.c:printEncheresState) : cannot unlock the final p_mutex\n");
-            }
-            fprintf(stderr, "(Server:enchere.c:alreadyExist) : votre enchère a déjà été proposée par %s, %d... et vous avez proposé : %d\n", enchere->name, enchere->nbCoups, betSolution);
-            return 0;
-        }
-        enchere = enchere->next;
-    }
-    free(enchere);
-    if(pthread_mutex_unlock(p_mutex) != 0) {
-        perror("(Server:encheres.c:printEncheresState) : cannot unlock the final p_mutex\n");
-    }
-    return -1;
-}
-
 void printEncheresState(pthread_mutex_t* p_mutex) {
     if(pthread_mutex_lock(p_mutex) != 0) {
     	perror("(Server:encheres.c:printEncheresState) : cannot lock the first p_mutex\n");
@@ -167,6 +145,26 @@ void printEncheresState(pthread_mutex_t* p_mutex) {
     
 }
 
+int rmEnchere(char *username) {
+    enchere_t * enchere = encheres;
+    enchere_t * previous_enchere = NULL;
+    //On cherche si le joueur a une enchère. Si oui, enchere = cette enchere, sinon enchere = NULL
+    while(enchere != NULL && strcmp(username, enchere->name)!=0) {
+        previous_enchere = enchere;
+        enchere = enchere->next;
+    }
+
+    if(enchere!=NULL) { //Joueur a une enchère
+        if(previous_enchere==NULL) { // maj tête de liste
+            encheres = enchere->next;
+        }
+        if(previous_enchere != NULL) {
+            previous_enchere->next = enchere->next;
+        }
+        nbEncheres--;
+        free(enchere);
+    }
+}
 int checkAndAddEnchere(int socket, char *username, int betSolution, pthread_mutex_t* p_mutex) {
     pthread_mutex_lock(p_mutex);
 
@@ -175,6 +173,7 @@ int checkAndAddEnchere(int socket, char *username, int betSolution, pthread_mute
         fprintf(stderr, "(Server:enchere.c:addEnchere) : on checkEnchere, the solution is negative...\n");
         return -1;
     }
+
 
     enchere_t * enchere = encheres;
     enchere_t * previous_enchere = NULL;
@@ -205,7 +204,6 @@ int checkAndAddEnchere(int socket, char *username, int betSolution, pthread_mute
             free(enchere);
         }
     }
-
     //A partir d'ici :
     // Soit le joueur n'avait pas d'enchère
     // Soit le joueur avait une enchère, qui vient d'être enlevée.

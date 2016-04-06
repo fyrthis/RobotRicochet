@@ -83,13 +83,15 @@ void handle_request(task_t * task, int thread_id) {
             strncpy(username, pch, strlen(pch));
 
             if(clients == NULL) { puts("(Server:serveur.c:handle_request) : Aucun client. Should never happened\n"); return; }
-
+            pthread_mutex_lock(&enchere_mutex);
+            rmEnchere(username);
+            pthread_mutex_unlock(&enchere_mutex);
             disconnectClient(username, &client_mutex);
             send_deconnexion(username, task->socket);
         }
 
 
-        else if(strcmp(pch,"SOLUTION")==0) //C -> S : SOLUTION/user/...
+        else if(strcmp(pch,"TROUVE")==0) //C -> S : TROUVE/user/...
         {
             //0. Récupération des paramètres
             pch = strtok (NULL, "/");
@@ -161,7 +163,7 @@ void handle_request(task_t * task, int thread_id) {
         /***************
         *ENVOISOLUTION *
         ****************/
-        else if(strcmp(pch,"ENVOISOLUTION")==0) {
+        else if(strcmp(pch,"SOLUTION")==0) {
             //0. Récupération des paramètres
             pch = strtok (NULL, "/");
             username = (char*)calloc(strlen(pch)+1, sizeof(char));

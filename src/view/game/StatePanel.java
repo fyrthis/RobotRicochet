@@ -1,5 +1,4 @@
 package view.game;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Observable;
@@ -22,8 +21,6 @@ public class StatePanel extends JPanel implements Observer {
 	public StatePanel(Model model) {
 		super();
 		this.model=model;
-		setBackground(Color.green);
-		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.RELATIVE;
@@ -52,7 +49,7 @@ public class StatePanel extends JPanel implements Observer {
 		else if(phase == Phase.RESOLUTION_ACTIVE)
 			txt = "Phase de résolution - C'est à vous de jouer !";
 		else if(phase == Phase.RESOLUTION_PASSIVE)
-			txt = "Phase de résolution - ...attendez votre tour !";
+			txt = "Phase de résolution - ...c'est à " + model.getGameState().getActivePlayer() + " de jouer!";
 		stateTitle.setText(txt);
 	}
 }

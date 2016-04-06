@@ -87,221 +87,143 @@ public class Grid extends Observable {
 		this.setChanged();
 		this.notifyObservers(grid);
 	}
-	
-	public void moveRobot(char color, char direction) throws InterruptedException {
-		Robot robot = null;
-		int val = 0;
-		switch(color){
-		case 'R':
-			robot = rouge;
-			val = 21;
-			break;
-		case 'B':
-			robot = bleu;
-			val = 31;
-			break;
-		case 'J':
-			robot = jaune;
-			val = 51;
-			break;
-		case 'V':
-			robot = vert;
-			val = 41;
-			break;
-		default: System.out.println("probleme instantiation robot null moveRobot");
-		}
-		
-		robot.addPointToPath(robot.x, robot.y);
-		switch(direction) {
-		case 'H':
-			// 1, 3, 5, 7, 9, 11, 13, 15 sont les valeurs des cases où il y a déjà un mur en haut
-			while(!(grid[0][robot.x][robot.y] == 1 || grid[0][robot.x][robot.y] ==  3 || grid[0][robot.x][robot.y] == 5 || grid[0][robot.x][robot.y] == 7
-			|| grid[0][robot.x][robot.y] == 9 || grid[0][robot.x][robot.y] == 11 || grid[0][robot.x][robot.y] == 13 || grid[0][robot.x][robot.y] == 15))
-			{
-				grid[1][robot.x][robot.y] = 0;
-				if(robot.y > 0) {
-					switch(color){
-					case 'R':
-						if((robot.x == bleu.x && robot.y-1 == bleu.y) || (robot.x == jaune.x && robot.y-1 == jaune.y) || (robot.x == vert.x && robot.y-1 == vert.y)) {
-							grid[1][robot.x][robot.y] = val+2;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
-					case 'B':
-						if((robot.x == rouge.x && robot.y-1 == rouge.y) || (robot.x == jaune.x && robot.y-1 == jaune.y) || (robot.x == vert.x && robot.y-1 == vert.y)) {
-							grid[1][robot.x][robot.y] = val+2;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
-					case 'J':
-						if((robot.x == bleu.x && robot.y-1 == bleu.y) || (robot.x == rouge.x && robot.y-1 == rouge.y) || (robot.x == vert.x && robot.y-1 == vert.y)) {
-							grid[1][robot.x][robot.y] = val+2;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
-					case 'V':
-						if((robot.x == bleu.x && robot.y-1 == bleu.y) || (robot.x == jaune.x && robot.y-1 == jaune.y) || (robot.x == rouge.x && robot.y-1 == rouge.y)) {
-							grid[1][robot.x][robot.y] = val+2;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
-					}
-					robot.y--;
-					grid[1][robot.x][robot.y] = val+1;
-				}
-				for(int i_update = 0; i_update < 4; i_update++){
-					Thread.sleep(DELAY);
-					update();
-				}
+
+	public void moveRobot(char color, char direction) throws InterruptedException{
+			Robot robot = null;
+			Robot[] others = new Robot[3];
+			int val = 0;
+			switch(color){
+			case 'R':
+				robot = rouge;
+				others[0] = bleu;
+				others[1] = jaune;
+				others[2] = vert;
+				val = 21;
+				break;
+			case 'B':
+				robot = bleu;
+				others[0] = rouge;
+				others[1] = jaune;
+				others[2] = vert;
+				val = 31;
+				break;
+			case 'J':
+				robot = jaune;
+				others[0] = rouge;
+				others[1] = bleu;
+				others[2] = vert;
+				val = 51;
+				break;
+			case 'V':
+				robot = vert;
+				others[0] = rouge;
+				others[1] = bleu;
+				others[2] = jaune;
+				val = 41;
+				break;
+			default:
+				System.out.println("probleme instantiation robot null moveRobot");
 			}
-			grid[1][robot.x][robot.y] = val+2;
-			break;
-		case 'B':
-			// 4, 5, 6, 7, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur en bas
-			while(!(grid[0][robot.x][robot.y] == 4 || grid[0][robot.x][robot.y] ==  5 || grid[0][robot.x][robot.y] == 6 || grid[0][robot.x][robot.y] == 7
-			|| grid[0][robot.x][robot.y] == 12 || grid[0][robot.x][robot.y] == 13 || grid[0][robot.x][robot.y] == 14 || grid[0][robot.x][robot.y] == 15))
-			{
-				grid[1][robot.x][robot.y] = 0;
-				if(robot.y < getSizeY()-1){
-					switch(color){
-					case 'R':
-						if((robot.x == bleu.x && robot.y+1 == bleu.y) || (robot.x == jaune.x && robot.y+1 == jaune.y) || (robot.x == vert.x && robot.y+1 == vert.y)) {
-							grid[1][robot.x][robot.y] = val+6;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
+			
+			robot.addPointToPath(robot.x, robot.y);
+			switch(direction) {
+			case 'H':
+				// 1, 3, 5, 7, 9, 11, 13, 15 sont les valeurs des cases où il y a déjà un mur en haut
+				while(!(grid[0][robot.x][robot.y] == 1 || grid[0][robot.x][robot.y] ==  3 || grid[0][robot.x][robot.y] == 5 || grid[0][robot.x][robot.y] == 7
+				|| grid[0][robot.x][robot.y] == 9 || grid[0][robot.x][robot.y] == 11 || grid[0][robot.x][robot.y] == 13 || grid[0][robot.x][robot.y] == 15))
+				{
+					grid[1][robot.x][robot.y] = 0;
+					if(robot.y > 0) {
+						for(Robot other : others){
+							if(robot.x == other.x && robot.y-1 == other.y){
+								grid[1][robot.x][robot.y] = val+2;
+								System.out.println("\t- " + color + "- bloqué par un robot en bas");
+								return;
+							}
 						}
-						break;
-					case 'B':
-						if((robot.x == rouge.x && robot.y+1 == rouge.y) || (robot.x == jaune.x && robot.y+1 == jaune.y) || (robot.x == vert.x && robot.y+1 == vert.y)) {
-							grid[1][robot.x][robot.y] = val+6;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
-					case 'J':
-						if((robot.x == bleu.x && robot.y+1 == bleu.y) || (robot.x == rouge.x && robot.y+1 == rouge.y) || (robot.x == vert.x && robot.y+1 == vert.y)) {
-							grid[1][robot.x][robot.y] = val+6;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
-					case 'V':
-						if((robot.x == bleu.x && robot.y+1 == bleu.y) || (robot.x == jaune.x && robot.y+1 == jaune.y) || (robot.x == rouge.x && robot.y+1 == rouge.y)) {
-							grid[1][robot.x][robot.y] = val+6;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
+						robot.y--;
+						grid[1][robot.x][robot.y] = val+1;
 					}
-					robot.y++;
-					grid[1][robot.x][robot.y] = val+5;
-				}
-				for(int i_update = 0; i_update < 4; i_update++){
-					Thread.sleep(DELAY);
-					update();	
-				}
-			} 
-			grid[1][robot.x][robot.y] = val+6;
-			break;
-		case 'G':
-			// 8, 9, 10, 11, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur à gauche
-			while(!(grid[0][robot.x][robot.y] == 8 || grid[0][robot.x][robot.y] ==  9 || grid[0][robot.x][robot.y] == 10 || grid[0][robot.x][robot.y] == 11
-			|| grid[0][robot.x][robot.y] == 12 || grid[0][robot.x][robot.y] == 13 || grid[0][robot.x][robot.y] == 14 || grid[0][robot.x][robot.y] == 15))
-			{
-				grid[1][robot.x][robot.y] = 0;
-				if(robot.x > 0) {
-					switch(color){
-					case 'R':
-						if((robot.x-1 == bleu.x && robot.y == bleu.y) || (robot.x-1 == jaune.x && robot.y == jaune.y) || (robot.x-1 == vert.x && robot.y == vert.y)) {
-							grid[1][robot.x][robot.y] = val+8;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
-					case 'B':
-						if((robot.x-1 == rouge.x && robot.y == rouge.y) || (robot.x-1 == jaune.x && robot.y == jaune.y) || (robot.x-1 == vert.x && robot.y == vert.y)) {
-							grid[1][robot.x][robot.y] = val+8;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
-					case 'J':
-						if((robot.x-1 == bleu.x && robot.y == bleu.y) || (robot.x-1 == rouge.x && robot.y == rouge.y) || (robot.x == vert.x-1 && robot.y == vert.y)) {
-							grid[1][robot.x][robot.y] = val+8;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
-					case 'V':
-						if((robot.x-1 == bleu.x && robot.y == bleu.y) || (robot.x-1 == jaune.x && robot.y == jaune.y) || (robot.x-1 == rouge.x && robot.y == rouge.y)) {
-							grid[1][robot.x][robot.y] = val+8;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
+					for(int i_update = 0; i_update < 4; i_update++){
+						Thread.sleep(DELAY);
+						update();
 					}
-					robot.x--;
-					grid[1][robot.x][robot.y] = val+7;
 				}
-				for(int i_update = 0; i_update < 4; i_update++){
-					Thread.sleep(DELAY);
-					update();	
-				}
-			} 
-			grid[1][robot.x][robot.y] = val+8;
-			break;
-		case 'D':
-			// 2, 3, 6, 7, 10, 11, 14, 15 son les valeurs des cases où il y a déjà un mur à droite
-			while(!(grid[0][robot.x][robot.y] == 2 || grid[0][robot.x][robot.y] ==  3 || grid[0][robot.x][robot.y] == 6 || grid[0][robot.x][robot.y] == 7
-			|| grid[0][robot.x][robot.y] == 10 || grid[0][robot.x][robot.y] == 11 || grid[0][robot.x][robot.y] == 14 || grid[0][robot.x][robot.y] == 15))
-			{
-				grid[1][robot.x][robot.y] = 0;
-				if(robot.x < getSizeX()-1){
-					switch(color){
-					case 'R':
-						if((robot.x+1 == bleu.x && robot.y == bleu.y) || (robot.x+1 == jaune.x && robot.y == jaune.y) || (robot.x+1 == vert.x && robot.y == vert.y)) {
-							grid[1][robot.x][robot.y] = val+4;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
+				grid[1][robot.x][robot.y] = val+2;
+				break;
+			case 'B':
+				// 4, 5, 6, 7, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur en bas
+				while(!(grid[0][robot.x][robot.y] == 4 || grid[0][robot.x][robot.y] ==  5 || grid[0][robot.x][robot.y] == 6 || grid[0][robot.x][robot.y] == 7
+				|| grid[0][robot.x][robot.y] == 12 || grid[0][robot.x][robot.y] == 13 || grid[0][robot.x][robot.y] == 14 || grid[0][robot.x][robot.y] == 15))
+				{
+					grid[1][robot.x][robot.y] = 0;
+					if(robot.y < getSizeY()-1){
+						for(Robot other : others){
+							if(robot.x == other.x && robot.y+1 == other.y){
+								grid[1][robot.x][robot.y] = val+6;
+								System.out.println("\t- " + color + "- bloqué par un robot en bas");
+								return;
+							}
 						}
-						break;
-					case 'B':
-						if((robot.x+1 == rouge.x && robot.y == rouge.y) || (robot.x+1 == jaune.x && robot.y == jaune.y) || (robot.x+1 == vert.x && robot.y == vert.y)) {
-							grid[1][robot.x][robot.y] = val+4;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
-					case 'J':
-						if((robot.x+1 == bleu.x && robot.y == bleu.y) || (robot.x+1 == rouge.x && robot.y == rouge.y) || (robot.x+1 == vert.x && robot.y == vert.y)) {
-							grid[1][robot.x][robot.y] = val+4;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
-					case 'V':
-						if((robot.x+1 == bleu.x && robot.y == bleu.y) || (robot.x+1 == jaune.x && robot.y == jaune.y) || (robot.x+1 == rouge.x && robot.y == rouge.y)) {
-							grid[1][robot.x][robot.y] = val+4;
-							System.out.println("\t- " + color + "- bloqué par un robot en bas");
-							return;
-						}
-						break;
+						robot.y++;
+						grid[1][robot.x][robot.y] = val+5;
 					}
-					robot.x++;
-					grid[1][robot.x][robot.y] = val+3;
+					for(int i_update = 0; i_update < 4; i_update++){
+						Thread.sleep(DELAY);
+						update();	
+					}
 				}
-				for(int i_update = 0; i_update < 4; i_update++){
-					Thread.sleep(DELAY);
-					update();	
+				grid[1][robot.x][robot.y] = val+6;
+				break;
+			case 'G':
+				// 8, 9, 10, 11, 12, 13, 14, 15 sont les valeurs des cases où il y a déjà un mur à gauche
+				while(!(grid[0][robot.x][robot.y] == 8 || grid[0][robot.x][robot.y] ==  9 || grid[0][robot.x][robot.y] == 10 || grid[0][robot.x][robot.y] == 11
+				|| grid[0][robot.x][robot.y] == 12 || grid[0][robot.x][robot.y] == 13 || grid[0][robot.x][robot.y] == 14 || grid[0][robot.x][robot.y] == 15))
+				{
+					grid[1][robot.x][robot.y] = 0;
+					if(robot.x > 0) {
+						for(Robot other : others){
+							if(robot.x-1 == other.x && robot.y == other.y){
+								grid[1][robot.x][robot.y] = val+8;
+								System.out.println("\t- " + color + "- bloqué par un robot en bas");
+								return;
+							}
+						}
+						robot.x--;
+						grid[1][robot.x][robot.y] = val+7;
+					}
+					for(int i_update = 0; i_update < 4; i_update++){
+						Thread.sleep(DELAY);
+						update();	
+					}
+				} 
+				grid[1][robot.x][robot.y] = val+8;
+				break;
+			case 'D':
+				// 2, 3, 6, 7, 10, 11, 14, 15 son les valeurs des cases où il y a déjà un mur à droite
+				while(!(grid[0][robot.x][robot.y] == 2 || grid[0][robot.x][robot.y] ==  3 || grid[0][robot.x][robot.y] == 6 || grid[0][robot.x][robot.y] == 7
+				|| grid[0][robot.x][robot.y] == 10 || grid[0][robot.x][robot.y] == 11 || grid[0][robot.x][robot.y] == 14 || grid[0][robot.x][robot.y] == 15))
+				{
+					grid[1][robot.x][robot.y] = 0;
+					if(robot.x < getSizeX()-1){
+						for(Robot other : others){
+							if(robot.x+1 == other.x && robot.y == other.y){
+								grid[1][robot.x][robot.y] = val+4;
+								System.out.println("\t- " + color + "- bloqué par un robot en bas");
+								return;
+							}
+						}
+						robot.x++;
+						grid[1][robot.x][robot.y] = val+3;
+					}
+					for(int i_update = 0; i_update < 4; i_update++){
+						Thread.sleep(DELAY);
+						update();	
+					}
 				}
-			}
-			grid[1][robot.x][robot.y] = val+4;
-			break;
-		default:;
+				grid[1][robot.x][robot.y] = val+4;
+				break;
+			default:;
 		}
 	}
 }

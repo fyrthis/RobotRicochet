@@ -1,5 +1,4 @@
 package view.game;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -26,9 +25,6 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private int marginTop;
-	private int marginLeft;
-
 	private Tile[][] grid;
 	private Tile[][] symbolsGrid;
 	private int size_x, size_y;
@@ -73,7 +69,6 @@ public class GridPanel extends JPanel implements ComponentListener, Observer {
 		super();
 		this.model=model;
 		this.addComponentListener(this);
-		setBackground(Color.gray);
 		readSprites();
 		
 		update[0] = update[1] = update[2] = update[3] = 1;

@@ -1,5 +1,4 @@
 package view.game;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Observable;
@@ -23,8 +22,6 @@ public class TimerPanel extends JPanel implements Observer {
 	public TimerPanel(Model model){
 		super();
 		this.model = model;
-		
-		setBackground(Color.blue);
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();

@@ -136,6 +136,7 @@ public class Players extends Observable {
 				players.remove(p); //Cette fois, pas besoin de le garder pour son score, tout le monde est à zéro.
 			}
 		}
+		LocalPlayer.getInstance().setScore(0);
 		setChanged();
 		notifyObservers();
 	}

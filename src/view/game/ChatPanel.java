@@ -73,8 +73,6 @@ public class ChatPanel extends JPanel implements ActionListener, Observer {
 		c.gridheight = 7;
 		add(sendMsgButton, c);
 		
-		setBackground(Color.red);
-
 		sendMsgButton.addActionListener(this);
 	}
 	

@@ -1,20 +1,22 @@
 package view.game;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import players.Players.LocalPlayer;
 import launcher.Debug;
 import model.Model;
+import players.Players.LocalPlayer;
 import utils.Phase;
 import view.View;
 
@@ -47,7 +49,6 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 	public InteractionPanel(Model model) {
 		super();
 		this.model=model;
-		setBackground(Color.green);
 		layout = new GroupLayout(this);
 		setLayout(layout);
    	}
@@ -187,6 +188,68 @@ public class InteractionPanel extends JPanel implements ActionListener, Observer
 				if(LocalPlayer.getInstance().hasAlreadyProposed()){
 					JOptionPane.showMessageDialog(this, "Votre solution est mauvaise...\nVous êtes mauvais...\nVous êtes exclu du tour parce que vous êtes mauvais...\n");
 				}
+			}
+		}
+		else if(phase == Phase.WIN){
+			final JOptionPane optionPane = new JOptionPane("Vous avez gagné !",
+					JOptionPane.INFORMATION_MESSAGE);
+
+			final JDialog dialog = new JDialog();
+			dialog.setContentPane(optionPane);
+			dialog.setDefaultCloseOperation(
+					JDialog.DO_NOTHING_ON_CLOSE);
+			optionPane.addPropertyChangeListener(
+				    new PropertyChangeListener() {
+				        public void propertyChange(PropertyChangeEvent e) {
+				            String prop = e.getPropertyName();
+
+				            if (dialog.isVisible() 
+				             && (e.getSource() == optionPane)
+				             && (prop.equals(JOptionPane.VALUE_PROPERTY))) {
+				                //If you were going to check something
+				                //before closing the window, you'd do
+				                //it here.
+				                dialog.setVisible(false);
+				            }
+				        }
+				    });
+			dialog.pack();
+			dialog.setVisible(true);
+
+			int value = ((Integer)optionPane.getValue()).intValue();
+			if (value == JOptionPane.INFORMATION_MESSAGE) {
+				model.getGameState().setPhase(Phase.INITIALISATION);
+			}
+		}
+		else if(phase == Phase.LOSE){
+			final JOptionPane optionPane = new JOptionPane("Vous avez perdu !",
+					JOptionPane.INFORMATION_MESSAGE);
+
+			final JDialog dialog = new JDialog();
+			dialog.setContentPane(optionPane);
+			dialog.setDefaultCloseOperation(
+					JDialog.DO_NOTHING_ON_CLOSE);
+			optionPane.addPropertyChangeListener(
+				    new PropertyChangeListener() {
+				        public void propertyChange(PropertyChangeEvent e) {
+				            String prop = e.getPropertyName();
+
+				            if (dialog.isVisible() 
+				             && (e.getSource() == optionPane)
+				             && (prop.equals(JOptionPane.VALUE_PROPERTY))) {
+				                //If you were going to check something
+				                //before closing the window, you'd do
+				                //it here.
+				                dialog.setVisible(false);
+				            }
+				        }
+				    });
+			dialog.pack();
+			dialog.setVisible(true);
+
+			int value = ((Integer)optionPane.getValue()).intValue();
+			if (value == JOptionPane.INFORMATION_MESSAGE) {
+				model.getGameState().setPhase(Phase.INITIALISATION);
 			}
 		}
 	}

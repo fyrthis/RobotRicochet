@@ -1,5 +1,4 @@
 package view.game;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
@@ -26,8 +25,6 @@ public class ScoreBoardPanel extends JPanel implements Observer {
 	public ScoreBoardPanel(Model model) {
 		super();
 		this.model=model;
-		setBackground(Color.yellow);
-		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;

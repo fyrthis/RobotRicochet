@@ -1,5 +1,4 @@
 package view.game;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
@@ -11,10 +10,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 
 import model.Model;
 import players.AbstractPlayer;
@@ -35,8 +30,6 @@ public class RoundBoardPanel extends JPanel implements Observer {
 	public RoundBoardPanel(Model model) {
 		super();
 		this.model=model;
-		setBackground(Color.yellow);
-
 		setLayout(new GridBagLayout());
 
 		c.fill = GridBagConstraints.BOTH;

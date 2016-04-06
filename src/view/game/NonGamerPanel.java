@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import launcher.Debug;
 import model.Model;
 
 public class NonGamerPanel extends AbstractGamePanel {
